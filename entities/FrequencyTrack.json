@@ -1,0 +1,59 @@
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "frequency_hz": {
+      "type": "number"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Body",
+        "Mind",
+        "Spirit",
+        "Wealth",
+        "Nature",
+        "Love",
+        "Cleansing"
+      ]
+    },
+    "benefit": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "duration_minutes": {
+      "type": "number"
+    },
+    "vibration_pattern": {
+      "type": "string",
+      "enum": [
+        "Continuous",
+        "Pulsed",
+        "Binaural",
+        "Isochronic",
+        "Solfeggio"
+      ]
+    },
+    "chakra": {
+      "type": "string"
+    },
+    "color_energy": {
+      "type": "string"
+    },
+    "affirmation": {
+      "type": "string"
+    },
+    "is_featured": {
+      "type": "boolean"
+    },
+    "play_count": {
+      "type": "number"
+    }
+  },
+  "required": [],
+  "name": "FrequencyTrack"
+}

@@ -1,0 +1,52 @@
+{
+  "type": "object",
+  "properties": {
+    "session_name": {
+      "type": "string"
+    },
+    "intention": {
+      "type": "string"
+    },
+    "tracks_used": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "duration_minutes": {
+      "type": "number"
+    },
+    "mood_before": {
+      "type": "string",
+      "enum": [
+        "Anxious",
+        "Low",
+        "Neutral",
+        "Good",
+        "Elevated"
+      ]
+    },
+    "mood_after": {
+      "type": "string",
+      "enum": [
+        "Anxious",
+        "Low",
+        "Neutral",
+        "Good",
+        "Elevated",
+        "Transformed"
+      ]
+    },
+    "notes": {
+      "type": "string"
+    },
+    "rating": {
+      "type": "number"
+    },
+    "date": {
+      "type": "string"
+    }
+  },
+  "required": [],
+  "name": "HealingSession"
+}
