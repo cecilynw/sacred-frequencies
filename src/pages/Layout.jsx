@@ -4,10 +4,11 @@ import { createPageUrl } from "@/utils";
 const NAV = [
   { label: "Home",     page: "Home",         icon: "✦" },
   { label: "Player",   page: "Player",        icon: "🎵" },
+  { label: "Grow",     page: "GrowthSound",   icon: "🌱" },
   { label: "Angels",   page: "AngelNumbers",  icon: "⟡" },
   { label: "Rituals",  page: "Rituals",       icon: "🌙" },
-  { label: "Journal",  page: "Journal",       icon: "📓" },
   { label: "Nature",   page: "NaturePortal",  icon: "🌿" },
+  { label: "Journal",  page: "Journal",       icon: "📓" },
   { label: "Guide",    page: "Guide",         icon: "📚" },
 ];
 
@@ -16,7 +17,6 @@ export default function Layout({ children }) {
 
   return (
     <div className="min-h-screen bg-[#030712]">
-      {/* Top nav */}
       <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#030712]/90 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-14">
           <Link to={createPageUrl("Home")} className="flex items-center gap-2">
@@ -36,12 +36,11 @@ export default function Layout({ children }) {
                   }`}
                 >
                   <span>{n.icon}</span>
-                  <span className="hidden md:inline ml-1">{n.label}</span>
+                  <span className="hidden lg:inline ml-1">{n.label}</span>
                 </Link>
               );
             })}
           </div>
-          {/* Upgrade pill */}
           <Link
             to={createPageUrl("Home")}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-amber-400/40 text-amber-300 text-xs font-bold hover:bg-amber-400/10 transition-colors"
