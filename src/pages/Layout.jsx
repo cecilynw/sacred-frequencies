@@ -2,14 +2,15 @@ import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
 const NAV = [
-  { label: "Home",     page: "Home",         icon: "✦" },
-  { label: "Player",   page: "Player",        icon: "🎵" },
-  { label: "Grow",     page: "GrowthSound",   icon: "🌱" },
-  { label: "Angels",   page: "AngelNumbers",  icon: "⟡" },
-  { label: "Rituals",  page: "Rituals",       icon: "🌙" },
-  { label: "Nature",   page: "NaturePortal",  icon: "🌿" },
-  { label: "Journal",  page: "Journal",       icon: "📓" },
-  { label: "Guide",    page: "Guide",         icon: "📚" },
+  { label: "Home",     page: "Home",           icon: "✦" },
+  { label: "Player",   page: "Player",          icon: "🎵" },
+  { label: "Grow",     page: "GrowthSound",     icon: "🌱" },
+  { label: "Love",     page: "EpigeneticLove",  icon: "💗" },
+  { label: "Angels",   page: "AngelNumbers",    icon: "⟡" },
+  { label: "Rituals",  page: "Rituals",         icon: "🌙" },
+  { label: "Nature",   page: "NaturePortal",    icon: "🌿" },
+  { label: "Journal",  page: "Journal",         icon: "📓" },
+  { label: "Guide",    page: "Guide",           icon: "📚" },
 ];
 
 export default function Layout({ children }) {
@@ -23,7 +24,7 @@ export default function Layout({ children }) {
             <span className="text-lg">✦</span>
             <span className="font-black text-white/90 text-sm tracking-widest hidden sm:block">SACRED FREQUENCIES</span>
           </Link>
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-0.5 overflow-x-auto">
             {NAV.map((n) => {
               const href = createPageUrl(n.page);
               const active = location.pathname === href || location.pathname.startsWith(href + "/");
@@ -31,7 +32,7 @@ export default function Layout({ children }) {
                 <Link
                   key={n.page}
                   to={href}
-                  className={`px-2.5 py-1.5 rounded-lg text-sm transition-all ${
+                  className={`px-2.5 py-1.5 rounded-lg text-sm transition-all whitespace-nowrap ${
                     active ? "bg-white/15 text-white" : "text-white/50 hover:text-white/80 hover:bg-white/8"
                   }`}
                 >
@@ -43,7 +44,7 @@ export default function Layout({ children }) {
           </div>
           <Link
             to={createPageUrl("Home")}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-amber-400/40 text-amber-300 text-xs font-bold hover:bg-amber-400/10 transition-colors"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-amber-400/40 text-amber-300 text-xs font-bold hover:bg-amber-400/10 transition-colors flex-shrink-0"
           >
             💎 Upgrade
           </Link>
