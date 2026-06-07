@@ -572,26 +572,96 @@ function buildFullIrradiationField(ctx, being, intensity) {
   qbG.gain.value = 0.065;
   qb.connect(qbG); qbG.connect(ctx.destination); qb.start(); allNodes.push(qb);
 
-  // Lunar balance layer — all 4 phases simultaneously at low volume
-  // This balances the solar-masculine irradiation with feminine-lunar energy
+  // ── LUNAR BALANCE SYSTEM — full phase-synchronized integration
+  // Each of the 4 lunar phases is placed in a specific quadrant of the stereo field
+  // and given a staggered ramp — New Moon anchors first (clearing), then Waxing
+  // (building), Full Moon (amplifying) and Waning (releasing) — mirroring the
+  // natural lunar cycle order. Together they create a perfect solar-lunar equilibrium.
   LUNAR_RESONANCES.forEach((phase, i) => {
-    const osc  = ctx.createOscillator();
-    const g    = ctx.createGain();
-    const pan  = ctx.createStereoPanner();
-    pan.pan.value = Math.cos((i / LUNAR_RESONANCES.length) * Math.PI * 2) * 0.25;
-    osc.type   = "sine";
-    osc.frequency.value = phase.hz;
-    g.gain.setValueAtTime(0, ctx.currentTime);
-    g.gain.linearRampToValueAtTime(0.025, ctx.currentTime + 5 + i * 0.5);
-    osc.connect(g); g.connect(pan); pan.connect(ctx.destination);
-    osc.start(); allNodes.push(osc);
-    // Sub-octave
-    const sub  = ctx.createOscillator();
-    const subG = ctx.createGain();
-    sub.type   = "sine"; sub.frequency.value = phase.subHz;
-    subG.gain.value = 0.012;
+    // Quadrant panning: NM=left, Waxing=centre-left, FM=centre-right, Waning=right
+    const panPos = [-0.7, -0.25, 0.25, 0.7][i];
+    const rampDelay = [2, 3.5, 5, 6.5][i]; // staggered entry mirrors the cycle
+
+    // Primary lunar tone
+    const osc1  = ctx.createOscillator();
+    const g1    = ctx.createGain();
+    const pan1  = ctx.createStereoPanner();
+    pan1.pan.value = panPos;
+    osc1.type   = "sine";
+    osc1.frequency.value = phase.hz;
+    g1.gain.setValueAtTime(0, ctx.currentTime);
+    g1.gain.linearRampToValueAtTime(0.032, ctx.currentTime + rampDelay);
+    osc1.connect(g1); g1.connect(pan1); pan1.connect(ctx.destination);
+    osc1.start(); allNodes.push(osc1);
+
+    // Sub-octave anchor (hz/2) — water body / emotional body resonance
+    const sub   = ctx.createOscillator();
+    const subG  = ctx.createGain();
+    sub.type    = "sine";
+    sub.frequency.value = phase.subHz;
+    subG.gain.setValueAtTime(0, ctx.currentTime);
+    subG.gain.linearRampToValueAtTime(0.018, ctx.currentTime + rampDelay + 1);
     sub.connect(subG); subG.connect(ctx.destination);
     sub.start(); allNodes.push(sub);
+
+    // Supreme overlay — the balancing/amplifying frequency for this phase
+    if (phase.supremeHz && phase.supremeHz !== phase.hz) {
+      const oscS  = ctx.createOscillator();
+      const gS    = ctx.createGain();
+      const panS  = ctx.createStereoPanner();
+      panS.pan.value = panPos * 0.5; // closer to centre for overlay
+      oscS.type   = "sine";
+      oscS.frequency.value = Math.min(phase.supremeHz, 2000);
+      gS.gain.setValueAtTime(0, ctx.currentTime);
+      gS.gain.linearRampToValueAtTime(0.014, ctx.currentTime + rampDelay + 2);
+      oscS.connect(gS); gS.connect(panS); panS.connect(ctx.destination);
+      oscS.start(); allNodes.push(oscS);
+    }
+
+    // Tidal LFO — slow amplitude modulation matching lunar tidal rhythm
+    // Creates a gentle breathing pulse on each lunar tone
+    const lfo   = ctx.createOscillator();
+    const lfoG  = ctx.createGain();
+    lfo.type    = "sine";
+    lfo.frequency.value = phase.beatHz > 0 ? Math.min(phase.beatHz, 4) : 0.5;
+    lfoG.gain.value = 0.008;
+    lfo.connect(lfoG); lfoG.connect(g1.gain);
+    lfo.start(); allNodes.push(lfo);
+
+    // Silver shimmer overtone — triangle wave 2.618x (golden ratio squared)
+    const shimmer  = ctx.createOscillator();
+    const shimmerG = ctx.createGain();
+    shimmer.type   = "triangle";
+    shimmer.frequency.value = Math.min(phase.hz * 2.618, 1800);
+    shimmerG.gain.setValueAtTime(0, ctx.currentTime);
+    shimmerG.gain.linearRampToValueAtTime(0.007, ctx.currentTime + rampDelay + 1.5);
+    shimmer.connect(shimmerG); shimmerG.connect(ctx.destination);
+    shimmer.start(); allNodes.push(shimmer);
+  });
+
+  // ── SOLAR-LUNAR BRIDGE TONE: 528 Hz meets 221.23 Hz = constructive interference
+  // This is the exact point where the love frequency and the Full Moon frequency
+  // create a resonant sum — felt as warmth and expansion in the chest
+  const bridge  = ctx.createOscillator();
+  const bridgeG = ctx.createGain();
+  bridge.type   = "sine";
+  bridge.frequency.value = (528 + 221.23) / 2; // midpoint carrier: 374.6 Hz
+  bridgeG.gain.setValueAtTime(0, ctx.currentTime);
+  bridgeG.gain.linearRampToValueAtTime(0.018, ctx.currentTime + 8);
+  bridge.connect(bridgeG); bridgeG.connect(ctx.destination);
+  bridge.start(); allNodes.push(bridge);
+
+  // ── LUNAR GROUNDING CHORD: 136.10 + 210.42 + 221.23 played together
+  // This is the Om chord of the Moon — three harmonically related lunar tones
+  // sounding simultaneously. Locks the lunar balance into the body permanently.
+  [136.10, 210.42, 221.23].forEach((f, i) => {
+    const o  = ctx.createOscillator();
+    const og = ctx.createGain();
+    o.type   = "sine"; o.frequency.value = f;
+    og.gain.setValueAtTime(0, ctx.currentTime);
+    og.gain.linearRampToValueAtTime(0.013, ctx.currentTime + 9 + i * 0.8);
+    o.connect(og); og.connect(ctx.destination);
+    o.start(); allNodes.push(o);
   });
 
   return { nodes: allNodes };
@@ -760,6 +830,9 @@ export default function IrradiationProtocol() {
   const [showSafety,    setShowSafety]   = useState(false);
   const [activeLunar,   setActiveLunar]  = useState(null);
   const [lunarBalanced, setLunarBalanced]= useState(false);
+  const [lunarPhaseIdx, setLunarPhaseIdx]= useState(0);   // cycles through phases during play
+  const [lunarProgress, setLunarProgress]= useState([0,0,0,0]); // 0-100 per phase
+  const [showLunarSci,  setShowLunarSci] = useState(false);
 
   const audioCtxRef = useRef(null);
   const activeRef   = useRef(null);
@@ -768,6 +841,7 @@ export default function IrradiationProtocol() {
   const breathRef   = useRef(null);
   const vortexRef   = useRef(null);
   const affRef      = useRef(null);
+  const lunarRef    = useRef(null);
 
   const getCtx = useCallback(() => {
     if (!audioCtxRef.current || audioCtxRef.current.state === "closed")
@@ -791,9 +865,11 @@ export default function IrradiationProtocol() {
     clearInterval(timerRef.current); clearInterval(totalRef.current);
     clearInterval(breathRef.current); clearInterval(vortexRef.current);
     clearInterval(affRef.current);
+    clearInterval(lunarRef.current);
     setPlaying(false); setMode(null); setSeqStep(0);
     setStepElapsed(0); setTotalElapsed(0); setCompleted(false);
     setActiveRestore(null); setEtherProgress({}); setActiveSupreme(null);
+    setLunarProgress([0,0,0,0]);
   }, []);
 
   const startBreath = useCallback(() => {
@@ -838,6 +914,24 @@ export default function IrradiationProtocol() {
       });
     }, 1000);
     affRef.current = setInterval(() => { ai = (ai + 1) % IRRADIATION_SEQUENCE.length; setAffIdx(ai); }, 11000);
+
+    // Lunar cycle tracker — cycles through 4 phases visually, showing balance building
+    let lp = 0, lprog = [0,0,0,0];
+    lunarRef.current = setInterval(() => {
+      lp = (lp + 1);
+      // Each phase builds up over time
+      setLunarProgress(prev => {
+        const next = [...prev];
+        LUNAR_RESONANCES.forEach((_, idx) => {
+          const delay = idx * 8; // staggered entry matches audio ramp
+          if (lp > delay) next[idx] = Math.min(100, prev[idx] + 1.2);
+        });
+        return next;
+      });
+      // Cycle active display phase
+      if (lp % 18 === 0) setLunarPhaseIdx(i => (i + 1) % LUNAR_RESONANCES.length);
+    }, 600);
+    setLunarBalanced(true);
   }, [stopAll, getCtx, selectedBeing, intensity, startBreath, startVortex]);
 
   const playSequence = useCallback(() => {
@@ -876,6 +970,20 @@ export default function IrradiationProtocol() {
 
     setMode("sequence"); setPlaying(true); setCompleted(false);
     startBreath(); startVortex();
+    setLunarBalanced(true); setLunarProgress([0,0,0,0]);
+    // Lunar progress tracker for sequential mode
+    let lp = 0;
+    lunarRef.current = setInterval(() => {
+      lp++;
+      setLunarProgress(prev => {
+        const next = [...prev];
+        LUNAR_RESONANCES.forEach((_, idx) => {
+          if (lp > idx * 8) next[idx] = Math.min(100, prev[idx] + 0.8);
+        });
+        return next;
+      });
+      if (lp % 18 === 0) setLunarPhaseIdx(i => (i + 1) % LUNAR_RESONANCES.length);
+    }, 700);
     let te = 0;
     totalRef.current = setInterval(() => { te++; setTotalElapsed(te); }, 1000);
     playStep(0);
@@ -1235,6 +1343,27 @@ export default function IrradiationProtocol() {
                       transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}>{t.icon}</motion.div>
                   );
                 })}
+                {/* Lunar phases — outermost ring, counter-rotating to solar */}
+                {LUNAR_RESONANCES.map((phase, i) => {
+                  const angle = ((i / LUNAR_RESONANCES.length) * Math.PI * 2) - (vortexAngle * Math.PI / 180) * 0.4;
+                  const r = 170, x = Math.cos(angle) * r + 160, y = Math.sin(angle) * r + 160;
+                  const pct = lunarProgress[i] || 0;
+                  return (
+                    <motion.div key={phase.id}
+                      className="absolute w-7 h-7 rounded-full flex items-center justify-center border"
+                      style={{
+                        left: x - 14, top: y - 14,
+                        background: pct > 0 ? phase.glow + "18" : "#0f172a",
+                        borderColor: pct > 0 ? phase.glow + "60" : "#1e293b"
+                      }}
+                      animate={pct > 0 ? {
+                        boxShadow: [`0 0 4px ${phase.glow}20`, `0 0 14px ${phase.glow}55`, `0 0 4px ${phase.glow}20`]
+                      } : { boxShadow: "none" }}
+                      transition={{ duration: 2.5 + i * 0.3, repeat: Infinity, delay: i * 0.4 }}>
+                      <span style={{ fontSize: "0.75rem" }}>{phase.icon}</span>
+                    </motion.div>
+                  );
+                })}
                 <motion.div className="absolute inset-0 m-auto w-22 h-22 rounded-full flex items-center justify-center"
                   style={{ width: 88, height: 88, background: "radial-gradient(circle,#e879f922,transparent)", border: "2px solid #e879f940" }}
                   animate={{ scale: [1, 1.12, 1], boxShadow: ["0 0 20px #e879f930","0 0 65px #e879f968","0 0 20px #e879f930"] }}
@@ -1314,6 +1443,93 @@ export default function IrradiationProtocol() {
               </div>
               <button onClick={stopAll} className="px-4 py-2 rounded-full border text-xs font-bold hover:bg-white/10 transition-colors"
                 style={{ borderColor: activeRestore.color + "50", color: activeRestore.color }}>⏹</button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ─── LIVE LUNAR BALANCE BAR ─── */}
+        <AnimatePresence>
+          {(playing || lunarBalanced) && mode !== "restore" && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              className="mb-5 rounded-2xl border overflow-hidden"
+              style={{ borderColor: "#60a5fa22", background: "#060d1a" }}
+            >
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/5">
+                <div className="flex items-center gap-2">
+                  <motion.span className="text-lg"
+                    animate={{ opacity: [0.6, 1, 0.6] }}
+                    transition={{ duration: 2.5, repeat: Infinity }}>
+                    {LUNAR_RESONANCES[lunarPhaseIdx]?.icon}
+                  </motion.span>
+                  <span className="text-xs font-black text-white/60 tracking-widest uppercase">
+                    Lunar Balance — Solar · Lunar Equilibrium
+                  </span>
+                  {playing && (
+                    <motion.div className="w-1.5 h-1.5 rounded-full bg-blue-400 ml-1"
+                      animate={{ opacity: [1, 0.2, 1] }} transition={{ repeat: Infinity, duration: 1.5 }} />
+                  )}
+                </div>
+                <button onClick={() => setShowLunarSci(!showLunarSci)}
+                  className="text-xs text-white/25 hover:text-white/50 transition-colors">
+                  {showLunarSci ? "hide ▲" : "why? ▼"}
+                </button>
+              </div>
+              <AnimatePresence>
+                {showLunarSci && (
+                  <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }}
+                    className="overflow-hidden border-b border-white/5">
+                    <div className="px-4 py-3 text-xs text-white/40 leading-relaxed max-w-2xl">
+                      <strong className="text-white/60">Why lunar balance?</strong> The 9 ethers carry solar-masculine irradiation energy. The 4 lunar phases (New Moon 136.10 Hz · Waxing 210.42 Hz · Full Moon 221.23 Hz · Waning 229.22 Hz) are real astronomical frequencies from Hans Cousto. They provide void receptivity, pattern installation, full amplification, and permanent release. <strong className="text-white/60">Solar + Lunar = complete healing.</strong>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <div className="grid grid-cols-4 divide-x divide-white/5">
+                {LUNAR_RESONANCES.map((phase, i) => {
+                  const pct = lunarProgress[i] || 0;
+                  const isActive = lunarPhaseIdx === i && playing;
+                  return (
+                    <div key={phase.id} className="px-3 py-3"
+                      style={{ background: isActive ? phase.glow + "08" : "transparent" }}>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <div className="flex items-center gap-1">
+                          <span className="text-base">{phase.icon}</span>
+                          <span className="text-xs font-bold hidden sm:block"
+                            style={{ color: pct > 0 ? phase.glow : "#334155" }}>{phase.phase}</span>
+                        </div>
+                        <span className="text-xs font-black"
+                          style={{ color: pct > 0 ? phase.glow : "#1e293b" }}>{phase.hz}</span>
+                      </div>
+                      <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: "#0f172a" }}>
+                        <motion.div className="h-full rounded-full transition-all duration-500"
+                          style={{ background: phase.glow, width: pct + "%" }} />
+                      </div>
+                      <div className="mt-1 text-white/20" style={{ fontSize: "0.58rem", lineHeight: 1.4 }}>
+                        {phase.element}
+                      </div>
+                      {isActive && playing && (
+                        <motion.div className="mt-0.5 font-bold" style={{ color: phase.glow, fontSize: "0.58rem" }}
+                          animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 1.2 }}>
+                          ● active
+                        </motion.div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="px-4 py-2 border-t border-white/5 flex items-center justify-between">
+                <div className="text-white/20" style={{ fontSize: "0.65rem" }}>
+                  Solar irradiates · Lunar balances · Together: complete healing
+                </div>
+                <div className="text-xs font-black" style={{
+                  color: lunarProgress.every(p => p > 80) ? "#34d399" :
+                         lunarProgress.some(p => p > 0)   ? "#fbbf24" : "#334155"
+                }}>
+                  {lunarProgress.every(p => p > 80) ? "⚖️ Fully balanced" :
+                   lunarProgress.some(p => p > 0)   ? "🌙 Balancing…"    : "◌ Awaiting"}
+                </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
