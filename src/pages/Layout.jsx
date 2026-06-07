@@ -2,16 +2,16 @@ import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
 const NAV = [
-  { label: "Home",    page: "Home",           icon: "✦"  },
-  { label: "Player",  page: "Player",          icon: "🎵" },
-  { label: "Vortex",  page: "QuantumVortex",   icon: "🌀" },
-  { label: "Grow",    page: "GrowthSound",     icon: "🌱" },
-  { label: "Love",    page: "EpigeneticLove",  icon: "💗" },
-  { label: "Angels",  page: "AngelNumbers",    icon: "⟡"  },
-  { label: "Rituals", page: "Rituals",         icon: "🌙" },
-  { label: "Nature",  page: "NaturePortal",    icon: "🌿" },
-  { label: "Journal", page: "Journal",         icon: "📓" },
-  { label: "Guide",   page: "Guide",           icon: "📚" },
+  { label: "Home",      page: "Home",                icon: "✦"  },
+  { label: "Player",    page: "Player",               icon: "🎵" },
+  { label: "Cleanse",   page: "IrradiationProtocol",  icon: "🌀" },
+  { label: "Vortex",    page: "QuantumVortex",         icon: "⚛️" },
+  { label: "Grow",      page: "GrowthSound",           icon: "🌱" },
+  { label: "Love",      page: "EpigeneticLove",        icon: "💗" },
+  { label: "Angels",    page: "AngelNumbers",          icon: "⟡"  },
+  { label: "Rituals",   page: "Rituals",               icon: "🌙" },
+  { label: "Nature",    page: "NaturePortal",          icon: "🌿" },
+  { label: "Journal",   page: "Journal",               icon: "📓" },
 ];
 
 export default function Layout({ children }) {
