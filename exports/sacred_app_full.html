@@ -575,11 +575,24 @@ function getCtx(){
   return ctx;
 }
 function tone(f,vol=0.2,wave=waveform){
-  const c=getCtx(),o=c.createOscillator(),g=c.createGain();
-  o.connect(g);g.connect(c.destination);
-  o.type=wave;o.frequency.value=Math.min(Math.max(f,1),4000);
+  const c=getCtx();
+  const o=c.createOscillator();
+  const g=c.createGain();
+  const comp=c.createDynamicsCompressor();
+  o.connect(g);g.connect(comp);comp.connect(c.destination);
+  o.type=wave;
+  // For very low frequencies use audible carrier with binaural
+  if(f<20){
+    o.frequency.value=100;
+    const o2=c.createOscillator();const g2=c.createGain();
+    o2.type='sine';o2.frequency.value=100+f;g2.gain.value=vol;
+    o2.connect(g2);g2.connect(comp);o2.start();
+    g.gain.value=vol;o.start();
+    return{osc:o,gain:g,extra:[{osc:o2,gain:g2}]};
+  }
+  o.frequency.value=Math.min(Math.max(f,20),4000);
   g.gain.setValueAtTime(0,c.currentTime);
-  g.gain.linearRampToValueAtTime(vol,c.currentTime+1.5);
+  g.gain.linearRampToValueAtTime(Math.min(vol,0.5),c.currentTime+1.2);
   o.start();return{osc:o,gain:g};
 }
 function binaural(base,beat){
@@ -614,11 +627,13 @@ function nature(vol=0.1){
   return{nodes:ns,masterGain:mg};
 }
 function fade(nodes){
+  if(!ctx)return;
   nodes.forEach(n=>{
     try{if(n.gain)n.gain.gain.linearRampToValueAtTime(0,ctx.currentTime+0.8);}catch{}
     try{if(n.masterGain)n.masterGain.gain.linearRampToValueAtTime(0,ctx.currentTime+0.8);}catch{}
     setTimeout(()=>{
       try{n.osc&&n.osc.stop();}catch{}
+      try{n.extra&&n.extra.forEach(x=>{try{x.osc.stop();}catch{}});}catch{}
       try{n.nodes&&n.nodes.forEach(x=>{try{x.stop();}catch{}});}catch{}
     },1000);
   });
@@ -640,8 +655,8 @@ function selTrackFn(t){
 function startPlay(){
   fade(activeNodes);activeNodes=[];
   const f=selTrack.hz;const nodes=[];
-  if(f<20){const bn=binaural(100,f);bn.forEach(n=>nodes.push(n));}
-  else{nodes.push(tone(Math.min(f,2000),0.25));if(f>200&&f<3000)nodes.push(tone(Math.min(f*2,4000),0.05,'sine'));}
+  nodes.push(tone(f,0.30));
+  if(f>=20&&f<3000)nodes.push(tone(Math.min(f*2,4000),0.06,'sine'));
   activeNodes=nodes;startTime=Date.now();isPlaying=true;
   document.getElementById('playBtn').textContent='■ Stop';
   document.getElementById('pBar').style.width='0%';
@@ -654,7 +669,7 @@ function stopPlay(){
   document.getElementById('pBar').style.width='0%';
   document.getElementById('pTimer').textContent='0:00';
 }
-function playerToggle(){if(!selTrack){alert('Tap a frequency first');return;}isPlaying?stopPlay():startPlay();}
+function playerToggle(){if(!selTrack){alert('Tap a frequency first');return;}unlockAudio();isPlaying?stopPlay():startPlay();}
 function timerTick(){
   const s=Math.floor((Date.now()-startTime)/1000);
   document.getElementById('pTimer').textContent=Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60;
@@ -1026,6 +1041,16 @@ function makeStars(){
     c.appendChild(s);
   }
 }
+
+// ═══ AUDIO UNLOCK on first touch (iOS Safari) ═══
+document.addEventListener('touchstart', function onFirstTouch(){
+  unlockAudio();
+  document.removeEventListener('touchstart', onFirstTouch);
+}, {passive:true});
+document.addEventListener('click', function onFirstClick(){
+  unlockAudio();
+  document.removeEventListener('click', onFirstClick);
+}, {passive:true});
 
 // ═══ INIT ═══
 makeStars();
