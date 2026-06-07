@@ -1,4 +1,7 @@
-Deno.serve(async (_req) => {
+Deno.serve(async (req) => {
+  const reqUrl = new URL(req.url);
+  const isDownload = reqUrl.searchParams.get('download') === '1';
+
   const html = `<!DOCTYPE html>
 <html lang="en" style="background:#030712;color:#e2e8f0">
 <head>
@@ -320,8 +323,8 @@ Deno.serve(async (_req) => {
     <p>Save as PDF via Print → Save as PDF · or use the buttons to download</p>
   </div>
   <div style="display:flex;gap:10px;flex-wrap:wrap">
-    <button class="btn-dl" onclick="window.print()">🖨️ Print / Save PDF</button>
-    <button class="btn-print" onclick="downloadHTML()">⬇️ Download HTML</button>
+    <button class="btn-dl" onclick="triggerPrint()">🖨️ Print / Save PDF</button>
+    <button class="btn-print" onclick="window.location.href=window.location.href.split('?')[0]+'?download=1'">⬇️ Download HTML</button>
   </div>
 </div>
 
@@ -1079,12 +1082,22 @@ function downloadHTML() {
 
 </body>
 </html>`;
+
+  if (isDownload) {
+    return new Response(html, {
+      headers: {
+        "Content-Type": "text/html; charset=utf-8",
+        "Content-Disposition": 'attachment; filename="9-Ether-Irradiation-Protocol-Supreme-Lunar.html"',
+        "Access-Control-Allow-Origin": "*",
+      }
+    });
+  }
+
   return new Response(html, {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-cache",
       "Access-Control-Allow-Origin": "*",
-      "Content-Security-Policy": "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://fonts.googleapis.com https://fonts.gstatic.com",
     }
   });
 });
