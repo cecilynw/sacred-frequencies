@@ -2,12 +2,13 @@ import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
 const NAV = [
-  { label: "Home", page: "Home", icon: "✦" },
-  { label: "Player", page: "Player", icon: "🎵" },
-  { label: "Angels", page: "AngelNumbers", icon: "⟡" },
-  { label: "Rituals", page: "Rituals", icon: "🌙" },
-  { label: "Journal", page: "Journal", icon: "📓" },
-  { label: "Guide", page: "Guide", icon: "📚" },
+  { label: "Home",     page: "Home",         icon: "✦" },
+  { label: "Player",   page: "Player",        icon: "🎵" },
+  { label: "Angels",   page: "AngelNumbers",  icon: "⟡" },
+  { label: "Rituals",  page: "Rituals",       icon: "🌙" },
+  { label: "Journal",  page: "Journal",       icon: "📓" },
+  { label: "Nature",   page: "NaturePortal",  icon: "🌿" },
+  { label: "Guide",    page: "Guide",         icon: "📚" },
 ];
 
 export default function Layout({ children }) {
@@ -20,7 +21,7 @@ export default function Layout({ children }) {
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-14">
           <Link to={createPageUrl("Home")} className="flex items-center gap-2">
             <span className="text-lg">✦</span>
-            <span className="font-bold text-white/90 text-sm tracking-wide hidden sm:block">SACRED FREQUENCIES</span>
+            <span className="font-black text-white/90 text-sm tracking-widest hidden sm:block">SACRED FREQUENCIES</span>
           </Link>
           <div className="flex items-center gap-0.5">
             {NAV.map((n) => {
@@ -40,9 +41,15 @@ export default function Layout({ children }) {
               );
             })}
           </div>
+          {/* Upgrade pill */}
+          <Link
+            to={createPageUrl("Home")}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-amber-400/40 text-amber-300 text-xs font-bold hover:bg-amber-400/10 transition-colors"
+          >
+            💎 Upgrade
+          </Link>
         </div>
       </nav>
-
       {children}
     </div>
   );

@@ -12,7 +12,68 @@ const CATEGORY_META = {
   Cleansing:  { emoji: "🔮", glow: "#2dd4bf", bg: "from-teal-950 to-cyan-950" },
 };
 
-// Web Audio API tone generator
+function createNatureLayer(audioCtx, volume = 0.15) {
+  const masterGain = audioCtx.createGain();
+  masterGain.gain.value = volume;
+  masterGain.connect(audioCtx.destination);
+  const nodes = [];
+
+  // Ocean wave (low-pass filtered noise)
+  const bufLen = audioCtx.sampleRate * 4;
+  const buf = audioCtx.createBuffer(1, bufLen, audioCtx.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < bufLen; i++) d[i] = (Math.random() * 2 - 1) * Math.sin(i / bufLen * Math.PI * 2);
+  const waveSrc = audioCtx.createBufferSource();
+  waveSrc.buffer = buf;
+  waveSrc.loop = true;
+  const waveFilter = audioCtx.createBiquadFilter();
+  waveFilter.type = "lowpass";
+  waveFilter.frequency.value = 350;
+  waveSrc.connect(waveFilter);
+  waveFilter.connect(masterGain);
+  waveSrc.start();
+  nodes.push(waveSrc);
+
+  // Amazon forest (brown noise band)
+  const fBuf = audioCtx.createBuffer(2, audioCtx.sampleRate * 3, audioCtx.sampleRate);
+  for (let c = 0; c < 2; c++) {
+    const fd = fBuf.getChannelData(c);
+    let last = 0;
+    for (let i = 0; i < fd.length; i++) {
+      const w = Math.random() * 2 - 1;
+      fd[i] = (last + 0.02 * w) / 1.02;
+      last = fd[i];
+    }
+  }
+  const fSrc = audioCtx.createBufferSource();
+  fSrc.buffer = fBuf;
+  fSrc.loop = true;
+  const fFilter = audioCtx.createBiquadFilter();
+  fFilter.type = "bandpass";
+  fFilter.frequency.value = 700;
+  fFilter.Q.value = 0.4;
+  const fGain = audioCtx.createGain();
+  fGain.gain.value = 0.4;
+  fSrc.connect(fFilter);
+  fFilter.connect(fGain);
+  fGain.connect(masterGain);
+  fSrc.start();
+  nodes.push(fSrc);
+
+  // 7.83 Hz earth pulse
+  const earthOsc = audioCtx.createOscillator();
+  const earthGain = audioCtx.createGain();
+  earthOsc.type = "sine";
+  earthOsc.frequency.value = 7.83;
+  earthGain.gain.value = 0.06;
+  earthOsc.connect(earthGain);
+  earthGain.connect(masterGain);
+  earthOsc.start();
+  nodes.push(earthOsc);
+
+  return { nodes, masterGain };
+}
+
 function createTone(audioCtx, frequency, waveform = "sine") {
   const oscillator = audioCtx.createOscillator();
   const gainNode = audioCtx.createGain();
@@ -26,29 +87,21 @@ function createTone(audioCtx, frequency, waveform = "sine") {
 }
 
 function getBinaural(audioCtx, baseFreq, beatFreq = 7.83) {
-  // Left ear: base frequency
   const leftOsc = audioCtx.createOscillator();
   const leftGain = audioCtx.createGain();
   const leftPanner = audioCtx.createStereoPanner();
   leftPanner.pan.value = -1;
-  leftOsc.connect(leftGain);
-  leftGain.connect(leftPanner);
-  leftPanner.connect(audioCtx.destination);
-  leftOsc.frequency.value = baseFreq;
-  leftOsc.type = "sine";
+  leftOsc.connect(leftGain); leftGain.connect(leftPanner); leftPanner.connect(audioCtx.destination);
+  leftOsc.frequency.value = baseFreq; leftOsc.type = "sine";
   leftGain.gain.setValueAtTime(0, audioCtx.currentTime);
   leftGain.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 2);
 
-  // Right ear: base + beat frequency
   const rightOsc = audioCtx.createOscillator();
   const rightGain = audioCtx.createGain();
   const rightPanner = audioCtx.createStereoPanner();
   rightPanner.pan.value = 1;
-  rightOsc.connect(rightGain);
-  rightGain.connect(rightPanner);
-  rightPanner.connect(audioCtx.destination);
-  rightOsc.frequency.value = baseFreq + beatFreq;
-  rightOsc.type = "sine";
+  rightOsc.connect(rightGain); rightGain.connect(rightPanner); rightPanner.connect(audioCtx.destination);
+  rightOsc.frequency.value = baseFreq + beatFreq; rightOsc.type = "sine";
   rightGain.gain.setValueAtTime(0, audioCtx.currentTime);
   rightGain.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 2);
 
@@ -62,25 +115,36 @@ export default function Player() {
   const [elapsed, setElapsed] = useState(0);
   const [volume, setVolume] = useState(0.7);
   const [waveform, setWaveform] = useState("sine");
+  const [natureOn, setNatureOn] = useState(false);
+  const [category, setCategory] = useState("All");
+  const [affirmationVisible, setAffirmationVisible] = useState(false);
 
   const audioCtxRef = useRef(null);
   const nodesRef = useRef([]);
   const timerRef = useRef(null);
   const startTimeRef = useRef(null);
+  const natureRef = useRef(null);
 
   useEffect(() => {
     FrequencyTrack.list().then((data) => {
       setTracks(data);
       if (data.length > 0) setSelected(data.find((t) => t.is_featured) || data[0]);
     });
+    return () => { stopAll(); };
   }, []);
+
+  const getCtx = () => {
+    if (!audioCtxRef.current || audioCtxRef.current.state === "closed") {
+      audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtxRef.current.state === "suspended") audioCtxRef.current.resume();
+    return audioCtxRef.current;
+  };
 
   const stopAll = useCallback(() => {
     nodesRef.current.forEach((n) => {
       try {
-        if (n.gainNode) {
-          n.gainNode.gain.linearRampToValueAtTime(0, audioCtxRef.current.currentTime + 1);
-        }
+        if (n.gainNode) n.gainNode.gain.linearRampToValueAtTime(0, audioCtxRef.current.currentTime + 1);
         if (n.leftGain) n.leftGain.gain.linearRampToValueAtTime(0, audioCtxRef.current.currentTime + 1);
         if (n.rightGain) n.rightGain.gain.linearRampToValueAtTime(0, audioCtxRef.current.currentTime + 1);
         setTimeout(() => {
@@ -94,39 +158,29 @@ export default function Player() {
     clearInterval(timerRef.current);
     setPlaying(false);
     setElapsed(0);
+    setAffirmationVisible(false);
   }, []);
 
   const startPlaying = useCallback(() => {
     if (!selected) return;
     stopAll();
-
-    if (!audioCtxRef.current || audioCtxRef.current.state === "closed") {
-      audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioCtxRef.current.state === "suspended") {
-      audioCtxRef.current.resume();
-    }
-
+    const ctx = getCtx();
     const freq = selected.frequency_hz;
     const pattern = selected.vibration_pattern;
     const nodes = [];
 
     if (pattern === "Binaural") {
-      const b = getBinaural(audioCtxRef.current, Math.min(freq, 500), freq > 20 ? 7.83 : freq);
-      b.leftOsc.start();
-      b.rightOsc.start();
+      const b = getBinaural(ctx, Math.min(freq, 500), 7.83);
+      b.leftOsc.start(); b.rightOsc.start();
       nodes.push(b);
     } else {
-      const wf = waveform;
-      const t = createTone(audioCtxRef.current, freq, wf);
+      const t = createTone(ctx, freq, waveform);
       t.oscillator.start();
       nodes.push(t);
-
-      // Add subtle harmonic overtone
       if (freq < 2000) {
-        const t2 = createTone(audioCtxRef.current, freq * 2, "sine");
-        t2.gainNode.gain.setValueAtTime(0, audioCtxRef.current.currentTime);
-        t2.gainNode.gain.linearRampToValueAtTime(0.05, audioCtxRef.current.currentTime + 2);
+        const t2 = createTone(ctx, freq * 2, "sine");
+        t2.gainNode.gain.setValueAtTime(0, ctx.currentTime);
+        t2.gainNode.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 2);
         t2.oscillator.start();
         nodes.push(t2);
       }
@@ -135,52 +189,102 @@ export default function Player() {
     nodesRef.current = nodes;
     startTimeRef.current = Date.now();
     setPlaying(true);
+    setTimeout(() => setAffirmationVisible(true), 3000);
 
     timerRef.current = setInterval(() => {
       setElapsed(Math.floor((Date.now() - startTimeRef.current) / 1000));
     }, 1000);
   }, [selected, waveform, stopAll]);
 
-  useEffect(() => {
-    return () => { stopAll(); };
-  }, []);
+  const toggleNature = () => {
+    const ctx = getCtx();
+    if (natureOn && natureRef.current) {
+      natureRef.current.masterGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 2);
+      setTimeout(() => {
+        natureRef.current?.nodes.forEach(n => { try { n.stop(); } catch {} });
+        natureRef.current = null;
+      }, 2200);
+      setNatureOn(false);
+    } else {
+      const layer = createNatureLayer(ctx, 0.15);
+      natureRef.current = layer;
+      setNatureOn(true);
+    }
+  };
 
   const formatTime = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
-
   const meta = selected ? CATEGORY_META[selected.category] : null;
+  const categories = ["All", ...Object.keys(CATEGORY_META)];
+  const filtered = category === "All" ? tracks : tracks.filter(t => t.category === category);
 
   return (
     <div className="min-h-screen bg-[#030712] text-white">
-      <div className="max-w-5xl mx-auto px-4 py-10">
-        <h1 className="text-4xl font-bold text-center mb-2 bg-gradient-to-r from-amber-300 to-violet-300 bg-clip-text text-transparent">
-          🎵 Sacred Frequency Player
-        </h1>
-        <p className="text-center text-white/40 mb-10">Use headphones for binaural beats. Set your intention before playing.</p>
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-black mb-2 bg-gradient-to-r from-amber-300 to-violet-300 bg-clip-text text-transparent">
+            🎵 Sacred Frequency Player
+          </h1>
+          <p className="text-white/40 text-sm">Use headphones for full binaural effect · Set your intention before playing</p>
+        </div>
+
+        {/* Nature toggle bar */}
+        <div className="flex justify-center mb-6">
+          <button
+            onClick={toggleNature}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full border font-semibold text-sm transition-all"
+            style={{
+              borderColor: natureOn ? "#34d39970" : "#ffffff25",
+              background: natureOn ? "#10b98115" : "transparent",
+              color: natureOn ? "#34d399" : "#ffffff60"
+            }}
+          >
+            {natureOn ? "🌿 Amazon + Ocean Ambience: ON" : "🎧 Add Nature Ambience"}
+          </button>
+        </div>
+
+        {/* Category Filter */}
+        <div className="flex gap-2 flex-wrap justify-center mb-6">
+          {categories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setCategory(cat)}
+              className="px-3 py-1.5 rounded-full text-xs font-semibold border transition-all"
+              style={{
+                borderColor: category === cat ? "#ffffff50" : "#ffffff15",
+                background: category === cat ? "#ffffff15" : "transparent",
+                color: category === cat ? "#fff" : "#ffffff50"
+              }}
+            >
+              {CATEGORY_META[cat]?.emoji} {cat}
+            </button>
+          ))}
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* TRACK LIST */}
-          <div className="lg:col-span-2 space-y-2 max-h-[600px] overflow-y-auto pr-1 scrollbar-thin">
-            {tracks.map((track) => {
+          <div className="lg:col-span-2 space-y-2 max-h-[620px] overflow-y-auto pr-1">
+            {filtered.map((track) => {
               const m = CATEGORY_META[track.category];
               const isActive = selected?.id === track.id;
               return (
                 <button
                   key={track.id}
                   onClick={() => { setSelected(track); stopAll(); }}
-                  className={`w-full text-left px-4 py-3 rounded-xl border transition-all ${
-                    isActive ? "border-white/30 bg-white/10" : "border-white/10 bg-white/4 hover:bg-white/7"
-                  }`}
-                  style={isActive && m ? { borderColor: m.glow + "70", background: m.glow + "12" } : {}}
+                  className="w-full text-left px-4 py-3 rounded-xl border transition-all"
+                  style={isActive && m
+                    ? { borderColor: m.glow + "70", background: m.glow + "12" }
+                    : { borderColor: "#ffffff15", background: "#ffffff05" }}
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-xl">{m?.emoji}</span>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-sm text-white/90 truncate">{track.name.split("—")[1]?.trim() || track.name}</div>
-                      <div className="text-xs text-white/40">{track.frequency_hz} Hz · {track.duration_minutes} min</div>
+                      <div className="font-semibold text-sm text-white/90 truncate">
+                        {track.name.split("—")[1]?.trim() || track.name}
+                      </div>
+                      <div className="text-xs text-white/40">{track.frequency_hz} Hz · {track.category}</div>
                     </div>
                     {isActive && playing && (
-                      <motion.div
-                        className="w-2 h-2 rounded-full"
+                      <motion.div className="w-2 h-2 rounded-full flex-shrink-0"
                         style={{ background: m?.glow }}
                         animate={{ opacity: [1, 0.3, 1] }}
                         transition={{ repeat: Infinity, duration: 1.2 }}
@@ -204,25 +308,24 @@ export default function Player() {
                   className={`rounded-3xl bg-gradient-to-br ${meta?.bg || "from-gray-900 to-gray-800"} border border-white/15 p-8`}
                   style={{ boxShadow: `0 0 60px ${meta?.glow || "#fff"}20` }}
                 >
-                  {/* Pulsing circle */}
+                  {/* Pulsing visual */}
                   <div className="flex justify-center mb-8">
                     <div className="relative">
-                      {playing && (
-                        <>
-                          {[1, 2, 3].map((i) => (
-                            <motion.div
-                              key={i}
-                              className="absolute inset-0 rounded-full"
-                              style={{ border: `1px solid ${meta?.glow}40` }}
-                              animate={{ scale: [1, 1.5 + i * 0.3], opacity: [0.5, 0] }}
-                              transition={{ repeat: Infinity, duration: 2, delay: i * 0.6 }}
-                            />
-                          ))}
-                        </>
-                      )}
+                      {playing && [1, 2, 3].map((i) => (
+                        <motion.div
+                          key={i}
+                          className="absolute inset-0 rounded-full"
+                          style={{ border: `1px solid ${meta?.glow}40` }}
+                          animate={{ scale: [1, 1.5 + i * 0.3], opacity: [0.5, 0] }}
+                          transition={{ repeat: Infinity, duration: 2, delay: i * 0.6 }}
+                        />
+                      ))}
                       <div
-                        className="w-28 h-28 rounded-full flex items-center justify-center text-4xl font-black"
-                        style={{ background: `radial-gradient(circle, ${meta?.glow}30, ${meta?.glow}08)`, border: `2px solid ${meta?.glow}60` }}
+                        className="w-32 h-32 rounded-full flex items-center justify-center text-5xl font-black"
+                        style={{
+                          background: `radial-gradient(circle, ${meta?.glow}30, ${meta?.glow}08)`,
+                          border: `2px solid ${meta?.glow}60`
+                        }}
                       >
                         {meta?.emoji}
                       </div>
@@ -236,82 +339,99 @@ export default function Player() {
                     <div className="text-xl font-semibold text-white/90 mb-1">
                       {selected.name.split("—")[1]?.trim() || selected.name}
                     </div>
-                    <div className="text-sm text-white/50 mb-4">{selected.benefit}</div>
-                    <div className="italic text-sm text-white/40">"{selected.affirmation}"</div>
+                    <div className="text-xs text-white/40 mb-3">{selected.category} · {selected.vibration_pattern} · {selected.duration_minutes} min</div>
+                    <p className="text-white/55 text-sm leading-relaxed max-w-sm mx-auto">{selected.benefit}</p>
                   </div>
 
-                  {/* Timer */}
-                  <div className="text-center mb-6">
-                    <span className="text-2xl font-mono text-white/70">{formatTime(elapsed)}</span>
-                    <span className="text-white/30 mx-2">/</span>
-                    <span className="text-white/40 text-lg">{formatTime(selected.duration_minutes * 60)}</span>
-                  </div>
+                  {/* Affirmation reveal */}
+                  <AnimatePresence>
+                    {affirmationVisible && selected.affirmation && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="text-center mb-5 px-4 py-3 rounded-2xl border"
+                        style={{ borderColor: meta?.glow + "30", background: meta?.glow + "08" }}
+                      >
+                        <div className="text-xs text-white/40 mb-1">✦ Your Affirmation</div>
+                        <div className="italic text-white/80 text-sm font-medium">"{selected.affirmation}"</div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
                   {/* Controls */}
-                  <div className="flex items-center justify-center gap-4 mb-6">
+                  <div className="flex items-center justify-center gap-6 mb-6">
                     <button
                       onClick={() => {
-                        const idx = tracks.findIndex((t) => t.id === selected.id);
+                        const idx = tracks.indexOf(selected);
                         if (idx > 0) { setSelected(tracks[idx - 1]); stopAll(); }
                       }}
-                      className="p-3 rounded-full border border-white/20 hover:bg-white/10 transition-colors text-white/70"
+                      className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-xl transition-colors"
                     >⏮</button>
 
-                    <button
+                    <motion.button
                       onClick={playing ? stopAll : startPlaying}
-                      className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold transition-all hover:scale-105"
-                      style={{ background: meta?.glow, boxShadow: `0 0 30px ${meta?.glow}60` }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-black transition-all shadow-2xl"
+                      style={{
+                        background: `linear-gradient(135deg, ${meta?.glow}, ${meta?.glow}99)`,
+                        boxShadow: playing ? `0 0 40px ${meta?.glow}60` : `0 0 20px ${meta?.glow}30`,
+                        color: "#000"
+                      }}
                     >
                       {playing ? "⏸" : "▶"}
-                    </button>
+                    </motion.button>
 
                     <button
                       onClick={() => {
-                        const idx = tracks.findIndex((t) => t.id === selected.id);
+                        const idx = tracks.indexOf(selected);
                         if (idx < tracks.length - 1) { setSelected(tracks[idx + 1]); stopAll(); }
                       }}
-                      className="p-3 rounded-full border border-white/20 hover:bg-white/10 transition-colors text-white/70"
+                      className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-xl transition-colors"
                     >⏭</button>
                   </div>
 
+                  {/* Timer */}
+                  {playing && (
+                    <div className="text-center mb-4">
+                      <span className="text-white/40 text-sm">{formatTime(elapsed)} playing</span>
+                    </div>
+                  )}
+
+                  {/* Volume */}
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-white/40 text-sm">🔈</span>
+                    <input
+                      type="range" min="0" max="1" step="0.01" value={volume}
+                      onChange={(e) => setVolume(parseFloat(e.target.value))}
+                      className="flex-1 h-1.5 rounded-full appearance-none"
+                      style={{ accentColor: meta?.glow }}
+                    />
+                    <span className="text-white/40 text-sm">🔊</span>
+                  </div>
+
                   {/* Waveform selector */}
-                  <div className="flex justify-center gap-2 mb-4">
-                    {["sine", "triangle", "sawtooth", "square"].map((w) => (
+                  <div className="flex gap-2 justify-center">
+                    {["sine", "triangle", "square", "sawtooth"].map((w) => (
                       <button
                         key={w}
                         onClick={() => setWaveform(w)}
-                        className={`px-3 py-1 text-xs rounded-full border transition-all ${waveform === w ? "border-white/40 bg-white/15 text-white" : "border-white/15 text-white/40 hover:text-white/70"}`}
+                        className="px-3 py-1 rounded-full text-xs font-semibold border transition-all"
+                        style={{
+                          borderColor: waveform === w ? meta?.glow + "80" : "#ffffff20",
+                          background: waveform === w ? meta?.glow + "20" : "transparent",
+                          color: waveform === w ? meta?.glow : "#ffffff50"
+                        }}
                       >
                         {w}
                       </button>
                     ))}
                   </div>
-
-                  {/* Info row */}
-                  <div className="grid grid-cols-3 gap-3 mt-4 text-center">
-                    {[
-                      ["Chakra", selected.chakra || "—"],
-                      ["Pattern", selected.vibration_pattern],
-                      ["Energy", selected.color_energy || "—"],
-                    ].map(([label, val]) => (
-                      <div key={label} className="bg-black/30 rounded-xl p-3">
-                        <div className="text-xs text-white/40 mb-0.5">{label}</div>
-                        <div className="text-sm font-semibold text-white/80">{val}</div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-4 p-4 bg-black/20 rounded-xl text-sm text-white/50 leading-relaxed">
-                    {selected.description}
-                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
-        </div>
-
-        <div className="mt-8 p-4 bg-amber-950/30 border border-amber-700/30 rounded-xl text-center text-amber-200/60 text-sm">
-          🎧 <strong>Tip:</strong> Use stereo headphones for binaural beats. Find a quiet space, close your eyes, set a clear intention, and let the frequency do its work.
         </div>
       </div>
     </div>
