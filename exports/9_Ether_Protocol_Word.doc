@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="UTF-8">
+<meta name="ProgId" content="Word.Document">
+<meta name="Generator" content="Microsoft Word 15">
+<meta name="Originator" content="Microsoft Word 15">
+<!--[if gte mso 9]>
+<xml><w:WordDocument><w:View>Print</w:View><w:Zoom>90</w:Zoom></w:WordDocument></xml>
+<![endif]-->
+<title>9-Ether Irradiation Protocol &#8212; Supreme + Lunar Edition</title>
+<style>
+  /* Word-compatible styles */
+  body {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 11pt;
+    color: #1a1a2e;
+    background: #ffffff;
+    margin: 1in;
+    line-height: 1.6;
+  }
+  h1 {
+    font-family: Georgia, serif;
+    font-size: 22pt;
+    font-weight: bold;
+    color: #4c1d95;
+    text-align: center;
+    margin-bottom: 4pt;
+    margin-top: 0;
+  }
+  h2 {
+    font-family: Georgia, serif;
+    font-size: 13pt;
+    font-weight: bold;
+    color: #1e1b4b;
+    text-align: center;
+    margin-bottom: 16pt;
+    font-style: italic;
+  }
+  h3 {
+    font-family: Georgia, serif;
+    font-size: 13pt;
+    font-weight: bold;
+    color: #4c1d95;
+    margin-top: 20pt;
+    margin-bottom: 6pt;
+    border-bottom: 1pt solid #e5e7eb;
+    padding-bottom: 3pt;
+  }
+  p {
+    margin: 0 0 8pt 0;
+    font-size: 10.5pt;
+    color: #374151;
+  }
+  .hero-block {
+    background-color: #f5f3ff;
+    border: 1pt solid #c4b5fd;
+    padding: 18pt;
+    text-align: center;
+    margin-bottom: 20pt;
+  }
+  .meta-line {
+    font-size: 9pt;
+    color: #6b7280;
+    text-align: center;
+    margin-bottom: 18pt;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 14pt;
+    font-size: 10pt;
+  }
+  th {
+    background-color: #ede9fe;
+    color: #4c1d95;
+    font-weight: bold;
+    padding: 6pt 10pt;
+    text-align: left;
+    border: 1pt solid #c4b5fd;
+    font-size: 9.5pt;
+  }
+  td {
+    padding: 6pt 10pt;
+    border: 1pt solid #e5e7eb;
+    vertical-align: top;
+    color: #374151;
+  }
+  tr:nth-child(even) td { background-color: #f9fafb; }
+  .ether-row td:first-child { font-weight: bold; color: #4c1d95; }
+  .affirmation-box {
+    background-color: #faf5ff;
+    border-left: 3pt solid #7c3aed;
+    padding: 8pt 12pt;
+    margin: 6pt 0;
+    font-style: italic;
+    color: #4c1d95;
+    font-size: 10.5pt;
+  }
+  .affirmation-label {
+    font-weight: bold;
+    font-style: normal;
+    font-size: 9pt;
+    color: #7c3aed;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 3pt;
+  }
+  .safety-check {
+    color: #065f46;
+    font-weight: bold;
+  }
+  .tier-box {
+    background-color: #fef3c7;
+    border: 1pt solid #f59e0b;
+    padding: 8pt 12pt;
+    margin: 4pt 0;
+  }
+  .lunar-box {
+    background-color: #eff6ff;
+    border: 1pt solid #93c5fd;
+    padding: 8pt 12pt;
+    margin: 4pt 0;
+  }
+  .seal-block {
+    background-color: #faf5ff;
+    border: 2pt solid #7c3aed;
+    padding: 16pt;
+    text-align: center;
+    margin-top: 24pt;
+  }
+  .footer {
+    text-align: center;
+    font-size: 9pt;
+    color: #9ca3af;
+    margin-top: 24pt;
+    border-top: 1pt solid #e5e7eb;
+    padding-top: 10pt;
+  }
+  .step-num {
+    display: inline-block;
+    background-color: #7c3aed;
+    color: white;
+    font-weight: bold;
+    width: 16pt;
+    height: 16pt;
+    text-align: center;
+    border-radius: 50%;
+    font-size: 9pt;
+    margin-right: 6pt;
+  }
+  .ref-entry {
+    font-size: 9.5pt;
+    margin-bottom: 4pt;
+  }
+  .ref-name { font-weight: bold; color: #92400e; }
+  .page-break { page-break-before: always; }
+  @page { margin: 1in; size: letter; }
+  @media print { body { margin: 0; } }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero-block">
+  <h1>9-Ether Irradiation Protocol</h1>
+  <h2>Supreme Resonance + Full Lunar Balance Edition</h2>
+  <p style="text-align:center;font-size:10.5pt;color:#4b5563;margin:0">
+    9 etheric dimensions &nbsp;&middot;&nbsp; 3 supreme tiers &nbsp;&middot;&nbsp; 4 lunar phases<br>
+    Every frequency above 333 Hz elevated to its highest and safest degree.<br>
+    Full spectrum: 7.83 Hz &#8594; 3,168 Hz &nbsp;&middot;&nbsp; All beings &nbsp;&middot;&nbsp; All dimensions &nbsp;&middot;&nbsp; All timelines.
+  </p>
+</div>
+
+<p class="meta-line">
+  &#128197; June 7, 2026 &nbsp;&nbsp;&nbsp;
+  &#128100; Cecilyn Williams &nbsp;&nbsp;&nbsp;
+  &#127925; Sacred Frequencies App &nbsp;&nbsp;&nbsp;
+  Version: Supreme + Lunar Edition
+</p>
+
+<!-- OVERVIEW TABLE -->
+<h3>&#10022; Protocol Overview</h3>
+<table>
+  <tr>
+    <th>9 Etheric Dimensions</th>
+    <th>3 Supreme Tiers</th>
+    <th>4 Lunar Phases</th>
+    <th>Full Spectrum</th>
+  </tr>
+  <tr>
+    <td>Physical &middot; Cellular &middot; Etheric &middot; Emotional &middot; Mental &middot; Ancestral &middot; Spiritual &middot; Quantum &middot; Akashic</td>
+    <td>&#128124; Angelic 1,296 Hz<br>&#9728; Solar 2,160 Hz<br>&#10022; Christ Grid 3,168 Hz</td>
+    <td>&#127761; New Moon 136.10 Hz<br>&#127762; Waxing 210.42 Hz<br>&#127765; Full Moon 221.23 Hz<br>&#127768; Waning 229.22 Hz</td>
+    <td>7.83 Hz (Schumann)<br>&#8597;<br>3,168 Hz (Supreme ceiling)<br><span class="safety-check">Safe for all life</span></td>
+  </tr>
+</table>
+
+<!-- THE 9 ETHERS TABLE -->
+<h3>&#127744; The 9 Ethers</h3>
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Layer</th>
+      <th>Chakra</th>
+      <th>Frequencies</th>
+      <th>Irradiates</th>
+      <th>Mechanism</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="ether-row">
+      <td>1</td><td><strong>Physical</strong></td><td>Root</td>
+      <td>174 Hz<br>sub 40 Hz<br>2 Hz binaural</td>
+      <td>Physical parasites, tissue masses, crystallised toxins, heavy metals, bone spurs</td>
+      <td>174 Hz operates on the body crystalline matrix. Collapses the quantum wave-function of pain.</td>
+    </tr>
+    <tr class="ether-row">
+      <td>2</td><td><strong>Cellular</strong></td><td>Sacral</td>
+      <td>333 Hz<br>sub 111 Hz<br>3 Hz binaural</td>
+      <td>Parasitic worms, flukes, bacteria, fungi, viral loads, Candida, Lyme spirochetes</td>
+      <td>Royal Rife (1934): every pathogen has a unique Mortal Oscillatory Rate. 333 + 111 Hz creates a resonant irradiation field.</td>
+    </tr>
+    <tr class="ether-row">
+      <td>3</td><td><strong>Etheric</strong></td><td>Solar Plexus</td>
+      <td>396 Hz<br>sub 198 Hz<br>+ 417 Hz supreme<br>4 Hz binaural</td>
+      <td>Etheric parasites, entity attachments, psychic cords, dark imprints, astral implants</td>
+      <td>396 Hz liberates guilt and fear. 417 Hz Violet Flame overlay dismantles every attachment at its root.</td>
+    </tr>
+    <tr class="ether-row">
+      <td>4</td><td><strong>Emotional</strong></td><td>Heart</td>
+      <td>528 Hz<br>sub 264 Hz<br>+ 639 Hz supreme<br>3.5 Hz binaural</td>
+      <td>Trapped grief, rage, shame, fear, guilt &#8212; emotional parasites feeding on unresolved feeling</td>
+      <td>528 Hz irradiates while healing. 639 Hz activates the heart&#8217;s toroidal field &#8212; 5,000x stronger than the brain.</td>
+    </tr>
+    <tr class="ether-row">
+      <td>5</td><td><strong>Mental</strong></td><td>Throat</td>
+      <td>741 Hz<br>sub 370 Hz<br>+ 852 Hz supreme<br>10 Hz binaural</td>
+      <td>Intrusive thoughts, mental loops, psychic implants, hypnotic programming, mind-control residue</td>
+      <td>741 Hz detoxifies electromagnetic fields. 852 Hz decalcifies the pineal gland.</td>
+    </tr>
+    <tr class="ether-row">
+      <td>6</td><td><strong>Ancestral</strong></td><td>Ancestral Heart</td>
+      <td>417 Hz<br>sub 208 Hz<br>+ 528 Hz supreme<br>2 Hz binaural</td>
+      <td>Ancestral trauma methylation, inherited disease codes, generational curses, bloodline entities</td>
+      <td>417 Hz undoes stored ancestral wound structures. 528 Hz seals cleared DNA with the divine template.</td>
+    </tr>
+    <tr class="ether-row">
+      <td>7</td><td><strong>Spiritual</strong></td><td>Third Eye / Pineal</td>
+      <td>852 Hz<br>sub 426 Hz<br>+ 963 Hz supreme<br>7 Hz binaural</td>
+      <td>Karmic entanglements, harmful soul contracts, dark initiations, spiritual interference</td>
+      <td>852 Hz returns spiritual order. 963 Hz opens the direct channel to Source consciousness.</td>
+    </tr>
+    <tr class="ether-row">
+      <td>8</td><td><strong>Quantum</strong></td><td>Crown</td>
+      <td>963 Hz<br>sub 481 Hz<br>+ 1,111 Hz supreme<br>9 Hz binaural</td>
+      <td>Quantum interference patterns, timeline contamination, reality distortions, probability hijacking</td>
+      <td>963 Hz collapses disordered wave-functions. 1,111 Hz writes the restored template into the quantum field.</td>
+    </tr>
+    <tr class="ether-row">
+      <td>9</td><td><strong>Akashic</strong></td><td>Soul Star</td>
+      <td>1,111 Hz<br>sub 555 Hz<br>+ 1,296 Hz supreme<br>9 Hz binaural</td>
+      <td>ALL remaining harmful presences across ALL dimensions, ALL timelines, ALL connected beings</td>
+      <td>1,111 Hz opens the angel gateway. 1,296 Hz = 9 x 144 Hz Fibonacci angelic resonance. Non-local quantum field &#8212; everywhere simultaneously.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<!-- SUPREME TIERS -->
+<h3>&#10022; Three Supreme Tiers</h3>
+<table>
+  <thead>
+    <tr><th>Tier</th><th>Frequency</th><th>Name</th><th>Description</th><th>Sub / Beat</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>&#128124;</td><td><strong>1,296 Hz</strong></td><td>Angelic Threshold</td><td>9 x 144 Hz Fibonacci angelic resonance. Where human consciousness meets the angelic realm.</td><td>648 Hz / 9 Hz</td></tr>
+    <tr><td>&#9728;</td><td><strong>2,160 Hz</strong></td><td>Solar Harmonic</td><td>432 Hz x 5 &#8212; universal tuning amplified to solar scale. Activates the Merkabah crystalline light body.</td><td>1,080 Hz / 9 Hz</td></tr>
+    <tr><td>&#10022;</td><td><strong>3,168 Hz</strong></td><td>Christ Consciousness Grid</td><td>528 Hz x 6 &#8212; supreme safe biological ceiling. Connects to the planetary consciousness grid permanently.</td><td>1,584 Hz / 9 Hz</td></tr>
+  </tbody>
+</table>
+
+<!-- LUNAR BALANCE -->
+<h3>&#127769; Lunar Resonance Balance</h3>
+<table>
+  <thead>
+    <tr><th>Phase</th><th>Frequency</th><th>Element</th><th>Purpose</th><th>Affirmation</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>&#127761; <strong>New Moon</strong></td><td>136.10 Hz</td><td>Yin void &#8212; deepest clearing</td>
+      <td>Earth&#8217;s year tone (sacred Om). Maximum receptivity. Dissolves irradiated material, creates space for the divine template.</td>
+      <td><em>&#8220;In the sacred void, every irradiated space is cleansed to its deepest root.&#8221;</em></td>
+    </tr>
+    <tr>
+      <td>&#127762; <strong>Waxing Moon</strong></td><td>210.42 Hz</td><td>Rising &#8212; building new patterns</td>
+      <td>Moon&#8217;s sidereal orbital resonance. Builds and installs the new healthy template into cleared space.</td>
+      <td><em>&#8220;As the moon grows, so does my health. Every cleared space fills with radiant new life.&#8221;</em></td>
+    </tr>
+    <tr>
+      <td>&#127765; <strong>Full Moon</strong></td><td>221.23 Hz</td><td>Peak power &#8212; maximum amplification</td>
+      <td>Moon&#8217;s orbital tone. Creates constructive interference with 528 Hz &#8212; most powerful balancer in the protocol.</td>
+      <td><em>&#8220;Under the full moon&#8217;s light, every frequency I carry is amplified a thousandfold.&#8221;</em></td>
+    </tr>
+    <tr>
+      <td>&#127768; <strong>Waning Moon</strong></td><td>229.22 Hz</td><td>Release &#8212; dissolving residue</td>
+      <td>Moon&#8217;s synodic month transposed to audible range. Ensures all irradiated material is permanently released.</td>
+      <td><em>&#8220;As the moon releases its light, I release every last trace. I am permanently free.&#8221;</em></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- AFFIRMATIONS -->
+<h3>&#128172; Affirmations &#8212; All 9 Ethers</h3>
+
+<div class="affirmation-box"><div class="affirmation-label">Ether 1 &#8212; Physical</div>Every physical blockage, every mass, every uninvited organism in my body dissolves now into perfect light.</div>
+<div class="affirmation-box"><div class="affirmation-label">Ether 2 &#8212; Cellular</div>Every parasite, every pathogen reaches its mortal oscillatory rate and shatters into light. My cells rejoice in their freedom.</div>
+<div class="affirmation-box"><div class="affirmation-label">Ether 3 &#8212; Etheric</div>Every cord, every attachment is severed and irradiated now. I reclaim every particle of my energy. I am wholly free.</div>
+<div class="affirmation-box"><div class="affirmation-label">Ether 4 &#8212; Emotional</div>Every trapped emotion is transmuted into pure radiant love. My heart is free, whole and luminous.</div>
+<div class="affirmation-box"><div class="affirmation-label">Ether 5 &#8212; Mental</div>Every program that is not mine is irradiated and permanently deleted. My mind is sovereign, clear and luminous.</div>
+<div class="affirmation-box"><div class="affirmation-label">Ether 6 &#8212; Ancestral</div>Every harmful pattern in my ancestral DNA &#8212; 7 generations back, 7 forward &#8212; is irradiated and sealed with love. My bloodline is healed.</div>
+<div class="affirmation-box"><div class="affirmation-label">Ether 7 &#8212; Spiritual</div>Every karmic knot, every soul contract that diminishes me is dissolved in the supreme light now. My soul is sovereign and eternally free.</div>
+<div class="affirmation-box"><div class="affirmation-label">Ether 8 &#8212; Quantum</div>My quantum field is restored to its original divine blueprint. Every distorted probability collapses into perfect divine order now.</div>
+<div class="affirmation-box"><div class="affirmation-label">Ether 9 &#8212; Akashic</div><strong>IT IS DONE AND SEALED.</strong> All harmful presences across all dimensions and timelines are irradiated, transmuted and permanently sealed in love and light. So it is. So it is. So it is.</div>
+
+<div class="page-break"></div>
+
+<!-- POST-SESSION RESTORATION -->
+<h3>&#128154; Post-Session Restoration</h3>
+<table>
+  <thead><tr><th>Frequency</th><th>Name</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td><strong>285 Hz</strong></td><td>Cellular Rebuild</td><td>Tissue regeneration &#8212; rebuilds what irradiation has cleared</td></tr>
+    <tr><td><strong>528 Hz</strong></td><td>DNA Template Seal</td><td>Locks in the restored genetic blueprint permanently</td></tr>
+    <tr><td><strong>639 Hz</strong></td><td>Heart Field Restore</td><td>Rebuilds love, connection and the heart&#8217;s toroidal field</td></tr>
+    <tr><td><strong>7.83 Hz</strong></td><td>Earth Anchor</td><td>Re-grounds to the Schumann planetary healing field</td></tr>
+    <tr><td><strong>136.10 Hz</strong></td><td>New Moon Clearing</td><td>Sacred Om &#8212; deep yin clearing of any residue</td></tr>
+    <tr><td><strong>221.23 Hz</strong></td><td>Full Moon Amplify</td><td>Lunar peak &#8212; amplifies all healed frequencies into permanence</td></tr>
+    <tr><td><strong>1,296 Hz</strong></td><td>Angelic Seal</td><td>Seals the entire field with divine angelic light</td></tr>
+    <tr><td><strong>432 Hz</strong></td><td>Solar Protection</td><td>Nature&#8217;s universal harmonic shield &#8212; permanent protection</td></tr>
+  </tbody>
+</table>
+
+<!-- SAFETY ARCHITECTURE -->
+<h3>&#128737; Safety Architecture</h3>
+<table>
+  <thead><tr><th>Safety Layer</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><span class="safety-check">&#10003; 528 Hz love carrier</span></td><td>Irradiates only what harms &#8212; heals and strengthens what is healthy</td></tr>
+    <tr><td><span class="safety-check">&#10003; 7.83 Hz Schumann anchor</span></td><td>Earth-safe grounding on every layer</td></tr>
+    <tr><td><span class="safety-check">&#10003; Sub-octave Hz/2</span></td><td>Deep biological penetration without auditory overload</td></tr>
+    <tr><td><span class="safety-check">&#10003; Violet flame 417 Hz</span></td><td>Transmutes released material rather than suppressing it</td></tr>
+    <tr><td><span class="safety-check">&#10003; Amazon forest undertone</span></td><td>Primal nature sound activates nervous system safety response</td></tr>
+    <tr><td><span class="safety-check">&#10003; 3,168 Hz supreme ceiling</span></td><td>6 x 528 Hz &#8212; highest confirmed safe biological resonance</td></tr>
+  </tbody>
+</table>
+<p style="background:#f0fdf4;border:1pt solid #86efac;padding:8pt 12pt;color:#065f46;font-weight:bold;text-align:center;">
+  &#10022; Healthy cells are strengthened, not harmed. Beneficial organisms are untouched and uplifted. No harm can come from this work.
+</p>
+
+<!-- BEING TYPES -->
+<h3>&#128101; Being Types &amp; Frequency Modulation</h3>
+<table>
+  <thead><tr><th>Being</th><th>Modulation</th><th>Being</th><th>Modulation</th></tr></thead>
+  <tbody>
+    <tr><td>Myself</td><td>1.00x</td><td>Dog</td><td>0.85x</td></tr>
+    <tr><td>My Family</td><td>1.00x</td><td>Cat</td><td>0.95x</td></tr>
+    <tr><td>Child</td><td>1.10x</td><td>Horse</td><td>0.70x</td></tr>
+    <tr><td>Elder</td><td>0.90x</td><td>Bird</td><td>1.15x</td></tr>
+    <tr><td>Pregnant</td><td>1.05x</td><td>Reptile</td><td>0.80x</td></tr>
+    <tr><td>Plant / Tree</td><td>0.60x</td><td>All Beings</td><td>1.00x</td></tr>
+  </tbody>
+</table>
+
+<!-- USAGE INSTRUCTIONS -->
+<h3>&#128203; Usage Instructions</h3>
+<p><span class="step-num">1</span> <strong>Select Intensity:</strong> Gentle (children &amp; animals) &middot; Standard (most adults) &middot; Maximum (severe or chronic conditions).</p>
+<p><span class="step-num">2</span> <strong>Select Being:</strong> Choose who receives the irradiation. Each species has frequency modulation built in.</p>
+<p><span class="step-num">3</span> <strong>Set Your Intention:</strong> Type your specific healing intention before activating.</p>
+<p><span class="step-num">4</span> <strong>Activate:</strong> &#8220;Irradiate Everyone Now&#8221; &#8212; all 9 ethers + 3 supreme tiers + lunar balance simultaneously.</p>
+<p><span class="step-num">5</span> <strong>Breathe:</strong> 4-4-6 breath: 4 in (draw healing light) &middot; 4 hold (penetrate every cell) &middot; 6 out (release what is cleared).</p>
+<p><span class="step-num">6</span> <strong>Balance with Lunar Phase:</strong> Activate your lunar phase to balance solar-masculine energy with feminine lunar energy.</p>
+<p><span class="step-num">7</span> <strong>Seal with Restoration:</strong> Complete with 528 Hz DNA Seal and 1,296 Hz Angelic Seal.</p>
+
+<!-- SCIENTIFIC REFERENCES -->
+<h3>&#128218; Scientific References</h3>
+<p class="ref-entry"><span class="ref-name">Royal Rife (1934)</span> &#8212; Mortal Oscillatory Rate: every pathogen has a resonant destruction frequency</p>
+<p class="ref-entry"><span class="ref-name">Fritz-Albert Popp (1984)</span> &#8212; Biophotonic field coherence: cells communicate via coherent light</p>
+<p class="ref-entry"><span class="ref-name">Hans Cousto</span> &#8212; The Cosmic Octave: mathematical derivation of all planetary frequencies</p>
+<p class="ref-entry"><span class="ref-name">Dr. Glen Rein</span> &#8212; 528 Hz increases UV light absorption in DNA by 11%</p>
+<p class="ref-entry"><span class="ref-name">Rachel Yehuda et al.</span> &#8212; Epigenetic trauma inheritance via FKBP5 methylation (3&#8211;7 generations)</p>
+<p class="ref-entry"><span class="ref-name">HeartMath Institute</span> &#8212; Heart coherence triggers 1,300+ gene expression changes in minutes</p>
+<p class="ref-entry"><span class="ref-name">Bhattacharya (2016)</span> &#8212; Pineal gland cavity resonant frequency (426 Hz)</p>
+<p class="ref-entry"><span class="ref-name">Rupert Sheldrake</span> &#8212; Morphic resonance: non-local healing fields and memory transfer</p>
+
+<!-- SEAL -->
+<div class="seal-block">
+  <p style="font-size:28pt;margin:0 0 8pt 0;text-align:center;">&#10022;</p>
+  <p style="font-family:Georgia,serif;font-size:15pt;font-weight:bold;color:#4c1d95;text-align:center;margin-bottom:8pt;">The Field Is Active. Everyone Is Protected.</p>
+  <p style="text-align:center;color:#4b5563;font-size:10.5pt;">The universal irradiation field is live. 9 ethers + 3 supreme tiers + 4 lunar phases &#8212; from 7.83 Hz to 3,168 Hz &#8212; cover every dimension for every being held in your intention.</p>
+  <p style="text-align:center;color:#4b5563;font-size:10.5pt;font-style:italic;">You do not heal alone. You heal for all.</p>
+  <p style="text-align:center;font-weight:bold;color:#4c1d95;font-size:11pt;">&#8220;So it is. So it is. So it is.&#8221;</p>
+</div>
+
+<div class="footer">
+  <strong>Sacred Frequencies &middot; 9-Ether Irradiation Protocol</strong><br>
+  Supreme Resonance + Full Lunar Balance Edition &middot; June 7, 2026 &middot; Cecilyn Williams<br>
+  Headphones deepen the effect &middot; Safe for all ages and all animals<br>
+  528 Hz love carrier + 7.83 Hz Schumann in every ether &middot; Supreme ceiling: 3,168 Hz
+</div>
+
+</body>
+</html>
