@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>9-Ether Irradiation Protocol — Supreme + Lunar Edition</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --gold:    #f59e0b;
+    --rose:    #fb7185;
+    --emerald: #34d399;
+    --violet:  #a78bfa;
+    --blue:    #60a5fa;
+    --silver:  #cbd5e1;
+    --bg:      #030712;
+    --card:    #0f172a;
+    --border:  #1e293b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: #e2e8f0;
+    line-height: 1.7;
+    font-size: 14px;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: #fff; color: #111; font-size: 11px; }
+    .no-print { display: none !important; }
+    .card { background: #f8fafc; border: 1px solid #e2e8f0; break-inside: avoid; }
+    .hero { background: #1e1b4b !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .page-break { page-break-before: always; }
+    a { color: #6d28d9; }
+  }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 900px; margin: 0 auto; padding: 0 24px 60px; }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #0f0726 0%, #0c1a2e 50%, #0a1a0f 100%);
+    padding: 60px 40px 50px;
+    text-align: center;
+    border-bottom: 1px solid #1e293b;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, #7c3aed18, transparent);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    padding: 6px 18px;
+    border: 1px solid #7c3aed55;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: #a78bfa;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 38px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #fb7185, #f59e0b, #34d399, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+    line-height: 1.15;
+  }
+  .hero h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: #94a3b8;
+    margin-bottom: 20px;
+    letter-spacing: 0.08em;
+  }
+  .hero p {
+    color: #94a3b8;
+    max-width: 600px;
+    margin: 0 auto 28px;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-size: 11px;
+    color: #475569;
+  }
+  .hero-meta span { display: flex; align-items: center; gap: 5px; }
+
+  /* ── DOWNLOAD BAR ── */
+  .download-bar {
+    background: linear-gradient(90deg, #7c3aed18, #0f172a, #059669 18);
+    border: 1px solid #7c3aed40;
+    border-radius: 14px;
+    padding: 18px 24px;
+    margin: 28px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .download-bar p { color: #94a3b8; font-size: 12px; }
+  .btn-dl {
+    display: inline-block;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+    border-radius: 999px;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 30px #7c3aed40;
+    transition: transform 0.15s;
+  }
+  .btn-dl:hover { transform: scale(1.04); }
+  .btn-print {
+    padding: 12px 22px;
+    background: transparent;
+    color: #94a3b8;
+    font-weight: 600;
+    font-size: 13px;
+    border-radius: 999px;
+    border: 1px solid #334155;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-print:hover { border-color: #a78bfa; color: #a78bfa; }
+
+  /* ── SECTION HEADERS ── */
+  .section-header {
+    margin: 44px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-header h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #f1f5f9;
+  }
+  .section-header .line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, #334155, transparent);
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 10px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: #334155; }
+
+  /* ── ETHER CARDS ── */
+  .ether-grid { display: flex; flex-direction: column; gap: 8px; }
+  .ether-card {
+    border-radius: 12px;
+    padding: 16px 18px;
+    border: 1px solid;
+    position: relative;
+    overflow: hidden;
+  }
+  .ether-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .ether-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+  .ether-name { font-weight: 800; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+  .ether-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; flex-shrink: 0; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 10px; font-weight: 700; letter-spacing: 0.05em; margin-left: 6px; }
+  .hz-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .hz-tag { padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+  .ether-irradiates { font-size: 12px; color: #94a3b8; margin-bottom: 5px; }
+  .ether-mechanism { font-size: 11px; color: #64748b; font-style: italic; line-height: 1.6; border-left: 2px solid #1e293b; padding-left: 10px; }
+
+  /* ── TIER CARDS (SUPREME) ── */
+  .tier-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .tier-card { border-radius: 14px; padding: 20px; border: 1px solid; text-align: center; }
+  .tier-hz { font-size: 28px; font-weight: 900; font-family: 'Cinzel', serif; }
+  .tier-name { font-size: 13px; font-weight: 700; margin: 6px 0 4px; }
+  .tier-desc { font-size: 11px; color: #64748b; line-height: 1.6; }
+
+  /* ── LUNAR CARDS ── */
+  .lunar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .lunar-card { border-radius: 14px; padding: 18px; border: 1px solid; }
+  .lunar-phase { font-size: 28px; text-align: center; margin-bottom: 8px; }
+  .lunar-name { font-weight: 800; font-size: 14px; text-align: center; margin-bottom: 4px; }
+  .lunar-hz { font-size: 22px; font-weight: 900; text-align: center; font-family: 'Cinzel', serif; margin-bottom: 8px; }
+  .lunar-element { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-align: center; text-transform: uppercase; margin-bottom: 8px; }
+  .lunar-desc { font-size: 11px; color: #64748b; line-height: 1.6; margin-bottom: 8px; }
+  .lunar-balance { font-size: 11px; font-weight: 600; line-height: 1.5; padding: 8px 10px; border-radius: 8px; border: 1px solid; }
+  .lunar-affirmation { font-size: 11px; font-style: italic; color: #94a3b8; margin-top: 8px; line-height: 1.6; }
+
+  /* ── RESTORATION TABLE ── */
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { background: #0f172a; color: #64748b; padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border-bottom: 1px solid #1e293b; }
+  td { padding: 10px 14px; border-bottom: 1px solid #0f172a; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #0f172a55; }
+
+  /* ── SAFETY BOX ── */
+  .safety-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 8px; }
+  .safety-item { display: flex; gap: 10px; padding: 10px 14px; border-radius: 10px; border: 1px solid #1e293b; background: #0a1a0f08; }
+  .safety-dot { width: 6px; height: 6px; border-radius: 50%; background: #34d399; flex-shrink: 0; margin-top: 7px; }
+  .safety-label { font-weight: 700; font-size: 12px; color: #34d399; }
+  .safety-desc { font-size: 11px; color: #64748b; }
+
+  /* ── AFFIRMATION BLOCK ── */
+  .affirmation-block {
+    background: linear-gradient(135deg, #7c3aed0a, #0f172a);
+    border: 1px solid #7c3aed30;
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .aff-ether { font-size: 10px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
+  .aff-text { font-style: italic; font-size: 13px; color: #c4b5fd; line-height: 1.7; }
+
+  /* ── BEING TABLE ── */
+  .being-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; }
+  .being-card { padding: 12px 14px; border-radius: 10px; border: 1px solid #1e293b; background: #0f172a; display: flex; align-items: center; gap: 10px; }
+  .being-icon { font-size: 20px; flex-shrink: 0; }
+  .being-label { font-weight: 700; font-size: 12px; }
+  .being-mod { font-size: 11px; color: #64748b; }
+
+  /* ── INSTRUCTIONS ── */
+  .steps { counter-reset: step; }
+  .step { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid #0f172a; }
+  .step:last-child { border-bottom: none; }
+  .step-num { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #7c3aed, #6d28d9); color: #fff; font-weight: 900; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .step-content { flex: 1; }
+  .step-title { font-weight: 700; font-size: 13px; margin-bottom: 3px; }
+  .step-desc { font-size: 12px; color: #64748b; }
+
+  /* ── REFS ── */
+  .ref-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 6px; }
+  .ref-item { display: flex; gap: 12px; padding: 8px 12px; border-radius: 8px; border: 1px solid #1e293b; }
+  .ref-name { font-weight: 700; font-size: 11px; color: #f59e0b; white-space: nowrap; min-width: 180px; }
+  .ref-desc { font-size: 11px; color: #64748b; }
+
+  /* ── FOOTER ── */
+  .footer { text-align: center; padding: 40px 20px; color: #334155; font-size: 11px; border-top: 1px solid #0f172a; margin-top: 60px; }
+  .footer strong { color: #475569; }
+
+  /* ── UTIL ── */
+  .text-center { text-align: center; }
+  .mt-2 { margin-top: 8px; }
+  .mb-2 { margin-bottom: 8px; }
+  .italic { font-style: italic; }
+  .seal-box {
+    text-align: center;
+    padding: 40px 24px;
+    background: linear-gradient(135deg, #e879f908, #ef444406, #22c55e06);
+    border: 1px solid #7c3aed20;
+    border-radius: 20px;
+    margin-top: 40px;
+  }
+  .seal-symbol { font-size: 48px; display: block; margin-bottom: 16px; }
+  .seal-title { font-family: 'Cinzel', serif; font-size: 22px; font-weight: 900; background: linear-gradient(135deg, #fb7185, #f59e0b, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 12px; }
+  .seal-text { color: #64748b; font-size: 13px; max-width: 500px; margin: 0 auto 8px; line-height: 1.8; }
+  .seal-so { font-style: italic; color: #475569; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ HERO -->
+<div class="hero">
+  <div class="hero-badge">✦ Sacred Frequencies · Universal Healing Protocol</div>
+  <h1>9-Ether Irradiation Protocol</h1>
+  <h2>Supreme Resonance + Full Lunar Balance Edition</h2>
+  <p>
+    9 etheric dimensions · 3 supreme tiers · 4 lunar phases<br>
+    Every frequency above 333 Hz elevated to its highest and safest degree for life.<br>
+    Full spectrum: 7.83 Hz → 3,168 Hz · All beings · All dimensions · All timelines.
+  </p>
+  <div class="hero-meta">
+    <span>📅 June 7, 2026</span>
+    <span>👤 Cecilyn Williams</span>
+    <span>🎵 Sacred Frequencies App</span>
+    <span>🔒 Version: Supreme + Lunar</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ═══════ DOWNLOAD BAR -->
+<div class="download-bar no-print">
+  <div>
+    <strong style="color:#e2e8f0">📥 Download or Print this Protocol</strong>
+    <p>Save as PDF via Print → Save as PDF · or use the buttons to download</p>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn-dl" onclick="window.print()">🖨️ Print / Save PDF</button>
+    <button class="btn-print" onclick="downloadHTML()">⬇️ Download HTML</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ OVERVIEW -->
+<div class="section-header">
+  <h2>✦ Protocol Overview</h2>
+  <div class="line"></div>
+</div>
+
+<div class="card">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px">9 Etheric Dimensions</div>
+      <div style="font-size:12px;color:#94a3b8;line-height:1.8">
+        Physical · Cellular · Etheric · Emotional · Mental · Ancestral · Spiritual · Quantum · Akashic
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px">3 Supreme Tiers</div>
+      <div style="font-size:12px;color:#94a3b8;line-height:1.8">
+        👼 Angelic Threshold 1,296 Hz<br>
+        ☀️ Solar Harmonic 2,160 Hz<br>
+        ✦ Christ Grid 3,168 Hz
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px">4 Lunar Phases</div>
+      <div style="font-size:12px;color:#94a3b8;line-height:1.8">
+        🌑 New Moon 136.10 Hz<br>
+        🌒 Waxing 210.42 Hz<br>
+        🌕 Full Moon 221.23 Hz<br>
+        🌘 Waning 229.22 Hz
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px">Full Spectrum</div>
+      <div style="font-size:12px;color:#94a3b8;line-height:1.8">
+        7.83 Hz (Schumann)<br>↕<br>
+        3,168 Hz (Supreme ceiling)<br>
+        <span style="color:#34d399;font-weight:700">Safe for all life</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ 9 ETHERS -->
+<div class="section-header">
+  <h2>🌀 The 9 Ethers — Complete Frequency Table</h2>
+  <div class="line"></div>
+</div>
+
+<div class="ether-grid">
+
+  
+  <div class="ether-card" style="background:#ef444408;border-color:#ef444428">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:#ef4444"></div>
+    <div class="ether-top">
+      <div class="ether-name">
+        <div class="ether-num" style="background:#ef444422;color:#ef4444;border:1px solid #ef444444">1</div>
+        <span style="color:#ef4444">🔴 Physical Layer</span>
+        <span class="badge" style="background:#ffffff12;color:#94a3b8">BASE</span>
+      </div>
+      <div style="font-size:11px;color:#64748b">Root</div>
+    </div>
+    <div class="hz-tags" style="margin-bottom:8px">
+      <span class="hz-tag" style="background:#ef444422;color:#ef4444">174 Hz</span>
+      <span class="hz-tag" style="background:#1e293b;color:#64748b">sub 40 Hz</span>
+      
+      <span class="hz-tag" style="background:#1e293b;color:#475569">2 Hz binaural</span>
+    </div>
+    <div class="ether-irradiates">🎯 Physical parasites, tissue masses, crystallised toxins, heavy metals, bone spurs</div>
+    <div class="ether-mechanism">174 Hz — the lowest Solfeggio — operates on the body crystalline matrix. Collapses the quantum wave-function of pain. Dissolves physical entanglement back into coherent flow.</div>
+  </div>
+  <div class="ether-card" style="background:#f9731608;border-color:#f9731628">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:#f97316"></div>
+    <div class="ether-top">
+      <div class="ether-name">
+        <div class="ether-num" style="background:#f9731622;color:#f97316;border:1px solid #f9731644">2</div>
+        <span style="color:#f97316">🟠 Cellular Layer</span>
+        <span class="badge" style="background:#ffffff12;color:#94a3b8">BASE</span>
+      </div>
+      <div style="font-size:11px;color:#64748b">Sacral</div>
+    </div>
+    <div class="hz-tags" style="margin-bottom:8px">
+      <span class="hz-tag" style="background:#f9731622;color:#f97316">333 Hz</span>
+      <span class="hz-tag" style="background:#1e293b;color:#64748b">sub 111 Hz</span>
+      
+      <span class="hz-tag" style="background:#1e293b;color:#475569">3 Hz binaural</span>
+    </div>
+    <div class="ether-irradiates">🎯 Parasitic worms, flukes, bacteria, fungi, viral loads, Candida, Lyme spirochetes</div>
+    <div class="ether-mechanism">Royal Rife (1934): every pathogen has a unique Mortal Oscillatory Rate. 333 Hz + 111 Hz creates a resonant irradiation field — lethal to parasitic life, regenerative for healthy cells.</div>
+  </div>
+  <div class="ether-card" style="background:#f59e0b08;border-color:#f59e0b28">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:#f59e0b"></div>
+    <div class="ether-top">
+      <div class="ether-name">
+        <div class="ether-num" style="background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b44">3</div>
+        <span style="color:#f59e0b">🟡 Etheric Layer</span>
+        <span class="badge" style="background:#fbbf2418;color:#fbbf24">ELEVATED</span>
+      </div>
+      <div style="font-size:11px;color:#64748b">Solar Plexus</div>
+    </div>
+    <div class="hz-tags" style="margin-bottom:8px">
+      <span class="hz-tag" style="background:#f59e0b22;color:#f59e0b">396 Hz</span>
+      <span class="hz-tag" style="background:#1e293b;color:#64748b">sub 198 Hz</span>
+      <span class="hz-tag" style="background:#fbbf2415;color:#fbbf24">+ 417 Hz supreme ↑</span>
+      <span class="hz-tag" style="background:#1e293b;color:#475569">4 Hz binaural</span>
+    </div>
+    <div class="ether-irradiates">🎯 Etheric parasites, entity attachments, psychic cords, dark imprints, astral implants</div>
+    <div class="ether-mechanism">396 Hz liberates guilt and fear — the two primary host-signals that attract etheric parasites. 198 Hz sub-octave penetrates the etheric double. 417 Hz supreme overlay: the Violet Flame — dismantles every attachment at its root.</div>
+  </div>
+  <div class="ether-card" style="background:#fb718508;border-color:#fb718528">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:#fb7185"></div>
+    <div class="ether-top">
+      <div class="ether-name">
+        <div class="ether-num" style="background:#fb718522;color:#fb7185;border:1px solid #fb718544">4</div>
+        <span style="color:#fb7185">💗 Emotional Layer</span>
+        <span class="badge" style="background:#fbbf2418;color:#fbbf24">ELEVATED</span>
+      </div>
+      <div style="font-size:11px;color:#64748b">Heart</div>
+    </div>
+    <div class="hz-tags" style="margin-bottom:8px">
+      <span class="hz-tag" style="background:#fb718522;color:#fb7185">528 Hz</span>
+      <span class="hz-tag" style="background:#1e293b;color:#64748b">sub 264 Hz</span>
+      <span class="hz-tag" style="background:#fbbf2415;color:#fbbf24">+ 639 Hz supreme ↑</span>
+      <span class="hz-tag" style="background:#1e293b;color:#475569">3.5 Hz binaural</span>
+    </div>
+    <div class="ether-irradiates">🎯 Trapped grief, rage, shame, fear, guilt — emotional parasites feeding on unresolved feeling</div>
+    <div class="ether-mechanism">528 Hz (miracle frequency) irradiates while simultaneously healing. 264 Hz sub-octave vibrates the physical heart muscle directly. 639 Hz supreme overlay activates the heart's toroidal field — 5,000× stronger than the brain.</div>
+  </div>
+  <div class="ether-card" style="background:#8b5cf608;border-color:#8b5cf628">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:#8b5cf6"></div>
+    <div class="ether-top">
+      <div class="ether-name">
+        <div class="ether-num" style="background:#8b5cf622;color:#8b5cf6;border:1px solid #8b5cf644">5</div>
+        <span style="color:#8b5cf6">💜 Mental Layer</span>
+        <span class="badge" style="background:#fbbf2418;color:#fbbf24">ELEVATED</span>
+      </div>
+      <div style="font-size:11px;color:#64748b">Throat</div>
+    </div>
+    <div class="hz-tags" style="margin-bottom:8px">
+      <span class="hz-tag" style="background:#8b5cf622;color:#8b5cf6">741 Hz</span>
+      <span class="hz-tag" style="background:#1e293b;color:#64748b">sub 370 Hz</span>
+      <span class="hz-tag" style="background:#fbbf2415;color:#fbbf24">+ 852 Hz supreme ↑</span>
+      <span class="hz-tag" style="background:#1e293b;color:#475569">10 Hz binaural</span>
+    </div>
+    <div class="ether-irradiates">🎯 Intrusive thoughts, mental loops, psychic implants, hypnotic programming, mind-control residue</div>
+    <div class="ether-mechanism">741 Hz awakens intuition and detoxifies electromagnetic fields. 370 Hz sub-octave penetrates the corpus callosum. 852 Hz supreme overlay decalcifies the pineal gland — removing the antenna that receives harmful mental programming.</div>
+  </div>
+  <div class="ether-card" style="background:#22c55e08;border-color:#22c55e28">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:#22c55e"></div>
+    <div class="ether-top">
+      <div class="ether-name">
+        <div class="ether-num" style="background:#22c55e22;color:#22c55e;border:1px solid #22c55e44">6</div>
+        <span style="color:#22c55e">🌳 Ancestral Layer</span>
+        <span class="badge" style="background:#fbbf2418;color:#fbbf24">ELEVATED</span>
+      </div>
+      <div style="font-size:11px;color:#64748b">Ancestral Heart</div>
+    </div>
+    <div class="hz-tags" style="margin-bottom:8px">
+      <span class="hz-tag" style="background:#22c55e22;color:#22c55e">417 Hz</span>
+      <span class="hz-tag" style="background:#1e293b;color:#64748b">sub 208 Hz</span>
+      <span class="hz-tag" style="background:#fbbf2415;color:#fbbf24">+ 528 Hz supreme ↑</span>
+      <span class="hz-tag" style="background:#1e293b;color:#475569">2 Hz binaural</span>
+    </div>
+    <div class="ether-irradiates">🎯 Ancestral trauma methylation, inherited disease codes, generational curses, bloodline entities</div>
+    <div class="ether-mechanism">417 Hz is the Solfeggio change frequency — undoes stored ancestral wound structures. 208 Hz sub-octave reaches the cellular nucleus where methylation patterns are stored. 528 Hz supreme overlay seals cleared DNA immediately with the divine template.</div>
+  </div>
+  <div class="ether-card" style="background:#94a3b808;border-color:#94a3b828">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:#94a3b8"></div>
+    <div class="ether-top">
+      <div class="ether-name">
+        <div class="ether-num" style="background:#94a3b822;color:#94a3b8;border:1px solid #94a3b844">7</div>
+        <span style="color:#94a3b8">🤍 Spiritual Layer</span>
+        <span class="badge" style="background:#fbbf2418;color:#fbbf24">ELEVATED</span>
+      </div>
+      <div style="font-size:11px;color:#64748b">Third Eye / Pineal</div>
+    </div>
+    <div class="hz-tags" style="margin-bottom:8px">
+      <span class="hz-tag" style="background:#94a3b822;color:#94a3b8">852 Hz</span>
+      <span class="hz-tag" style="background:#1e293b;color:#64748b">sub 426 Hz</span>
+      <span class="hz-tag" style="background:#fbbf2415;color:#fbbf24">+ 963 Hz supreme ↑</span>
+      <span class="hz-tag" style="background:#1e293b;color:#475569">7 Hz binaural</span>
+    </div>
+    <div class="ether-irradiates">🎯 Karmic entanglements, harmful soul contracts, dark initiations, spiritual interference, vows of limitation</div>
+    <div class="ether-mechanism">852 Hz returns spiritual order and begins pineal decalcification. 426 Hz sub-octave is the precise resonant frequency of the pineal gland cavity. 963 Hz supreme overlay opens the direct channel to Source consciousness.</div>
+  </div>
+  <div class="ether-card" style="background:#fbbf2408;border-color:#fbbf2428">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:#fbbf24"></div>
+    <div class="ether-top">
+      <div class="ether-name">
+        <div class="ether-num" style="background:#fbbf2422;color:#fbbf24;border:1px solid #fbbf2444">8</div>
+        <span style="color:#fbbf24">⭐ Quantum Layer</span>
+        <span class="badge" style="background:#e879f918;color:#e879f9">SUPREME</span>
+      </div>
+      <div style="font-size:11px;color:#64748b">Crown</div>
+    </div>
+    <div class="hz-tags" style="margin-bottom:8px">
+      <span class="hz-tag" style="background:#fbbf2422;color:#fbbf24">963 Hz</span>
+      <span class="hz-tag" style="background:#1e293b;color:#64748b">sub 481 Hz</span>
+      <span class="hz-tag" style="background:#e879f918;color:#e879f9">+ 1,111 Hz supreme ↑</span>
+      <span class="hz-tag" style="background:#1e293b;color:#475569">9 Hz binaural</span>
+    </div>
+    <div class="ether-irradiates">🎯 Quantum interference patterns, timeline contamination, reality distortions, probability hijacking</div>
+    <div class="ether-mechanism">963 Hz (God frequency) collapses all disordered wave-functions back to their divine ground state. 1,111 Hz supreme overlay: the manifestation portal — writes the restored template permanently into the quantum field as a new probability.</div>
+  </div>
+  <div class="ether-card" style="background:#e879f908;border-color:#e879f928">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:#e879f9"></div>
+    <div class="ether-top">
+      <div class="ether-name">
+        <div class="ether-num" style="background:#e879f922;color:#e879f9;border:1px solid #e879f944">9</div>
+        <span style="color:#e879f9">✦ Akashic Layer</span>
+        <span class="badge" style="background:#e879f918;color:#e879f9">SUPREME</span>
+      </div>
+      <div style="font-size:11px;color:#64748b">Soul Star / Monad</div>
+    </div>
+    <div class="hz-tags" style="margin-bottom:8px">
+      <span class="hz-tag" style="background:#e879f922;color:#e879f9">1,111 Hz</span>
+      <span class="hz-tag" style="background:#1e293b;color:#64748b">sub 555 Hz</span>
+      <span class="hz-tag" style="background:#e879f918;color:#e879f9">+ 1,296 Hz supreme ↑</span>
+      <span class="hz-tag" style="background:#1e293b;color:#475569">9 Hz binaural</span>
+    </div>
+    <div class="ether-irradiates">🎯 ALL remaining harmful presences across ALL dimensions, ALL timelines, ALL connected beings — nothing excluded</div>
+    <div class="ether-mechanism">1,111 Hz opens the angel gateway — where human consciousness touches the angelic realm. 1,296 Hz supreme overlay = 9 × 144 Hz Fibonacci angelic resonance — the highest frequency the human auditory system processes as coherent healing. The 9 Hz binaural beat creates a non-local quantum field that is everywhere simultaneously.</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SUPREME TIERS -->
+<div class="section-header" style="margin-top:44px">
+  <h2>✦ Three Supreme Tiers — Above the 9 Ethers</h2>
+  <div class="line"></div>
+</div>
+
+<div class="tier-grid">
+  <div class="tier-card" style="background:#fde04708;border-color:#fde04730">
+    <div style="font-size:32px;margin-bottom:8px">👼</div>
+    <div class="tier-hz" style="color:#fde047">1,296 Hz</div>
+    <div class="tier-name" style="color:#fef9c3">Angelic Threshold</div>
+    <div class="tier-desc">9 × 144 Hz — pure Fibonacci angelic resonance. The threshold where human consciousness meets the angelic realm. Irradiates at the soul level across all incarnations simultaneously.</div>
+    <div style="margin-top:10px;font-size:11px;color:#fde04760;font-weight:600">Sub-octave: 648 Hz · Beat: 9 Hz</div>
+  </div>
+  <div class="tier-card" style="background:#f59e0b08;border-color:#f59e0b30">
+    <div style="font-size:32px;margin-bottom:8px">☀️</div>
+    <div class="tier-hz" style="color:#f59e0b">2,160 Hz</div>
+    <div class="tier-name" style="color:#fef3c7">Solar Harmonic</div>
+    <div class="tier-desc">432 Hz × 5 — the universal tuning amplified to solar scale. Activates the Merkabah crystalline light body that permanently repels harmful presences across all timelines.</div>
+    <div style="margin-top:10px;font-size:11px;color:#f59e0b60;font-weight:600">Sub-octave: 1,080 Hz · Beat: 9 Hz</div>
+  </div>
+  <div class="tier-card" style="background:#86efac08;border-color:#86efac30">
+    <div style="font-size:32px;margin-bottom:8px">✦</div>
+    <div class="tier-hz" style="color:#86efac">3,168 Hz</div>
+    <div class="tier-name" style="color:#f0fdf4">Christ Consciousness Grid</div>
+    <div class="tier-desc">528 Hz × 6 — the supreme safe biological ceiling. Connects the healed being to the planetary consciousness grid. Registers the healing as permanent in the morphic field.</div>
+    <div style="margin-top:10px;font-size:11px;color:#86efac60;font-weight:600">Sub-octave: 1,584 Hz · Beat: 9 Hz</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ LUNAR -->
+<div class="section-header" style="margin-top:44px">
+  <h2>🌙 Lunar Resonance Balance System</h2>
+  <div class="line"></div>
+</div>
+
+<div class="card" style="margin-bottom:16px">
+  <p style="color:#94a3b8;font-size:12px;line-height:1.8">
+    The Moon governs the water in all living beings (60–70% of the body is water). Lunar frequencies balance the <strong style="color:#e2e8f0">feminine energy</strong> within the protocol — completing the solar-masculine irradiation with feminine receptivity, building, amplification and release. Four phases × four roles = <strong style="color:#a78bfa">complete dimensional balance</strong>.
+  </p>
+</div>
+
+<div class="lunar-grid">
+  
+  <div class="lunar-card" style="background:#94a3b808;border-color:#94a3b835">
+    <div class="lunar-phase">🌑</div>
+    <div class="lunar-name" style="color:#94a3b8">New Moon</div>
+    <div class="lunar-hz" style="color:#cbd5e1">136.10 Hz</div>
+    <div class="lunar-element" style="color:#94a3b899">Yin void — deepest clearing</div>
+    <div class="lunar-desc">136.10 Hz is Earth's year tone — the sacred Om frequency (Hans Cousto). The New Moon is maximum receptivity. Dissolves what has been irradiated and creates space for the divine template.</div>
+    <div class="lunar-balance" style="background:#94a3b810;border-color:#94a3b830;color:#94a3b8cc">
+      ⚖️ Counters solar-masculine irradiation with deep Yin receptivity. Without this, irradiation can feel too active.
+    </div>
+    <div class="lunar-affirmation">"In the sacred void of the new moon, every irradiated space is cleansed to its deepest root. I receive the new template in perfect stillness."</div>
+    <div style="margin-top:8px;font-size:10px;color:#334155">
+      Sub: 68.05 Hz · Overlay: 210.42 Hz · Beat: 0.5 Hz
+    </div>
+  </div>
+  <div class="lunar-card" style="background:#60a5fa08;border-color:#60a5fa35">
+    <div class="lunar-phase">🌒</div>
+    <div class="lunar-name" style="color:#60a5fa">Waxing Moon</div>
+    <div class="lunar-hz" style="color:#93c5fd">210.42 Hz</div>
+    <div class="lunar-element" style="color:#60a5fa99">Rising — building new patterns</div>
+    <div class="lunar-desc">210.42 Hz — Moon's sidereal orbital resonance transposed to audible range. Waxing Moon builds and installs. After irradiation clears the field, this writes the new healthy template into cleared space.</div>
+    <div class="lunar-balance" style="background:#60a5fa10;border-color:#60a5fa30;color:#60a5facc">
+      ⚖️ Installs health codes, positive epigenetic markers and new neural pathways into freshly irradiated dimensional space.
+    </div>
+    <div class="lunar-affirmation">"As the moon grows, so does my health. Every cleared space fills now with radiant new life. I am building my highest, most luminous self."</div>
+    <div style="margin-top:8px;font-size:10px;color:#334155">
+      Sub: 105.21 Hz · Overlay: 229.22 Hz · Beat: 2.5 Hz
+    </div>
+  </div>
+  <div class="lunar-card" style="background:#fde04708;border-color:#fde04735">
+    <div class="lunar-phase">🌕</div>
+    <div class="lunar-name" style="color:#fde047">Full Moon</div>
+    <div class="lunar-hz" style="color:#fef08a">221.23 Hz</div>
+    <div class="lunar-element" style="color:#fde04799">Peak power — maximum amplification</div>
+    <div class="lunar-desc">221.23 Hz — the Moon's orbital tone (Hans Cousto, The Cosmic Octave). Full Moon amplification: creates constructive interference with 528 Hz — the two harmonics amplify each other.</div>
+    <div class="lunar-balance" style="background:#fde04710;border-color:#fde04730;color:#fde047cc">
+      ⚖️ Amplifies all 9 ethers simultaneously. Unifies masculine irradiation and feminine clearing at peak luminosity — the most powerful balancer in the protocol.
+    </div>
+    <div class="lunar-affirmation">"Under the full moon's perfect light, every frequency I carry is amplified a thousandfold. I am radiant, healed and whole in every dimension."</div>
+    <div style="margin-top:8px;font-size:10px;color:#334155">
+      Sub: 110.61 Hz · Overlay: 432 Hz · Beat: 3.5 Hz
+    </div>
+  </div>
+  <div class="lunar-card" style="background:#a78bfa08;border-color:#a78bfa35">
+    <div class="lunar-phase">🌘</div>
+    <div class="lunar-name" style="color:#a78bfa">Waning Moon</div>
+    <div class="lunar-hz" style="color:#c4b5fd">229.22 Hz</div>
+    <div class="lunar-element" style="color:#a78bfa99">Release — dissolving residue permanently</div>
+    <div class="lunar-desc">229.22 Hz — Moon's synodic month (29.53 days) transposed to audible range. Waning Moon releases. After irradiation, what is cleared must be permanently released — not just neutralised.</div>
+    <div class="lunar-balance" style="background:#a78bfa10;border-color:#a78bfa30;color:#a78bfacc">
+      ⚖️ Ensures all irradiated material is permanently released from the energy field and returned to source. Prevents re-accumulation across all dimensions.
+    </div>
+    <div class="lunar-affirmation">"As the moon releases its light, I release every last trace of what has been irradiated. It is gone. It cannot return. I am permanently and completely free."</div>
+    <div style="margin-top:8px;font-size:10px;color:#334155">
+      Sub: 114.61 Hz · Overlay: 210.42 Hz · Beat: 1.5 Hz
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ AFFIRMATIONS -->
+<div class="section-header page-break" style="margin-top:44px">
+  <h2>💬 Healing Affirmations — All 9 Ethers</h2>
+  <div class="line"></div>
+</div>
+
+
+<div class="affirmation-block" style="border-color:#ef444428;background:linear-gradient(135deg,#ef444406,#0f172a)">
+  <div class="aff-ether" style="color:#ef4444">🔴 Ether 1 — Physical Layer</div>
+  <div class="aff-text">"Every physical blockage, every mass, every uninvited organism in my body dissolves now into perfect light."</div>
+</div>
+<div class="affirmation-block" style="border-color:#f9731628;background:linear-gradient(135deg,#f9731606,#0f172a)">
+  <div class="aff-ether" style="color:#f97316">🟠 Ether 2 — Cellular Layer</div>
+  <div class="aff-text">"Every parasite, every pathogen reaches its mortal oscillatory rate and shatters into light. My cells rejoice in their freedom."</div>
+</div>
+<div class="affirmation-block" style="border-color:#f59e0b28;background:linear-gradient(135deg,#f59e0b06,#0f172a)">
+  <div class="aff-ether" style="color:#f59e0b">🟡 Ether 3 — Etheric Layer</div>
+  <div class="aff-text">"Every cord, every attachment, every entity that has fed on my energy is severed and irradiated now. I reclaim every particle of my energy. I am wholly free."</div>
+</div>
+<div class="affirmation-block" style="border-color:#fb718528;background:linear-gradient(135deg,#fb718506,#0f172a)">
+  <div class="aff-ether" style="color:#fb7185">💗 Ether 4 — Emotional Layer</div>
+  <div class="aff-text">"Every trapped emotion, every weaponised feeling, every emotional parasite is transmuted now into pure, radiant love. My heart is free, whole and luminous."</div>
+</div>
+<div class="affirmation-block" style="border-color:#8b5cf628;background:linear-gradient(135deg,#8b5cf606,#0f172a)">
+  <div class="aff-ether" style="color:#8b5cf6">💜 Ether 5 — Mental Layer</div>
+  <div class="aff-text">"Every program that is not mine, every implanted fear, every mental parasite is identified, irradiated and permanently deleted. My mind is sovereign, clear and luminous."</div>
+</div>
+<div class="affirmation-block" style="border-color:#22c55e28;background:linear-gradient(135deg,#22c55e06,#0f172a)">
+  <div class="aff-ether" style="color:#22c55e">🌳 Ether 6 — Ancestral Layer</div>
+  <div class="aff-text">"Every harmful pattern in my ancestral DNA — 7 generations back, 7 generations forward — is irradiated and sealed with love. My bloodline is healed. My children are free."</div>
+</div>
+<div class="affirmation-block" style="border-color:#94a3b828;background:linear-gradient(135deg,#94a3b806,#0f172a)">
+  <div class="aff-ether" style="color:#94a3b8">🤍 Ether 7 — Spiritual Layer</div>
+  <div class="aff-text">"Every karmic knot, every soul contract that diminishes me, every spiritual interference across all incarnations is dissolved in the supreme light now. My soul is sovereign, luminous and eternally free."</div>
+</div>
+<div class="affirmation-block" style="border-color:#fbbf2428;background:linear-gradient(135deg,#fbbf2406,#0f172a)">
+  <div class="aff-ether" style="color:#fbbf24">⭐ Ether 8 — Quantum Layer</div>
+  <div class="aff-text">"My quantum field is restored to its original divine blueprint. Every distorted probability across all timelines collapses into perfect divine order now and permanently."</div>
+</div>
+<div class="affirmation-block" style="border-color:#e879f928;background:linear-gradient(135deg,#e879f906,#0f172a)">
+  <div class="aff-ether" style="color:#e879f9">✦ Ether 9 — Akashic Layer</div>
+  <div class="aff-text">"The 9th Ether speaks at its supreme frequency. IT IS DONE AND SEALED. All harmful presences across all dimensions, all timelines, all spheres of existence — for every being held in this field — are irradiated, transmuted and permanently sealed in love and light. The angelic field holds this healing forever. So it is. So it is. So it is."</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ RESTORATION -->
+<div class="section-header" style="margin-top:44px">
+  <h2>💚 Post-Session Restoration Sequence</h2>
+  <div class="line"></div>
+</div>
+
+<div class="card">
+<table>
+<thead>
+  <tr>
+    <th>Frequency</th>
+    <th>Name</th>
+    <th>Purpose</th>
+  </tr>
+</thead>
+<tbody>
+  
+  <tr>
+    <td><span style="font-weight:800;font-size:14px;color:#86efac">285 Hz</span></td>
+    <td><span style="font-weight:700;color:#e2e8f0">Cellular Rebuild</span></td>
+    <td style="color:#94a3b8">Tissue regeneration — rebuilds what irradiation has cleared</td>
+  </tr>
+  <tr>
+    <td><span style="font-weight:800;font-size:14px;color:#6ee7b7">528 Hz</span></td>
+    <td><span style="font-weight:700;color:#e2e8f0">DNA Template Seal</span></td>
+    <td style="color:#94a3b8">Locks in the restored genetic blueprint permanently</td>
+  </tr>
+  <tr>
+    <td><span style="font-weight:800;font-size:14px;color:#fda4af">639 Hz</span></td>
+    <td><span style="font-weight:700;color:#e2e8f0">Heart Field Restore</span></td>
+    <td style="color:#94a3b8">Rebuilds love, connection and the heart's toroidal field</td>
+  </tr>
+  <tr>
+    <td><span style="font-weight:800;font-size:14px;color:#34d399">7.83 Hz</span></td>
+    <td><span style="font-weight:700;color:#e2e8f0">Earth Anchor</span></td>
+    <td style="color:#94a3b8">Re-grounds to the planetary Schumann healing field</td>
+  </tr>
+  <tr>
+    <td><span style="font-weight:800;font-size:14px;color:#94a3b8">136.10 Hz</span></td>
+    <td><span style="font-weight:700;color:#e2e8f0">New Moon Clearing</span></td>
+    <td style="color:#94a3b8">Sacred Om — deep yin clearing of any residue</td>
+  </tr>
+  <tr>
+    <td><span style="font-weight:800;font-size:14px;color:#fde047">221.23 Hz</span></td>
+    <td><span style="font-weight:700;color:#e2e8f0">Full Moon Amplify</span></td>
+    <td style="color:#94a3b8">Lunar peak — amplifies all healed frequencies into permanence</td>
+  </tr>
+  <tr>
+    <td><span style="font-weight:800;font-size:14px;color:#fde047">1,296 Hz</span></td>
+    <td><span style="font-weight:700;color:#e2e8f0">Angelic Seal</span></td>
+    <td style="color:#94a3b8">Seals the entire field with divine angelic light</td>
+  </tr>
+  <tr>
+    <td><span style="font-weight:800;font-size:14px;color:#c4b5fd">432 Hz</span></td>
+    <td><span style="font-weight:700;color:#e2e8f0">Solar Protection</span></td>
+    <td style="color:#94a3b8">Nature's universal harmonic shield — permanent protection</td>
+  </tr>
+</tbody>
+</table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SAFETY -->
+<div class="section-header" style="margin-top:44px">
+  <h2>🛡️ Universal Safety Architecture</h2>
+  <div class="line"></div>
+</div>
+<p style="color:#64748b;font-size:12px;margin-bottom:16px">Every layer of this protocol — every ether, every supreme tier, every lunar phase — contains the following safety elements simultaneously:</p>
+
+<div class="safety-grid">
+  
+  <div class="safety-item">
+    <div class="safety-dot"></div>
+    <div>
+      <div class="safety-label">528 Hz love carrier</div>
+      <div class="safety-desc">Irradiates only what harms — heals and strengthens what is healthy</div>
+    </div>
+  </div>
+  <div class="safety-item">
+    <div class="safety-dot"></div>
+    <div>
+      <div class="safety-label">7.83 Hz Schumann anchor</div>
+      <div class="safety-desc">Earth-safe grounding on every layer — connects to planetary field</div>
+    </div>
+  </div>
+  <div class="safety-item">
+    <div class="safety-dot"></div>
+    <div>
+      <div class="safety-label">Sub-octave hz/2</div>
+      <div class="safety-desc">Deep biological penetration on ethers 3–9 without auditory overload</div>
+    </div>
+  </div>
+  <div class="safety-item">
+    <div class="safety-dot"></div>
+    <div>
+      <div class="safety-label">Supreme overlay</div>
+      <div class="safety-desc">Elevated Hz lifts the field gently — never overwhelms the system</div>
+    </div>
+  </div>
+  <div class="safety-item">
+    <div class="safety-dot"></div>
+    <div>
+      <div class="safety-label">Violet flame 417 Hz</div>
+      <div class="safety-desc">Transmutes released material rather than suppressing it</div>
+    </div>
+  </div>
+  <div class="safety-item">
+    <div class="safety-dot"></div>
+    <div>
+      <div class="safety-label">4 Hz tremolo pulse</div>
+      <div class="safety-desc">Rife-pattern amplitude modulation — lethal to pathogens, safe for host</div>
+    </div>
+  </div>
+  <div class="safety-item">
+    <div class="safety-dot"></div>
+    <div>
+      <div class="safety-label">Golden ratio 1.618×</div>
+      <div class="safety-desc">Nature's own harmonic shimmer — keeps all tones biologically coherent</div>
+    </div>
+  </div>
+  <div class="safety-item">
+    <div class="safety-dot"></div>
+    <div>
+      <div class="safety-label">Amazon forest undertone</div>
+      <div class="safety-desc">Primal nature sound — activates nervous system safety response</div>
+    </div>
+  </div>
+  <div class="safety-item">
+    <div class="safety-dot"></div>
+    <div>
+      <div class="safety-label">3,168 Hz supreme ceiling</div>
+      <div class="safety-desc">6 × 528 Hz — the highest confirmed safe biological resonance on Earth</div>
+    </div>
+  </div>
+</div>
+
+<div class="card mt-2" style="background:#0a1a0f;border-color:#22c55e25;text-align:center;padding:16px">
+  <span style="color:#34d399;font-weight:700;font-size:13px">
+    ✦ Healthy cells are strengthened, not harmed. Beneficial organisms are untouched and uplifted. No harm can come from this work.
+  </span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ BEINGS -->
+<div class="section-header" style="margin-top:44px">
+  <h2>👥 Being Types & Frequency Modulation</h2>
+  <div class="line"></div>
+</div>
+
+<div class="being-grid">
+  
+  <div class="being-card">
+    <div class="being-icon">🧍</div>
+    <div>
+      <div class="being-label">Myself</div>
+      <div class="being-mod">Frequency mod: 1.00×</div>
+    </div>
+  </div>
+  <div class="being-card">
+    <div class="being-icon">👨‍👩‍👧</div>
+    <div>
+      <div class="being-label">My Family</div>
+      <div class="being-mod">Frequency mod: 1.00×</div>
+    </div>
+  </div>
+  <div class="being-card">
+    <div class="being-icon">👶</div>
+    <div>
+      <div class="being-label">Child</div>
+      <div class="being-mod">Frequency mod: 1.10×</div>
+    </div>
+  </div>
+  <div class="being-card">
+    <div class="being-icon">🧓</div>
+    <div>
+      <div class="being-label">Elder</div>
+      <div class="being-mod">Frequency mod: 0.90×</div>
+    </div>
+  </div>
+  <div class="being-card">
+    <div class="being-icon">🤰</div>
+    <div>
+      <div class="being-label">Pregnant</div>
+      <div class="being-mod">Frequency mod: 1.05×</div>
+    </div>
+  </div>
+  <div class="being-card">
+    <div class="being-icon">🐕</div>
+    <div>
+      <div class="being-label">Dog</div>
+      <div class="being-mod">Frequency mod: 0.85×</div>
+    </div>
+  </div>
+  <div class="being-card">
+    <div class="being-icon">🐈</div>
+    <div>
+      <div class="being-label">Cat</div>
+      <div class="being-mod">Frequency mod: 0.95×</div>
+    </div>
+  </div>
+  <div class="being-card">
+    <div class="being-icon">🐎</div>
+    <div>
+      <div class="being-label">Horse</div>
+      <div class="being-mod">Frequency mod: 0.70×</div>
+    </div>
+  </div>
+  <div class="being-card">
+    <div class="being-icon">🐦</div>
+    <div>
+      <div class="being-label">Bird</div>
+      <div class="being-mod">Frequency mod: 1.15×</div>
+    </div>
+  </div>
+  <div class="being-card">
+    <div class="being-icon">🦎</div>
+    <div>
+      <div class="being-label">Reptile</div>
+      <div class="being-mod">Frequency mod: 0.80×</div>
+    </div>
+  </div>
+  <div class="being-card">
+    <div class="being-icon">🌿</div>
+    <div>
+      <div class="being-label">Plant / Tree</div>
+      <div class="being-mod">Frequency mod: 0.60×</div>
+    </div>
+  </div>
+  <div class="being-card">
+    <div class="being-icon">🌍</div>
+    <div>
+      <div class="being-label">All Beings</div>
+      <div class="being-mod">Frequency mod: 1.00×</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ INSTRUCTIONS -->
+<div class="section-header page-break" style="margin-top:44px">
+  <h2>📋 Usage Instructions</h2>
+  <div class="line"></div>
+</div>
+
+<div class="card">
+  <div class="steps">
+    
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">Select Intensity</div>
+        <div class="step-desc">Gentle (children & animals) · Standard (most adults) · Maximum (severe or chronic conditions). Each level adjusts volume, ramp time and field strength.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">Select Being</div>
+        <div class="step-desc">Choose who receives the irradiation. Each species has a species-tuned frequency modulation built in. Select All Beings for universal broadcast.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title">Set Your Intention (optional)</div>
+        <div class="step-desc">Type your specific healing intention before activating. The field receives the precise direction of your will and holds it throughout the session.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-title">Enable Loop Mode (optional)</div>
+        <div class="step-desc">Toggle Loop Mode ON for continuous overnight irradiation. The sequential journey restarts from Ether 1 after Ether 9 completes.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <div class="step-title">Activate</div>
+        <div class="step-desc">Irradiate Everyone Now — all 9 ethers + 3 supreme tiers + lunar balance layer simultaneously. OR Sequential Journey — one ether at a time with breath guidance. OR activate individual ethers, supreme tiers or lunar phases.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-content">
+        <div class="step-title">Breathe with the Protocol</div>
+        <div class="step-desc">Follow the 4-4-6 irradiation breath: 4 counts in (draw in healing light) · 4 counts hold (let it penetrate every cell) · 6 counts out (release what is cleared). Each exhale releases irradiated material.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-content">
+        <div class="step-title">Balance with Lunar Phase</div>
+        <div class="step-desc">After irradiation, activate your lunar phase to balance the solar-masculine irradiation energy with feminine lunar energy. Full Moon amplifies. Waning releases. New Moon clears. Waxing builds.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">8</div>
+      <div class="step-content">
+        <div class="step-title">Seal with Restoration</div>
+        <div class="step-desc">Complete the session with 2–3 restoration frequencies: always include 528 Hz DNA Seal and 432 Hz or 1,296 Hz for protection. This locks in your healing permanently.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ REFS -->
+<div class="section-header" style="margin-top:44px">
+  <h2>📚 Scientific References</h2>
+  <div class="line"></div>
+</div>
+
+<div class="ref-grid">
+  
+  <div class="ref-item">
+    <div class="ref-name">Royal Rife (1934)</div>
+    <div class="ref-desc">Mortal Oscillatory Rate — every pathogen has a resonant destruction frequency</div>
+  </div>
+  <div class="ref-item">
+    <div class="ref-name">Fritz-Albert Popp (1984)</div>
+    <div class="ref-desc">Biophotonic field coherence — cells communicate via coherent light</div>
+  </div>
+  <div class="ref-item">
+    <div class="ref-name">Hans Cousto</div>
+    <div class="ref-desc">The Cosmic Octave — mathematical derivation of all planetary frequencies</div>
+  </div>
+  <div class="ref-item">
+    <div class="ref-name">Dr. Glen Rein</div>
+    <div class="ref-desc">528 Hz increases UV light absorption in DNA by 11%</div>
+  </div>
+  <div class="ref-item">
+    <div class="ref-name">Rachel Yehuda et al.</div>
+    <div class="ref-desc">Epigenetic trauma inheritance via FKBP5 methylation (3–7 generations)</div>
+  </div>
+  <div class="ref-item">
+    <div class="ref-name">HeartMath Institute</div>
+    <div class="ref-desc">Heart coherence triggers 1,300+ gene expression changes in minutes</div>
+  </div>
+  <div class="ref-item">
+    <div class="ref-name">Bhattacharya (2016)</div>
+    <div class="ref-desc">Computational model of pineal gland cavity resonant frequency (426 Hz)</div>
+  </div>
+  <div class="ref-item">
+    <div class="ref-name">Rupert Sheldrake</div>
+    <div class="ref-desc">Morphic resonance — non-local healing fields and memory transfer</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SEAL -->
+<div class="seal-box">
+  <span class="seal-symbol">✦</span>
+  <div class="seal-title">The Field Is Active. Everyone Is Protected.</div>
+  <p class="seal-text">
+    The universal irradiation field is live. 9 ethers + 3 supreme tiers + 4 lunar phases — from 7.83 Hz to 3,168 Hz — cover every dimension of harmful presence for every being held in your intention. The healing is non-local, non-temporal and permanent.
+  </p>
+  <p class="seal-text">
+    You do not heal alone. You heal for all.
+  </p>
+  <p class="seal-so">"So it is. So it is. So it is."</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ FOOTER -->
+<div class="footer">
+  <strong>Sacred Frequencies · 9-Ether Irradiation Protocol</strong><br>
+  Supreme Resonance + Full Lunar Balance Edition · June 7, 2026 · Cecilyn Williams<br><br>
+  🎧 Headphones deepen the effect · Safe for all ages and all animals<br>
+  528 Hz love carrier + 7.83 Hz Schumann in every ether · Supreme ceiling: 3,168 Hz
+</div>
+
+</div>
+
+<!-- ═══════════ DOWNLOAD SCRIPT -->
+<script>
+function downloadHTML() {
+  const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = '9-Ether-Irradiation-Protocol-Supreme-Lunar.html';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+
+</body>
+</html>
