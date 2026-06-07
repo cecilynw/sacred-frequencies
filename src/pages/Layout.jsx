@@ -4,6 +4,7 @@ import { createPageUrl } from "@/utils";
 const NAV = [
   { label: "Home", page: "Home", icon: "✦" },
   { label: "Player", page: "Player", icon: "🎵" },
+  { label: "Angels", page: "AngelNumbers", icon: "⟡" },
   { label: "Rituals", page: "Rituals", icon: "🌙" },
   { label: "Journal", page: "Journal", icon: "📓" },
   { label: "Guide", page: "Guide", icon: "📚" },
@@ -19,9 +20,9 @@ export default function Layout({ children }) {
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-14">
           <Link to={createPageUrl("Home")} className="flex items-center gap-2">
             <span className="text-lg">✦</span>
-            <span className="font-bold text-white/90 text-sm tracking-wide">SACRED FREQUENCIES</span>
+            <span className="font-bold text-white/90 text-sm tracking-wide hidden sm:block">SACRED FREQUENCIES</span>
           </Link>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5">
             {NAV.map((n) => {
               const href = createPageUrl(n.page);
               const active = location.pathname === href || location.pathname.startsWith(href + "/");
@@ -29,12 +30,12 @@ export default function Layout({ children }) {
                 <Link
                   key={n.page}
                   to={href}
-                  className={`px-3 py-1.5 rounded-lg text-sm transition-all ${
+                  className={`px-2.5 py-1.5 rounded-lg text-sm transition-all ${
                     active ? "bg-white/15 text-white" : "text-white/50 hover:text-white/80 hover:bg-white/8"
                   }`}
                 >
-                  <span className="mr-1">{n.icon}</span>
-                  <span className="hidden sm:inline">{n.label}</span>
+                  <span>{n.icon}</span>
+                  <span className="hidden md:inline ml-1">{n.label}</span>
                 </Link>
               );
             })}

@@ -18,6 +18,15 @@ const CATEGORY_META = {
   Cleansing:  { emoji: "🔮", color: "from-teal-900/60 to-cyan-800/40",   border: "border-teal-400/40",   glow: "#2dd4bf" },
 };
 
+const ANGEL_PREVIEWS = [
+  { hz: 111,  symbol: "✦",  meaning: "New Beginnings",       glow: "#fff9c4" },
+  { hz: 333,  symbol: "△",  meaning: "Ascended Masters",     glow: "#fbbf24" },
+  { hz: 555,  symbol: "⚡", meaning: "Transformation",       glow: "#06b6d4" },
+  { hz: 777,  symbol: "✪",  meaning: "Divine Luck",          glow: "#8b5cf6" },
+  { hz: 888,  symbol: "∞",  meaning: "Infinite Abundance",   glow: "#10b981" },
+  { hz: 1111, symbol: "⟡",  meaning: "Manifestation Portal", glow: "#e2e8f0" },
+];
+
 export default function Home() {
   const [tracks, setTracks] = useState([]);
   const [featured, setFeatured] = useState([]);
@@ -46,11 +55,7 @@ export default function Home() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#030712]/20 via-[#030712]/40 to-[#030712]" />
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
-          >
+          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
             <div className="text-5xl mb-4">✦</div>
             <h1 className="text-5xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-amber-300 via-emerald-300 to-violet-300 bg-clip-text text-transparent leading-tight">
               Sacred Frequencies
@@ -59,12 +64,11 @@ export default function Home() {
               Sound & Vibration Healing for Body, Mind & Spirit
             </p>
             <p className="text-base text-white/50 mb-8 max-w-2xl mx-auto">
-              Harness the power of Solfeggio tones, Schumann resonance, and sacred Hz to cleanse
-              negative energy, activate DNA, and align with abundance, longevity, and love.
+              Harness Solfeggio tones, angel number frequencies, Schumann resonance & sacred Hz
+              to cleanse negative energy, activate DNA, and align with abundance, longevity & love.
             </p>
           </motion.div>
 
-          {/* STATS */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -79,42 +83,73 @@ export default function Home() {
             ))}
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="flex flex-wrap justify-center gap-4"
-          >
-            <Link
-              to={createPageUrl("Player")}
-              className="px-8 py-3 rounded-full bg-gradient-to-r from-amber-500 to-emerald-500 text-black font-bold text-lg hover:scale-105 transition-transform shadow-lg shadow-amber-500/30"
-            >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
+            className="flex flex-wrap justify-center gap-4">
+            <Link to={createPageUrl("Player")}
+              className="px-8 py-3 rounded-full bg-gradient-to-r from-amber-500 to-emerald-500 text-black font-bold text-lg hover:scale-105 transition-transform shadow-lg shadow-amber-500/30">
               🎵 Open Player
             </Link>
-            <Link
-              to={createPageUrl("Rituals")}
-              className="px-8 py-3 rounded-full border border-white/30 text-white font-semibold text-lg hover:bg-white/10 transition-colors"
-            >
-              🌙 Healing Rituals
+            <Link to={createPageUrl("AngelNumbers")}
+              className="px-8 py-3 rounded-full border border-white/30 text-white font-semibold text-lg hover:bg-white/10 transition-colors">
+              ⟡ Angel Numbers
+            </Link>
+            <Link to={createPageUrl("Rituals")}
+              className="px-8 py-3 rounded-full border border-white/20 text-white/70 font-semibold text-lg hover:bg-white/10 transition-colors">
+              🌙 Rituals
             </Link>
           </motion.div>
         </div>
       </div>
 
-      {/* FEATURED */}
       <div className="max-w-7xl mx-auto px-6 py-12">
+
+        {/* ANGEL NUMBERS TEASER */}
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
+          className="mb-16"
         >
+          <div className="text-center mb-6">
+            <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-amber-300 to-white to-violet-300 bg-clip-text text-transparent">
+              ⟡ Angel Number Frequencies
+            </h2>
+            <p className="text-white/45">20 divine numeric tones — from 111 Hz to 9999 Hz — each carrying a sacred message</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+            {ANGEL_PREVIEWS.map((a, i) => (
+              <motion.div
+                key={a.hz}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="rounded-2xl p-4 text-center border"
+                style={{ background: a.glow + "10", borderColor: a.glow + "35", boxShadow: `0 0 20px ${a.glow}15` }}
+              >
+                <div className="text-3xl mb-1" style={{ color: a.glow }}>{a.symbol}</div>
+                <div className="text-xl font-black" style={{ color: a.glow }}>{a.hz}</div>
+                <div className="text-xs text-white/40 mt-1">Hz</div>
+                <div className="text-xs text-white/55 mt-1 font-medium">{a.meaning}</div>
+              </motion.div>
+            ))}
+          </div>
+          <div className="text-center">
+            <Link to={createPageUrl("AngelNumbers")}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-violet-500/50 text-violet-300 hover:bg-violet-500/10 transition-colors font-semibold">
+              View All 20 Angel Frequencies →
+            </Link>
+          </div>
+        </motion.div>
+
+        {/* FEATURED */}
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
           <h2 className="text-3xl font-bold mb-2 text-center bg-gradient-to-r from-amber-300 to-emerald-300 bg-clip-text text-transparent">
             ⭐ Featured Frequencies
           </h2>
           <p className="text-white/50 text-center mb-8">The most powerful healing tones, hand-selected for maximum transformation</p>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-16">
-            {featured.slice(0, 6).map((track, i) => (
+            {featured.filter(t => !ANGEL_PREVIEWS.find(a => a.hz === Math.round(t.frequency_hz))).slice(0, 6).map((track, i) => (
               <FrequencyCard key={track.id} track={track} meta={CATEGORY_META[track.category]} index={i} />
             ))}
           </div>
@@ -129,11 +164,11 @@ export default function Home() {
         >
           {[
             { icon: "🧬", title: "Longevity & Health", desc: "Repair DNA, regenerate cells, and activate your body's innate healing intelligence through precisely calibrated frequencies." },
-            { icon: "💎", title: "Wealth & Abundance", desc: "Dissolve scarcity programming and align your energetic field with prosperity consciousness using 888 Hz and golden frequencies." },
-            { icon: "🌍", title: "Nature Alignment", desc: "Sync with the Earth's 7.83 Hz Schumann Resonance and 432 Hz universal tuning to restore natural harmony and peace." },
-            { icon: "❤️", title: "Love & Relationships", desc: "Open your heart chakra with 639 Hz and 528 Hz to transform relationships, deepen connections, and radiate love." },
-            { icon: "🔮", title: "Cleanse & Clear", desc: "Remove negative energy, ancestral trauma, and electromagnetic toxins from your field using 396, 417, and 741 Hz." },
-            { icon: "👁️", title: "Spirit & Awakening", desc: "Activate the pineal gland, open your third eye, and connect with your highest divine self through 852 and 963 Hz." },
+            { icon: "💎", title: "Wealth & Abundance", desc: "Dissolve scarcity programming with 888 Hz, 8888 Hz and golden frequencies that align you with infinite prosperity." },
+            { icon: "🌍", title: "Nature Alignment", desc: "Sync with Earth's 7.83 Hz Schumann Resonance and 432 Hz universal tuning to restore natural harmony and peace." },
+            { icon: "❤️", title: "Love & Relationships", desc: "Open your heart with 639 Hz and 528 Hz. Attract soul partnerships with 222 Hz divine balance." },
+            { icon: "🔮", title: "Cleanse & Clear", desc: "Remove negative energy, ancestral trauma, and karmic cycles using 396, 417, 741, 999, and 9999 Hz." },
+            { icon: "⟡", title: "Angel Alignment", desc: "Activate the power of every angel number as a living sonic frequency — manifest faster with 1111 Hz portal." },
           ].map((b, i) => (
             <motion.div
               key={i}
@@ -152,10 +187,8 @@ export default function Home() {
 
         {/* ALL FREQUENCIES */}
         <div>
-          <h2 className="text-3xl font-bold mb-2 text-center text-white/90">
-            🎶 Full Frequency Library
-          </h2>
-          <p className="text-white/50 text-center mb-6">20 sacred tones across 7 healing dimensions</p>
+          <h2 className="text-3xl font-bold mb-2 text-center text-white/90">🎶 Full Frequency Library</h2>
+          <p className="text-white/50 text-center mb-6">40 sacred tones across 7 healing dimensions</p>
           <CategoryFilter
             categories={["All", ...Object.keys(CATEGORY_META)]}
             active={activeCategory}
