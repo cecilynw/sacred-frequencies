@@ -42,12 +42,12 @@ p.sub{color:var(--muted);font-size:14px;line-height:1.75;max-width:600px;margin:
 .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .section-label{font-size:10.5px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);margin-bottom:10px;margin-top:24px}
 .hz-badge{display:inline-block;padding:3px 11px;border-radius:999px;font-size:12px;font-weight:800}
-.filter-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px;-webkit-overflow-scrolling:touch;overflow-x:auto}
-.filter-btn{padding:4px 11px;border-radius:999px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);transition:all 0.12s;-webkit-tap-highlight-color:transparent}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;-webkit-overflow-scrolling:touch}
+.filter-btn{padding:4px 11px;border-radius:999px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);transition:all 0.12s;-webkit-tap-highlight-color:transparent;min-height:34px;touch-action:manipulation}
 .filter-btn.active{border-color:#ffffff50;background:#ffffff18;color:#fff}
 /* Player */
 .player-box{background:linear-gradient(135deg,#0f0726,#0c1a2e,#0a1a0f);border:1px solid #7c3aed40;border-radius:18px;padding:22px 20px;margin-bottom:18px;text-align:center;overflow:visible;-webkit-overflow-scrolling:touch}
-.player-hz{font-size:clamp(36px,8vw,56px);font-weight:900;color:#fbbf24;background:linear-gradient(135deg,#fbbf24,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;-webkit-user-select:none}
+.player-hz{font-size:clamp(28px,7vw,52px);font-weight:900;color:#fbbf24;background:linear-gradient(135deg,#fbbf24,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;-webkit-user-select:none}
 .affirmation{font-style:italic;font-size:13px;color:#c4b5fd;padding:10px 14px;background:#7c3aed12;border-radius:10px;border:1px solid #7c3aed30;margin-top:10px;display:none}
 .progress-bar{height:3px;background:#1e293b;border-radius:2px;margin:10px 0;overflow:hidden}
 .progress-fill{height:100%;background:linear-gradient(90deg,#a78bfa,#f472b6);border-radius:2px;transition:width 1s linear;width:0%}
@@ -150,15 +150,17 @@ nav{z-index:200}
 <div class="page" id="page-player">
   <h1 class="grad-amber" style="margin-bottom:6px">🎵 Frequency Player</h1>
   <p class="sub" style="margin-bottom:18px;text-align:left">Use headphones for binaural effect · Set your intention · Tap a track then press Play</p>
-  <div id="iosHint" style="display:none;background:#a78bfa15;border:1px solid #a78bfa40;border-radius:10px;padding:8px 12px;margin-bottom:14px;font-size:11px;color:#a78bfa;text-align:center">📱 <strong>iPhone tip:</strong> Make sure silent switch is OFF · Tap a track, then tap ▶ Play</div>
-  <div class="player-box">
+  <div id="iosHint" style="background:#a78bfa15;border:1px solid #a78bfa40;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#c4b5fd;text-align:center;line-height:1.5">
+  📱 <strong>Tip:</strong> Silent switch OFF · Volume up · Tap a track, then tap ▶ Play
+</div>
+  <div class="player-box" style="padding:16px 14px;">
     <div id="pName" style="font-size:12px;color:var(--dim);margin-bottom:4px">Select a frequency below</div>
     <div class="player-hz" id="pHz">— Hz</div>
     <div id="pBenefit" style="font-size:12px;color:var(--muted);margin:6px 0"></div>
     <div class="progress-bar"><div class="progress-fill" id="pBar"></div></div>
     <div id="pTimer" style="font-size:11px;color:var(--dim);margin-bottom:14px">0:00</div>
     <div style="display:flex;align-items:center;gap:10px;margin:0 0 10px 0;padding:0 4px">
-      <span style="font-size:18px">🔊</span>
+      <span style="font-size:16px;line-height:1">🔊</span>
       <input type="range" id="volSlider" min="1" max="100" value="70" style="flex:1;accent-color:#a78bfa;height:6px;" oninput="setVol(this.value)">
       <span id="volLabel" style="font-size:12px;color:var(--muted);min-width:34px;text-align:right">70%</span>
     </div>
@@ -673,7 +675,7 @@ function selTrackFn(t){
   document.getElementById('pName').textContent=t.n;
   document.getElementById('pHz').textContent=t.hz+' Hz';
   document.getElementById('pBenefit').textContent=t.ben;
-  document.getElementById('pAff').style.display='none';
+  document.getElementById('pAff').style.display='block';
   document.getElementById('pAff').textContent='"'+t.aff+'"';
   document.querySelectorAll('.track-card').forEach(c=>c.classList.remove('sel'));
   const el=document.getElementById('tc-'+String(t.hz).replace('.','_'));
@@ -1106,11 +1108,7 @@ document.addEventListener('click', function onFirstClick(){
 }, {passive:true});
 
 // ═══ INIT ═══
-// Show iOS hint
-if(/iPad|iPhone|iPod/.test(navigator.userAgent)){
-  const h=document.getElementById('iosHint');
-  if(h)h.style.display='block';
-}
+// iOS hint always shown
 makeStars();
 rTracks();rAngels();rLoveStages();rVortex();rNature();rGrowth();rRituals();rGuide();rProtocol();
 rMoodBtns();jLoad();rJournal();
