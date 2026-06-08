@@ -152,6 +152,11 @@ nav{z-index:200}
     <div id="pBenefit" style="font-size:12px;color:var(--muted);margin:6px 0"></div>
     <div class="progress-bar"><div class="progress-fill" id="pBar"></div></div>
     <div id="pTimer" style="font-size:11px;color:var(--dim);margin-bottom:14px">0:00</div>
+    <div style="display:flex;align-items:center;gap:10px;margin:0 0 10px 0;padding:0 4px">
+      <span style="font-size:18px">🔊</span>
+      <input type="range" id="volSlider" min="1" max="100" value="70" style="flex:1;accent-color:#a78bfa;height:6px;" oninput="setVol(this.value)">
+      <span id="volLabel" style="font-size:12px;color:var(--muted);min-width:34px;text-align:right">70%</span>
+    </div>
     <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:10px">
       <button class="btn btn-primary" id="playBtn" onclick="playerToggle()">▶ Play</button>
       <button class="nature-btn" id="natBtn" onclick="playerNature()">🌿 Add Nature Ambience</button>
@@ -583,11 +588,15 @@ function tone(f,vol=0.2,wave=waveform){
   o.type=wave;
   // For very low frequencies use audible carrier with binaural
   if(f<20){
+    // Binaural: L=100Hz, R=100+fHz
     o.frequency.value=100;
     const o2=c.createOscillator();const g2=c.createGain();
-    o2.type='sine';o2.frequency.value=100+f;g2.gain.value=vol;
-    o2.connect(g2);g2.connect(comp);o2.start();
-    g.gain.value=vol;o.start();
+    const merger=c.createChannelMerger(2);
+    o2.type='sine';o2.frequency.value=100+f;
+    g2.gain.value=Math.min(vol,0.7);g.gain.value=Math.min(vol,0.7);
+    o.connect(g);o2.connect(g2);
+    g.connect(merger,0,0);g2.connect(merger,0,1);
+    merger.connect(comp);o2.start();o.start();
     return{osc:o,gain:g,extra:[{osc:o2,gain:g2}]};
   }
   o.frequency.value=Math.min(Math.max(f,20),4000);
@@ -655,8 +664,8 @@ function selTrackFn(t){
 function startPlay(){
   fade(activeNodes);activeNodes=[];
   const f=selTrack.hz;const nodes=[];
-  nodes.push(tone(f,0.30));
-  if(f>=20&&f<3000)nodes.push(tone(Math.min(f*2,4000),0.06,'sine'));
+  nodes.push(tone(f,masterVol*0.5));
+  if(f>=20&&f<3000)nodes.push(tone(Math.min(f*2,4000),masterVol*0.08,'sine'));
   activeNodes=nodes;startTime=Date.now();isPlaying=true;
   document.getElementById('playBtn').textContent='■ Stop';
   document.getElementById('pBar').style.width='0%';
@@ -668,6 +677,15 @@ function stopPlay(){
   document.getElementById('playBtn').textContent='▶ Play';
   document.getElementById('pBar').style.width='0%';
   document.getElementById('pTimer').textContent='0:00';
+}
+var masterVol=0.70;
+function setVol(v){
+  masterVol=parseInt(v)/100;
+  document.getElementById('volLabel').textContent=v+'%';
+  // Update any active gain nodes
+  activeNodes.forEach(n=>{
+    try{if(n.gain)n.gain.gain.setTargetAtTime(masterVol*0.5,ctx.currentTime,0.1);}catch{}
+  });
 }
 function playerToggle(){if(!selTrack){alert('Tap a frequency first');return;}unlockAudio();isPlaying?stopPlay():startPlay();}
 function timerTick(){
