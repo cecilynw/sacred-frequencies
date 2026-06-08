@@ -616,63 +616,52 @@ function unlockAudio(){
 //   < 20 Hz  → binaural beat (carrier 110 Hz, stereo panned)
 //   >= 20 Hz → standard oscillator + subtle 2nd harmonic
 function tone(f, vol, wave){
-  vol  = (vol  !== undefined) ? vol  : 0.2;
-  wave = (wave !== undefined) ? wave : (typeof waveform!=='undefined' ? waveform : 'sine');
+  vol  = (typeof vol  !== 'undefined') ? vol  : 0.2;
+  wave = (typeof wave !== 'undefined') ? wave : (typeof waveform !== 'undefined' ? waveform : 'sine');
+
   const c = getCtx();
 
-  // Shared compressor → destination
+  // Build graph: osc(s) → mg → comp → destination
+  // NOTE: connect comp LAST so graph is complete before any node starts
   const comp = c.createDynamicsCompressor();
-  comp.threshold.value = -16;
-  comp.knee.value      =   8;
+  comp.threshold.value = -14;
+  comp.knee.value      =  10;
   comp.ratio.value     =   3;
   comp.attack.value    = 0.005;
   comp.release.value   = 0.3;
-  comp.connect(c.destination);
 
-  // Master fade-in gain
   const mg = c.createGain();
-  mg.gain.setValueAtTime(0.0001, c.currentTime);
-  mg.gain.exponentialRampToValueAtTime(Math.min(vol, 0.88), c.currentTime + 0.6);
+  mg.gain.value = 0;          // start silent — set directly, no scheduling yet
   mg.connect(comp);
+  comp.connect(c.destination);  // connect to dest after full chain is built
 
   const oscs = [];
 
   if(f < 20){
-    /* ── BINAURAL BEAT ──────────────────────────────────
-       Headphones required for full effect.
-       Left ear:  carrier Hz
-       Right ear: carrier + f Hz
-       Brain entrains to the difference (= f Hz).
-       Carrier 110 Hz sits in comfortable vocal range.
-    ─────────────────────────────────────────────────── */
+    /* BINAURAL BEAT — requires headphones
+       Left  ear: 110 Hz
+       Right ear: 110 + f Hz  → brain hears the difference = f Hz */
     const carrier = 110;
     const merger  = c.createChannelMerger(2);
     merger.connect(mg);
 
-    // Left channel oscillator
     const oL = c.createOscillator();
     const gL = c.createGain();
-    oL.type = 'sine';
-    oL.frequency.value = carrier;
-    gL.gain.value = 1.0;
-    oL.connect(gL);
-    gL.connect(merger, 0, 0);   // output 0 → left input of merger
-    oL.start();
-    oscs.push(oL);
+    oL.type = 'sine'; oL.frequency.value = carrier;
+    gL.gain.value = 1;
+    oL.connect(gL); gL.connect(merger, 0, 0);
 
-    // Right channel oscillator
     const oR = c.createOscillator();
     const gR = c.createGain();
-    oR.type = 'sine';
-    oR.frequency.value = carrier + f;
-    gR.gain.value = 1.0;
-    oR.connect(gR);
-    gR.connect(merger, 0, 1);   // output 0 → right input of merger
-    oR.start();
-    oscs.push(oR);
+    oR.type = 'sine'; oR.frequency.value = carrier + f;
+    gR.gain.value = 1;
+    oR.connect(gR); gR.connect(merger, 0, 1);
+
+    oL.start(); oR.start();
+    oscs.push(oL, oR);
 
   } else {
-    /* ── STANDARD OSCILLATOR ────────────────────────── */
+    /* STANDARD OSCILLATOR */
     const osc = c.createOscillator();
     osc.type = wave;
     osc.frequency.value = Math.min(Math.max(f, 20), 4000);
@@ -680,25 +669,30 @@ function tone(f, vol, wave){
     osc.start();
     oscs.push(osc);
 
-    // 2nd harmonic for warmth (low gain)
+    // Soft 2nd harmonic for warmth
     if(f < 2000){
       const o2 = c.createOscillator();
       const g2 = c.createGain();
       o2.type = 'sine';
       o2.frequency.value = Math.min(f * 2, 4000);
       g2.gain.value = 0.07;
-      o2.connect(g2);
-      g2.connect(mg);
+      o2.connect(g2); g2.connect(mg);
       o2.start();
       oscs.push(o2);
     }
   }
+
+  // Ramp up AFTER oscillators started — avoids iOS scheduling drop
+  const targetVol = Math.min(vol, 0.88);
+  mg.gain.setValueAtTime(0.0001, c.currentTime);
+  mg.gain.linearRampToValueAtTime(targetVol, c.currentTime + 0.5);
 
   return {
     masterGain: mg,
     _stop: () => { oscs.forEach(o => { try{ o.stop(); }catch(e){} }); }
   };
 }
+
 
 // ── nature(): layered ambient soundscape ─────────────
 //   Ocean noise + Amazon forest + 528 Hz love tone
@@ -817,13 +811,22 @@ function selTrackFn(t){
 function startPlay(){
   fade(activeNodes); activeNodes = [];
   if(!selTrack) return;
-  activeNodes.push(tone(selTrack.hz, masterVol * 0.65));
-  startTime = Date.now(); isPlaying = true;
-  const btn = document.getElementById('playBtn');
-  if(btn) btn.textContent = '■ Stop';
-  const bar = document.getElementById('pBar'); if(bar) bar.style.width='0%';
-  clearInterval(timerIv); timerIv = setInterval(timerTick, 1000);
-  const affEl = document.getElementById('pAff'); if(affEl) affEl.style.display='block';
+  const c = getCtx();
+  // Ensure context is running before building audio graph
+  const doPlay = () => {
+    activeNodes.push(tone(selTrack.hz, masterVol * 0.65));
+    startTime = Date.now(); isPlaying = true;
+    const btn = document.getElementById('playBtn');
+    if(btn) btn.textContent = '■ Stop';
+    const bar = document.getElementById('pBar'); if(bar) bar.style.width='0%';
+    clearInterval(timerIv); timerIv = setInterval(timerTick, 1000);
+    const affEl = document.getElementById('pAff'); if(affEl) affEl.style.display='block';
+  };
+  if(c.state === 'running'){
+    doPlay();
+  } else {
+    c.resume().then(doPlay).catch(doPlay);
+  }
 }
 
 // ── stopPlay() ────────────────────────────────────────
