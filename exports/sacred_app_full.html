@@ -596,7 +596,7 @@ function getCtx(){
   return ctx;
 }
 
-// ── iOS unlock ────────────────────────────────────────
+// ── iOS unlock: silent buffer forces AudioContext open ─
 function unlockAudio(){
   try{
     const c = getCtx();
@@ -609,63 +609,70 @@ function unlockAudio(){
   }catch(e){ console.warn('unlockAudio:', e); }
 }
 
-// ── Master compressor (shared output) ────────────────
-function makeComp(c){
+// ── All nodes share this shape: { masterGain, _stop } ─
+// fade() and stopAll() consume this shape consistently.
+
+// ── tone(): plays any frequency correctly ─────────────
+//   < 20 Hz  → binaural beat (carrier 110 Hz, stereo panned)
+//   >= 20 Hz → standard oscillator + subtle 2nd harmonic
+function tone(f, vol, wave){
+  vol  = (vol  !== undefined) ? vol  : 0.2;
+  wave = (wave !== undefined) ? wave : (typeof waveform!=='undefined' ? waveform : 'sine');
+  const c = getCtx();
+
+  // Shared compressor → destination
   const comp = c.createDynamicsCompressor();
-  comp.threshold.value = -18;
-  comp.knee.value      =   6;
-  comp.ratio.value     =   4;
-  comp.attack.value    = 0.003;
-  comp.release.value   = 0.25;
+  comp.threshold.value = -16;
+  comp.knee.value      =   8;
+  comp.ratio.value     =   3;
+  comp.attack.value    = 0.005;
+  comp.release.value   = 0.3;
   comp.connect(c.destination);
-  return comp;
-}
 
-// ── Node factory: returns { masterGain, _stop } ──────
-function makeNode(c, vol, rampTime){
-  const comp = makeComp(c);
-  const mg   = c.createGain();
-  mg.gain.setValueAtTime(0.001, c.currentTime);
-  mg.gain.exponentialRampToValueAtTime(
-    Math.min(vol, 0.9), c.currentTime + (rampTime||0.6)
-  );
+  // Master fade-in gain
+  const mg = c.createGain();
+  mg.gain.setValueAtTime(0.0001, c.currentTime);
+  mg.gain.exponentialRampToValueAtTime(Math.min(vol, 0.88), c.currentTime + 0.6);
   mg.connect(comp);
-  return { masterGain: mg, comp, _oscs: [], _stop: null };
-}
 
-// ── tone(): single oscillator or binaural for sub-20Hz ─
-function tone(f, vol=0.2, wave=waveform){
-  const c   = getCtx();
-  const node = makeNode(c, vol, 0.5);
-  const mg   = node.masterGain;
   const oscs = [];
 
   if(f < 20){
-    // Binaural beat: left=110 Hz, right=110+f Hz
+    /* ── BINAURAL BEAT ──────────────────────────────────
+       Headphones required for full effect.
+       Left ear:  carrier Hz
+       Right ear: carrier + f Hz
+       Brain entrains to the difference (= f Hz).
+       Carrier 110 Hz sits in comfortable vocal range.
+    ─────────────────────────────────────────────────── */
     const carrier = 110;
-    const splitter = c.createChannelSplitter ? null : null;
-    const merger   = c.createChannelMerger(2);
+    const merger  = c.createChannelMerger(2);
     merger.connect(mg);
 
-    const mkSide = (freq) => {
-      const o = c.createOscillator();
-      const g = c.createGain();
-      o.type = 'sine';
-      o.frequency.value = freq;
-      g.gain.value = 0.8;
-      o.connect(g);
-      return { o, g };
-    };
+    // Left channel oscillator
+    const oL = c.createOscillator();
+    const gL = c.createGain();
+    oL.type = 'sine';
+    oL.frequency.value = carrier;
+    gL.gain.value = 1.0;
+    oL.connect(gL);
+    gL.connect(merger, 0, 0);   // output 0 → left input of merger
+    oL.start();
+    oscs.push(oL);
 
-    const L = mkSide(carrier);
-    const R = mkSide(carrier + f);
-    L.g.connect(merger, 0, 0);
-    R.g.connect(merger, 0, 1);
-    L.o.start(); R.o.start();
-    oscs.push(L.o, R.o);
+    // Right channel oscillator
+    const oR = c.createOscillator();
+    const gR = c.createGain();
+    oR.type = 'sine';
+    oR.frequency.value = carrier + f;
+    gR.gain.value = 1.0;
+    oR.connect(gR);
+    gR.connect(merger, 0, 1);   // output 0 → right input of merger
+    oR.start();
+    oscs.push(oR);
 
   } else {
-    // Standard oscillator
+    /* ── STANDARD OSCILLATOR ────────────────────────── */
     const osc = c.createOscillator();
     osc.type = wave;
     osc.frequency.value = Math.min(Math.max(f, 20), 4000);
@@ -673,13 +680,13 @@ function tone(f, vol=0.2, wave=waveform){
     osc.start();
     oscs.push(osc);
 
-    // Gentle overtone (adds warmth)
+    // 2nd harmonic for warmth (low gain)
     if(f < 2000){
       const o2 = c.createOscillator();
       const g2 = c.createGain();
       o2.type = 'sine';
       o2.frequency.value = Math.min(f * 2, 4000);
-      g2.gain.value = 0.08;
+      g2.gain.value = 0.07;
       o2.connect(g2);
       g2.connect(mg);
       o2.start();
@@ -687,86 +694,111 @@ function tone(f, vol=0.2, wave=waveform){
     }
   }
 
-  node._stop = () => { oscs.forEach(o => { try{ o.stop(); }catch(e){} }); };
-  return node;
+  return {
+    masterGain: mg,
+    _stop: () => { oscs.forEach(o => { try{ o.stop(); }catch(e){} }); }
+  };
 }
 
-// ── nature(): ocean + forest noise + Schumann ─────────
-function nature(vol=0.10){
-  const c  = getCtx();
-  const node = makeNode(c, vol, 1.2);
-  const mg   = node.masterGain;
-  const oscs = [];
+// ── nature(): layered ambient soundscape ─────────────
+//   Ocean noise + Amazon forest + 528 Hz love tone
+function nature(vol){
+  vol = (vol !== undefined) ? vol : 0.10;
+  const c    = getCtx();
+  const comp = c.createDynamicsCompressor();
+  comp.threshold.value = -20; comp.ratio.value = 3;
+  comp.connect(c.destination);
+  const mg = c.createGain();
+  mg.gain.setValueAtTime(0.0001, c.currentTime);
+  mg.gain.exponentialRampToValueAtTime(Math.min(vol, 0.9), c.currentTime + 1.5);
+  mg.connect(comp);
+  const srcs = [];
 
-  // Ocean: low-pass filtered noise
+  // Ocean: white noise shaped like a wave swell
   const wBuf = c.createBuffer(1, c.sampleRate * 4, c.sampleRate);
   const wData = wBuf.getChannelData(0);
-  for(let i=0; i<wData.length; i++) wData[i] = (Math.random()*2-1) * Math.sin(i/wData.length*Math.PI*2);
+  for(let i=0; i<wData.length; i++)
+    wData[i] = (Math.random()*2-1) * (0.6 + 0.4*Math.sin(i/wData.length*Math.PI*2));
   const wSrc = c.createBufferSource(); wSrc.buffer = wBuf; wSrc.loop = true;
-  const wFlt = c.createBiquadFilter(); wFlt.type = 'lowpass'; wFlt.frequency.value = 350;
-  wSrc.connect(wFlt); wFlt.connect(mg); wSrc.start();
-  oscs.push(wSrc);
+  const wFlt = c.createBiquadFilter(); wFlt.type='lowpass'; wFlt.frequency.value=380;
+  const wGn  = c.createGain(); wGn.gain.value = 0.7;
+  wSrc.connect(wFlt); wFlt.connect(wGn); wGn.connect(mg); wSrc.start();
+  srcs.push(wSrc);
 
-  // Forest: pink-ish bandpass noise
+  // Amazon forest: pink-ish bandpass noise
   const fBuf = c.createBuffer(1, c.sampleRate * 3, c.sampleRate);
   const fData = fBuf.getChannelData(0);
   let last=0;
-  for(let i=0; i<fData.length; i++){ const w=Math.random()*2-1; fData[i]=(last+0.02*w)/1.02; last=fData[i]; }
-  const fSrc = c.createBufferSource(); fSrc.buffer = fBuf; fSrc.loop = true;
-  const fFlt = c.createBiquadFilter(); fFlt.type='bandpass'; fFlt.frequency.value=800; fFlt.Q.value=0.3;
-  const fGn  = c.createGain(); fGn.gain.value = 0.45;
+  for(let i=0; i<fData.length; i++){
+    const w = Math.random()*2-1;
+    fData[i] = (last + 0.02*w) / 1.02;
+    last = fData[i];
+  }
+  const fSrc = c.createBufferSource(); fSrc.buffer=fBuf; fSrc.loop=true;
+  const fFlt = c.createBiquadFilter(); fFlt.type='bandpass'; fFlt.frequency.value=900; fFlt.Q.value=0.4;
+  const fGn  = c.createGain(); fGn.gain.value = 0.4;
   fSrc.connect(fFlt); fFlt.connect(fGn); fGn.connect(mg); fSrc.start();
-  oscs.push(fSrc);
+  srcs.push(fSrc);
 
-  // Schumann 7.83 Hz carrier on 100 Hz tone
+  // 528 Hz love/DNA repair tone (very soft under ambience)
   const sO = c.createOscillator(); const sG = c.createGain();
-  sO.type='sine'; sO.frequency.value=100; sG.gain.value=0.06;
+  sO.type='sine'; sO.frequency.value=528; sG.gain.value=0.04;
   sO.connect(sG); sG.connect(mg); sO.start();
-  oscs.push(sO);
+  srcs.push(sO);
 
-  node._stop = () => { oscs.forEach(o => { try{ o.stop(); }catch(e){} }); };
-  return node;
+  return {
+    masterGain: mg,
+    _stop: () => { srcs.forEach(s => { try{ s.stop(); }catch(e){} }); }
+  };
 }
 
-// ── binaural(): standalone binaural beat node ─────────
+// ── binaural(): named binaural — used by Love/Vortex ──
 function binaural(base, beat){
   const c    = getCtx();
-  const node = makeNode(c, 0.15, 2.0);
-  const mg   = node.masterGain;
+  const comp = c.createDynamicsCompressor();
+  comp.threshold.value=-18; comp.ratio.value=4;
+  comp.connect(c.destination);
+  const mg = c.createGain();
+  mg.gain.setValueAtTime(0.0001, c.currentTime);
+  mg.gain.exponentialRampToValueAtTime(0.15, c.currentTime + 2.0);
+  mg.connect(comp);
   const oscs = [];
-  const panner = c.createStereoPanner ? c.createStereoPanner() : null;
 
-  [[-1, base],[1, base+beat]].forEach(([pan, f]) => {
-    const o = c.createOscillator();
-    const g = c.createGain();
-    const p = c.createStereoPanner ? c.createStereoPanner() : null;
-    o.type='sine'; o.frequency.value=Math.min(f,2000);
-    g.gain.value=1;
-    o.connect(g);
-    if(p){ p.pan.value=pan; g.connect(p); p.connect(mg); } else { g.connect(mg); }
-    o.start(); oscs.push(o);
-  });
+  const merger = c.createChannelMerger(2);
+  merger.connect(mg);
 
-  node._stop = () => { oscs.forEach(o => { try{ o.stop(); }catch(e){} }); };
-  return node;
+  // Left
+  const oL=c.createOscillator(), gL=c.createGain();
+  oL.type='sine'; oL.frequency.value=Math.min(base,2000); gL.gain.value=1;
+  oL.connect(gL); gL.connect(merger,0,0); oL.start(); oscs.push(oL);
+
+  // Right
+  const oR=c.createOscillator(), gR=c.createGain();
+  oR.type='sine'; oR.frequency.value=Math.min(base+beat,2000); gR.gain.value=1;
+  oR.connect(gR); gR.connect(merger,0,1); oR.start(); oscs.push(oR);
+
+  return {
+    masterGain: mg,
+    _stop: () => { oscs.forEach(o => { try{ o.stop(); }catch(e){} }); }
+  };
 }
 
-// ── fade(): graceful fade-out then stop ───────────────
+// ── fade(): graceful 0.8 s fade then hard stop ────────
 function fade(nodes){
-  if(!ctx) return;
+  if(!ctx || !nodes) return;
   nodes.forEach(n => {
     if(!n || !n.masterGain) return;
     try{
       const g = n.masterGain.gain;
       g.cancelScheduledValues(ctx.currentTime);
-      g.setValueAtTime(g.value || 0.001, ctx.currentTime);
-      g.linearRampToValueAtTime(0, ctx.currentTime + 0.8);
+      g.setValueAtTime(Math.max(g.value, 0.0001), ctx.currentTime);
+      g.linearRampToValueAtTime(0.0001, ctx.currentTime + 0.8);
     }catch(e){}
-    setTimeout(() => { try{ n._stop && n._stop(); }catch(e){} }, 900);
+    setTimeout(() => { try{ n._stop && n._stop(); }catch(e){} }, 950);
   });
 }
 
-// ── Track selection ───────────────────────────────────
+// ── selTrackFn(): select a track and update display ───
 function selTrackFn(t){
   selTrack = t;
   const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
@@ -774,46 +806,44 @@ function selTrackFn(t){
   set('pHz',      t.hz + ' Hz');
   set('pBenefit', t.ben);
   const affEl = document.getElementById('pAff');
-  if(affEl){ affEl.textContent = '"'+(t.aff||'')+'"'; affEl.style.display='block'; }
-  // Highlight card
+  if(affEl){ affEl.textContent='"'+(t.aff||'')+'"'; affEl.style.display='block'; }
   document.querySelectorAll('.track-card').forEach(c=>c.classList.remove('sel'));
   const card = document.getElementById('tc-'+String(t.hz).replace('.','_'));
   if(card){ card.classList.add('sel'); card.scrollIntoView({block:'nearest',behavior:'smooth'}); }
-  // Restart if already playing
   if(isPlaying) startPlay();
 }
 
-// ── Play / Stop ───────────────────────────────────────
+// ── startPlay() ───────────────────────────────────────
 function startPlay(){
   fade(activeNodes); activeNodes = [];
-  const f = selTrack.hz;
-  activeNodes.push(tone(f, masterVol * 0.65));
-  startTime = Date.now();
-  isPlaying = true;
-  const playBtn = document.getElementById('playBtn');
-  if(playBtn) playBtn.textContent = '■ Stop';
-  document.getElementById('pBar').style.width = '0%';
-  clearInterval(timerIv);
-  timerIv = setInterval(timerTick, 1000);
-  const affEl = document.getElementById('pAff');
-  if(affEl) affEl.style.display = 'block';
+  if(!selTrack) return;
+  activeNodes.push(tone(selTrack.hz, masterVol * 0.65));
+  startTime = Date.now(); isPlaying = true;
+  const btn = document.getElementById('playBtn');
+  if(btn) btn.textContent = '■ Stop';
+  const bar = document.getElementById('pBar'); if(bar) bar.style.width='0%';
+  clearInterval(timerIv); timerIv = setInterval(timerTick, 1000);
+  const affEl = document.getElementById('pAff'); if(affEl) affEl.style.display='block';
 }
 
+// ── stopPlay() ────────────────────────────────────────
 function stopPlay(){
   fade(activeNodes); activeNodes = [];
   clearInterval(timerIv); isPlaying = false;
-  const playBtn = document.getElementById('playBtn');
-  if(playBtn) playBtn.textContent = '▶ Play';
-  document.getElementById('pBar').style.width = '0%';
-  document.getElementById('pTimer').textContent = '0:00';
+  const btn = document.getElementById('playBtn'); if(btn) btn.textContent='▶ Play';
+  const bar = document.getElementById('pBar');   if(bar) bar.style.width='0%';
+  const tmr = document.getElementById('pTimer'); if(tmr) tmr.textContent='0:00';
 }
 
+// ── playerToggle(): the Play button handler ───────────
 function playerToggle(){
   if(!selTrack){
     alert('Tap a frequency track first, then press Play.');
     return;
   }
+  // 1. Unlock audio context (iOS requires gesture-triggered resume)
   unlockAudio();
+  // 2. Resume suspended context, then play/stop
   getCtx().resume().then(() => {
     isPlaying ? stopPlay() : startPlay();
   }).catch(() => {
@@ -825,33 +855,31 @@ function playerToggle(){
 var masterVol = 0.70;
 function setVol(v){
   masterVol = parseInt(v) / 100;
-  document.getElementById('volLabel').textContent = v + '%';
+  const lbl = document.getElementById('volLabel'); if(lbl) lbl.textContent=v+'%';
   activeNodes.forEach(n => {
-    try{
-      n.masterGain.gain.setTargetAtTime(masterVol * 0.65, ctx.currentTime, 0.1);
-    }catch(e){}
+    try{ n.masterGain.gain.setTargetAtTime(masterVol*0.65, ctx.currentTime, 0.1); }catch(e){}
   });
 }
 
 // ── Timer ─────────────────────────────────────────────
 function timerTick(){
-  const s = Math.floor((Date.now()-startTime)/1000);
-  const el = document.getElementById('pTimer');
-  if(el) el.textContent = Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60;
+  const s   = Math.floor((Date.now()-startTime)/1000);
+  const tmr = document.getElementById('pTimer');
+  if(tmr) tmr.textContent = Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60;
   const bar = document.getElementById('pBar');
   if(bar) bar.style.width = Math.min(s/900*100,100)+'%';
 }
 
-// ── Nature toggle (Player page) ───────────────────────
+// ── Nature ambience toggle (Player page) ──────────────
 function playerNature(){
   if(natOn){
     fade(natNodes); natNodes=[]; natOn=false;
     const btn=document.getElementById('natBtn');
-    if(btn){btn.className='nature-btn';btn.textContent='🌿 Add Nature Ambience';}
+    if(btn){btn.className='nature-btn'; btn.textContent='🌿 Add Nature Ambience';}
   } else {
-    const l=nature(0.12); natNodes=[l]; natOn=true;
+    natNodes=[nature(0.12)]; natOn=true;
     const btn=document.getElementById('natBtn');
-    if(btn){btn.className='nature-btn on';btn.textContent='🌿 Amazon + Ocean: ON';}
+    if(btn){btn.className='nature-btn on'; btn.textContent='🌿 Amazon + Ocean: ON';}
   }
 }
 
