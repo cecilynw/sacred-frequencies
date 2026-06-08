@@ -376,12 +376,12 @@ const TRACKS=[
   {n:"1234 Hz — Angel Number · Divine Progression",hz:1234,cat:"Mind",ben:"Aligns life steps with divine order and natural progression",ch:"Solar Plexus & Crown",aff:"I trust the divine steps of my journey. Each day I progress perfectly."},
   {n:"2222 Hz — Angel Number · Master Builder",hz:2222,cat:"Wealth",ben:"Activates the master builder frequency for creating lasting legacy",ch:"Root & Crown",aff:"I am a master builder. What I create is magnificent, lasting, and divinely inspired."},
   {n:"3333 Hz — Angel Number · Trinity Activation",hz:3333,cat:"Spirit",ben:"Activates the holy trinity of body, mind, and spirit simultaneously",ch:"All Chakras Unified",aff:"Body, mind and spirit are perfectly unified. I am whole, holy, and complete."},
-  {n:"4444 Hz — Angel Number · Celestial Fortress",hz:4000,cat:"Body",ben:"Maximum divine protection and physical fortress energy",ch:"Root, Sacral, Solar Plexus, Heart",aff:"I am fully protected on all levels. Nothing of low vibration may enter my field."},
-  {n:"5555 Hz — Angel Number · Mass Transformation",hz:4000,cat:"Cleansing",ben:"Quantum leap frequency — instant massive life transformation",ch:"All Chakras",aff:"I quantum leap into my highest timeline now. My transformation is total and immediate."},
-  {n:"6666 Hz — Angel Number · Unconditional Love Field",hz:4000,cat:"Love",ben:"Generates a field of pure unconditional love and compassion",ch:"Heart & Higher Heart",aff:"I radiate unconditional love. My heart is a sun that warms every soul I meet."},
-  {n:"7777 Hz — Angel Number · Supreme Sacred Luck",hz:4000,cat:"Wealth",ben:"Maximum divine luck and spiritual fortune activation",ch:"All Seven Major Chakras",aff:"I am divinely lucky. Miracles, synchronicities, and blessings surround me always."},
-  {n:"8888 Hz — Angel Number · Infinite Financial Mastery",hz:4000,cat:"Wealth",ben:"Opens all financial channels simultaneously — maximum abundance",ch:"All Chakras — Financial Axis",aff:"All doors of abundance are open to me. I am an infinite magnet for wealth and prosperity."},
-  {n:"9999 Hz — Angel Number · Divine Completion & Ascension",hz:4000,cat:"Spirit",ben:"Complete spiritual ascension and soul graduation frequency",ch:"Soul Star & Beyond",aff:"I have completed my karmic journey. I ascend into pure light and divine service."},
+  {n:"4444 Hz — Angel Number · Celestial Fortress",hz:4000,lbl:"4444 Hz",cat:"Body",ben:"Maximum divine protection and physical fortress energy",ch:"Root, Sacral, Solar Plexus, Heart",aff:"I am fully protected on all levels. Nothing of low vibration may enter my field."},
+  {n:"5555 Hz — Angel Number · Mass Transformation",hz:4000,lbl:"5555 Hz",cat:"Cleansing",ben:"Quantum leap frequency — instant massive life transformation",ch:"All Chakras",aff:"I quantum leap into my highest timeline now. My transformation is total and immediate."},
+  {n:"6666 Hz — Angel Number · Unconditional Love Field",hz:4000,lbl:"6666 Hz",cat:"Love",ben:"Generates a field of pure unconditional love and compassion",ch:"Heart & Higher Heart",aff:"I radiate unconditional love. My heart is a sun that warms every soul I meet."},
+  {n:"7777 Hz — Angel Number · Supreme Sacred Luck",hz:4000,lbl:"7777 Hz",cat:"Wealth",ben:"Maximum divine luck and spiritual fortune activation",ch:"All Seven Major Chakras",aff:"I am divinely lucky. Miracles, synchronicities, and blessings surround me always."},
+  {n:"8888 Hz — Angel Number · Infinite Financial Mastery",hz:4000,lbl:"8888 Hz",cat:"Wealth",ben:"Opens all financial channels simultaneously — maximum abundance",ch:"All Chakras — Financial Axis",aff:"All doors of abundance are open to me. I am an infinite magnet for wealth and prosperity."},
+  {n:"9999 Hz — Angel Number · Divine Completion & Ascension",hz:4000,lbl:"9999 Hz",cat:"Spirit",ben:"Complete spiritual ascension and soul graduation frequency",ch:"Soul Star & Beyond",aff:"I have completed my karmic journey. I ascend into pure light and divine service."},
   {n:"174 Hz — Pain Relief & Security",hz:174,cat:"Body",ben:"Natural anesthetic — reduces physical and energetic pain",ch:"Earth Star",aff:"I am safe. My body heals naturally and completely."},
   {n:"285 Hz — Tissue Regeneration",hz:285,cat:"Body",ben:"Heals and regenerates tissues and organs",ch:"Root",aff:"Every cell in my body regenerates and thrives."},
   {n:"396 Hz — Liberation from Fear & Guilt",hz:396,cat:"Cleansing",ben:"Releases fear, guilt, and grief — grounds and stabilizes",ch:"Root",aff:"I release all guilt and fear. I am free to live fully."},
@@ -1097,7 +1097,7 @@ function rTracks(cat='All'){
     const globalIdx=TRACKS.indexOf(t);
     return '<div class="track-card" id="'+id+'" data-tidx="'+globalIdx+'" onclick="selByIdx(this)">'+
       '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">'+
-      '<div style="flex:1;min-width:0"><div class="hz-badge" style="background:'+c+'20;color:'+c+';margin-bottom:5px">'+t.hz+' Hz</div>'+
+      '<div style="flex:1;min-width:0"><div class="hz-badge" style="background:'+c+'20;color:'+c+';margin-bottom:5px">'+(t.lbl||t.hz+' Hz')+'</div>'+
       '<div style="font-weight:700;font-size:13px">'+t.n+'</div>'+
       '<div style="font-size:11px;color:var(--dim);margin-top:2px">'+t.ben+'</div>'+
       '<div style="font-size:10px;color:var(--dim);margin-top:1px">Chakra: '+t.ch||'—'+'</div></div>'+
@@ -1255,7 +1255,7 @@ function rGuide(){
   document.getElementById('freqRef').innerHTML=FREQ_REF.map(f=>
     '<div class="card" style="margin-bottom:6px;padding:10px 14px">'+
     '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'+
-    '<div class="hz-badge" style="background:'+CC[f.cat]+'20;color:'+CC[f.cat]+'">'+f.hz+' Hz</div>'+
+    '<div class="hz-badge" style="background:'+CC[f.cat]+'20;color:'+CC[f.cat]+'">'+(f.lbl||f.hz+' Hz')+'</div>'+
     '<div style="flex:1;min-width:0"><span style="font-weight:700;font-size:13px">'+f.name+'</span><span style="font-size:11px;color:var(--dim);margin-left:8px">'+f.info+'</span></div>'+
     '</div></div>'
   ).join('');
