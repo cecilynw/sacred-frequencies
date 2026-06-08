@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#030712">
 <title>Sacred Frequencies — Heal. Align. Ascend.</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -39,18 +42,18 @@ p.sub{color:var(--muted);font-size:14px;line-height:1.75;max-width:600px;margin:
 .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .section-label{font-size:10.5px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);margin-bottom:10px;margin-top:24px}
 .hz-badge{display:inline-block;padding:3px 11px;border-radius:999px;font-size:12px;font-weight:800}
-.filter-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px}
+.filter-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px;-webkit-overflow-scrolling:touch;overflow-x:auto}
 .filter-btn{padding:4px 11px;border-radius:999px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);transition:all 0.12s;-webkit-tap-highlight-color:transparent}
 .filter-btn.active{border-color:#ffffff50;background:#ffffff18;color:#fff}
 /* Player */
-.player-box{background:linear-gradient(135deg,#0f0726,#0c1a2e,#0a1a0f);border:1px solid #7c3aed40;border-radius:18px;padding:22px 20px;margin-bottom:18px;text-align:center}
+.player-box{background:linear-gradient(135deg,#0f0726,#0c1a2e,#0a1a0f);border:1px solid #7c3aed40;border-radius:18px;padding:22px 20px;margin-bottom:18px;text-align:center;overflow:visible;-webkit-overflow-scrolling:touch}
 .player-hz{font-size:clamp(36px,8vw,56px);font-weight:900;color:#fbbf24;background:linear-gradient(135deg,#fbbf24,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;-webkit-user-select:none}
 .affirmation{font-style:italic;font-size:13px;color:#c4b5fd;padding:10px 14px;background:#7c3aed12;border-radius:10px;border:1px solid #7c3aed30;margin-top:10px;display:none}
 .progress-bar{height:3px;background:#1e293b;border-radius:2px;margin:10px 0;overflow:hidden}
 .progress-fill{height:100%;background:linear-gradient(90deg,#a78bfa,#f472b6);border-radius:2px;transition:width 1s linear;width:0%}
 .nature-btn{padding:7px 16px;border-radius:999px;font-size:11.5px;font-weight:700;cursor:pointer;border:1px solid #334155;background:transparent;color:var(--dim);transition:all 0.15s;-webkit-tap-highlight-color:transparent}
 .nature-btn.on{border-color:#34d39970;background:#10b98118;color:#34d399}
-.track-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px 15px;cursor:pointer;transition:border-color 0.15s,background 0.15s;margin-bottom:7px;-webkit-tap-highlight-color:transparent}
+.track-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px 15px;cursor:pointer;transition:border-color 0.15s,background 0.15s;margin-bottom:7px;-webkit-tap-highlight-color:transparent;min-height:70px}
 .play-mini{background:#a78bfa22;border:1px solid #a78bfa55;color:#a78bfa;border-radius:50%;width:34px;height:34px;font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;-webkit-appearance:none;touch-action:manipulation}
 .track-card.sel{border-color:#a78bfa80;background:#a78bfa0a}
 /* Love */
@@ -147,6 +150,7 @@ nav{z-index:200}
 <div class="page" id="page-player">
   <h1 class="grad-amber" style="margin-bottom:6px">🎵 Frequency Player</h1>
   <p class="sub" style="margin-bottom:18px;text-align:left">Use headphones for binaural effect · Set your intention · Tap a track then press Play</p>
+  <div id="iosHint" style="display:none;background:#a78bfa15;border:1px solid #a78bfa40;border-radius:10px;padding:8px 12px;margin-bottom:14px;font-size:11px;color:#a78bfa;text-align:center">📱 <strong>iPhone tip:</strong> Make sure silent switch is OFF · Tap a track, then tap ▶ Play</div>
   <div class="player-box">
     <div id="pName" style="font-size:12px;color:var(--dim);margin-bottom:4px">Select a frequency below</div>
     <div class="player-hz" id="pHz">— Hz</div>
@@ -159,15 +163,15 @@ nav{z-index:200}
       <span id="volLabel" style="font-size:12px;color:var(--muted);min-width:34px;text-align:right">70%</span>
     </div>
     <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:10px">
-      <button class="btn btn-primary" id="playBtn" onclick="playerToggle()" style="touch-action:manipulation;-webkit-appearance:none;">▶ Play</button>
-      <button class="nature-btn" id="natBtn" onclick="playerNature()">🌿 Add Nature Ambience</button>
+      <button class="btn btn-primary" id="playBtn" onclick="playerToggle()" style="touch-action:manipulation;-webkit-appearance:none;min-width:140px;min-height:52px;font-size:17px;letter-spacing:0.5px;border-radius:30px;">▶ Play</button>
+      <button class="nature-btn" id="natBtn" onclick="playerNature()" style="touch-action:manipulation;-webkit-appearance:none;min-height:48px;">🌿 Add Nature Ambience</button>
     </div>
     <div class="affirmation" id="pAff"></div>
     <div style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">
-      <button class="filter-btn" onclick="setWave('sine',this)" id="wSine" style="font-size:11px">Sine</button>
-      <button class="filter-btn" onclick="setWave('triangle',this)" id="wTri" style="font-size:11px">Triangle</button>
-      <button class="filter-btn" onclick="setWave('sawtooth',this)" id="wSaw" style="font-size:11px">Sawtooth</button>
-      <button class="filter-btn" onclick="setWave('square',this)" id="wSq" style="font-size:11px">Square</button>
+      <button class="filter-btn" onclick="setWave('sine',this)" id="wSine" style="font-size:12px;min-height:36px;touch-action:manipulation">Sine</button>
+      <button class="filter-btn" onclick="setWave('triangle',this)" id="wTri" style="font-size:12px;min-height:36px;touch-action:manipulation">Triangle</button>
+      <button class="filter-btn" onclick="setWave('sawtooth',this)" id="wSaw" style="font-size:12px;min-height:36px;touch-action:manipulation">Sawtooth</button>
+      <button class="filter-btn" onclick="setWave('square',this)" id="wSq" style="font-size:12px;min-height:36px;touch-action:manipulation">Square</button>
     </div>
   </div>
   <div class="filter-row" id="catFilter">
@@ -1102,6 +1106,11 @@ document.addEventListener('click', function onFirstClick(){
 }, {passive:true});
 
 // ═══ INIT ═══
+// Show iOS hint
+if(/iPad|iPhone|iPod/.test(navigator.userAgent)){
+  const h=document.getElementById('iosHint');
+  if(h)h.style.display='block';
+}
 makeStars();
 rTracks();rAngels();rLoveStages();rVortex();rNature();rGrowth();rRituals();rGuide();rProtocol();
 rMoodBtns();jLoad();rJournal();
