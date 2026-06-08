@@ -148,6 +148,8 @@ nav{z-index:200}
 /* Section header */
 #page-player h1{font-size:clamp(22px,5vw,32px);margin-bottom:4px}
 </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js" crossorigin="anonymous"></script>
 </head>
 <body style="touch-action:pan-y;-webkit-text-size-adjust:100%;">
 
@@ -658,19 +660,19 @@ const FREQ_REF=[
 // ═══════════════════════════════ AUDIO ENGINE ═══════════════════════════════
 /* state variables now in Audio Engine v4 below */
 
-/* ╔══════════════════════════════════════════════════════════╗
-   ║  SACRED FREQUENCIES — AUDIO ENGINE v4                   ║
-   ║  Battle-tested pattern (Spotify/SoundCloud/Calm/Insight) ║
-   ║                                                          ║
-   ║  KEY RULES:                                              ║
-   ║  1. AudioContext ONLY created inside a user gesture      ║
-   ║  2. ctx.resume() called before EVERY sound action        ║
-   ║  3. Gain set via direct .value — NO ramps on iOS         ║
-   ║  4. Binaural: stereo ChannelMerger, 110 Hz carrier       ║
-   ║  5. Silent unlock on ANY page tap (belt + suspenders)    ║
-   ╚══════════════════════════════════════════════════════════╝ */
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  SACRED FREQUENCIES — AUDIO ENGINE v5                       ║
+   ║  Powered by Howler.js (SoundCloud / Calm / Headspace        ║
+   ║  industry-standard iOS unlock) + Web Audio oscillators      ║
+   ║                                                             ║
+   ║  HOW IT WORKS:                                              ║
+   ║  1. Howler.js auto-unlocks AudioContext on first gesture    ║
+   ║  2. We use Howler.ctx as our shared AudioContext            ║
+   ║  3. All oscillators attach to that guaranteed-open ctx      ║
+   ║  4. Fallback: standard Web Audio API if Howler unavailable  ║
+   ╚══════════════════════════════════════════════════════════════╝ */
 
-// ── State ─────────────────────────────────────────────────────
+// ── State ────────────────────────────────────────────────────────
 let ctx = null;
 let activeNodes = [], timerIv = null, startTime = null;
 let selTrack = null, isPlaying = false;
@@ -686,10 +688,44 @@ let protOn = false, protNodes = [], lunarNodes = [];
 let waveform = 'sine';
 let jSessions = [];
 let vBeing = 11;
-let _audioUnlocked = false;
 
-// ── AudioContext: singleton, created lazily ───────────────────
+// ── Howler silent unlock sound (industry standard) ───────────────
+// Howler.js automatically handles iOS Safari AudioContext unlock.
+// A silent 1-second mp3 (base64, ~1.2KB) is played on first gesture.
+// This is identical to what Calm, Headspace, and SoundCloud do.
+const SILENT_MP3 = 'data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV6urq6urq6urq6urq6urq6urq6urq6urq6v////////////////////////////////8AAAAATGF2YzU4LjU0AAAAAAAAAAAAAAAAJAAAAAAAAAAAASDs90hvAAAAAAAAAAAAAAAAAAAA//MUZAAAAAGkAAAAAAAAA0gAAAAATEFN//MUZAMAAAGkAAAAAAAAA0gAAAAARTMu//MUZAYAAAGkAAAAAAAAA0gAAAAAOTku//MUZAkAAAGkAAAAAAAAA0gAAAAAMTAw';
+
+let _howlerUnlocked = false;
+let _silentHowl = null;
+
+function initHowlerUnlock() {
+  if (typeof Howl === 'undefined') return; // Howler not loaded
+  if (_silentHowl) return;
+  try {
+    _silentHowl = new Howl({
+      src: [SILENT_MP3],
+      format: ['mp3'],
+      volume: 0,
+      autoplay: false,
+      onload: () => { console.log('🔊 Howler ready'); },
+      onunlock: () => {
+        _howlerUnlocked = true;
+        console.log('🔊 Howler unlocked AudioContext');
+        // After Howler unlocks, grab its context for our oscillators
+        if (Howler.ctx) { ctx = Howler.ctx; console.log('✅ Shared Howler.ctx, state:', ctx.state); }
+      }
+    });
+  } catch(e) { console.warn('Howler init error:', e); }
+}
+
+// ── AudioContext: uses Howler's ctx if available ─────────────────
 function getCtx() {
+  // Prefer Howler's already-unlocked context
+  if (typeof Howler !== 'undefined' && Howler.ctx && Howler.ctx.state !== 'closed') {
+    ctx = Howler.ctx;
+    return ctx;
+  }
+  // Fallback: create own context
   if (!ctx || ctx.state === 'closed') {
     try {
       ctx = new (window.AudioContext || window.webkitAudioContext)({
@@ -703,51 +739,44 @@ function getCtx() {
   return ctx;
 }
 
-// ── iOS/Safari Unlock — call inside EVERY user gesture ────────
-// Pattern used by Spotify Web, Calm, Insight Timer:
-// Play a 0-volume silent buffer to warm up the hardware pipeline
+// ── unlockAudio: belt+suspenders on top of Howler ───────────────
 function unlockAudio() {
-  if (_audioUnlocked) return;
+  // 1. Trigger Howler's unlock (silent mp3 trick)
+  if (_silentHowl) {
+    try { _silentHowl.play(); } catch(e) {}
+  }
+  // 2. Direct silent buffer fallback (Web Audio)
   try {
     const c = getCtx();
-    // Silent 0.1s buffer — forces hardware audio path open
-    const bufLen = Math.ceil(c.sampleRate * 0.1);
-    const buf = c.createBuffer(1, bufLen, c.sampleRate);
-    // Fill with zeros (silence)
-    const data = buf.getChannelData(0);
-    for (let i = 0; i < bufLen; i++) data[i] = 0;
+    const buf = c.createBuffer(1, Math.ceil(c.sampleRate * 0.05), c.sampleRate);
     const src = c.createBufferSource();
     src.buffer = buf;
     src.connect(c.destination);
     src.start(0);
-    c.resume().then(() => {
-      _audioUnlocked = true;
-      console.log('🔊 Audio unlocked, ctx.state:', c.state);
-    }).catch(() => {
-      _audioUnlocked = true; // proceed anyway
-    });
-  } catch(e) {
-    console.warn('unlockAudio error:', e);
-    _audioUnlocked = true;
-  }
+    c.resume().catch(() => {});
+  } catch(e) {}
 }
 
-// ── Global gesture unlock — fires on first tap anywhere ───────
+// ── Global gesture capture — fires on first interaction ─────────
 (function() {
-  const unlock = () => {
+  function onFirstGesture() {
     unlockAudio();
-    document.removeEventListener('touchstart', unlock, true);
-    document.removeEventListener('touchend', unlock, true);
-    document.removeEventListener('mousedown', unlock, true);
-    document.removeEventListener('keydown', unlock, true);
-  };
-  document.addEventListener('touchstart', unlock, { passive: true, capture: true });
-  document.addEventListener('touchend', unlock, { passive: true, capture: true });
-  document.addEventListener('mousedown', unlock, { passive: true, capture: true });
-  document.addEventListener('keydown', unlock, { passive: true, capture: true });
+    ['touchstart','touchend','mousedown','click'].forEach(ev =>
+      document.removeEventListener(ev, onFirstGesture, true)
+    );
+  }
+  ['touchstart','touchend','mousedown','click'].forEach(ev =>
+    document.addEventListener(ev, onFirstGesture, { passive: true, capture: true })
+  );
+  // Init Howler once DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHowlerUnlock);
+  } else {
+    initHowlerUnlock();
+  }
 })();
 
-// ── makeCompressor(): standard dynamics compressor ────────────
+// ── makeCompressor ───────────────────────────────────────────────
 function makeCompressor(c) {
   const comp = c.createDynamicsCompressor();
   comp.threshold.value = -18;
@@ -759,11 +788,12 @@ function makeCompressor(c) {
   return comp;
 }
 
-// ── tone(): THE core sound generator ─────────────────────────
-// Handles: sub-20Hz binaural, standard, solfeggio, all frequencies
+// ── tone(): core frequency generator ────────────────────────────
+// < 20 Hz  → binaural beat via stereo merger (110 Hz carrier)
+// >= 20 Hz → oscillator (+ soft 2nd harmonic for warmth)
 function tone(f, vol, wave) {
   vol  = (vol  !== undefined) ? vol  : 0.25;
-  wave = (wave !== undefined) ? wave : waveform;
+  wave = (wave !== undefined) ? wave : (waveform || 'sine');
 
   const c    = getCtx();
   const comp = makeCompressor(c);
@@ -773,9 +803,7 @@ function tone(f, vol, wave) {
   const oscs = [];
 
   if (f < 20) {
-    // ── BINAURAL BEAT (sub-audible) ─────────────────────────
-    // Left ear: 110 Hz carrier
-    // Right ear: 110 + f Hz carrier  →  brain entrains to f Hz difference
+    // BINAURAL: left=110Hz, right=110+f Hz
     const carrier = 110;
     const merger  = c.createChannelMerger(2);
     merger.connect(mg);
@@ -793,7 +821,6 @@ function tone(f, vol, wave) {
     oR.start(); oscs.push(oR);
 
   } else {
-    // ── STANDARD OSCILLATOR ────────────────────────────────
     const hz  = Math.min(Math.max(f, 20), 18000);
     const osc = c.createOscillator();
     osc.type = wave;
@@ -802,10 +829,9 @@ function tone(f, vol, wave) {
     osc.start();
     oscs.push(osc);
 
-    // Warmth: soft 2nd harmonic at -22dB
+    // Soft 2nd harmonic warmth layer (-22dB)
     if (hz < 2000) {
-      const o2 = c.createOscillator();
-      const g2 = c.createGain();
+      const o2 = c.createOscillator(), g2 = c.createGain();
       o2.type = 'sine';
       o2.frequency.value = Math.min(hz * 2, 18000);
       g2.gain.value = 0.08;
@@ -814,9 +840,8 @@ function tone(f, vol, wave) {
     }
   }
 
-  // ── Set gain AFTER oscillators are started ─────────────────
-  // This is critical on iOS — gain must be set AFTER .start()
-  mg.gain.value = Math.min(Math.max(vol, 0), 0.9);
+  // CRITICAL: set gain AFTER osc.start() — iOS drops gain set before start
+  mg.gain.value = Math.min(Math.max(vol, 0.001), 0.9);
 
   return {
     masterGain: mg,
@@ -824,8 +849,7 @@ function tone(f, vol, wave) {
   };
 }
 
-// ── nature(): ambient healing soundscape ─────────────────────
-// Ocean swell + Amazon forest + 528 Hz love tone
+// ── nature(): ocean + Amazon forest ambient layer ────────────────
 function nature(vol) {
   vol = (vol !== undefined) ? vol : 0.10;
   const c    = getCtx();
@@ -834,10 +858,10 @@ function nature(vol) {
   mg.connect(comp);
   const srcs = [];
 
-  // Ocean swell — white noise through a low-pass filter
+  // Ocean: white noise shaped into a wave swell (stereo)
   const sr   = c.sampleRate;
   const wLen = sr * 4;
-  const wBuf = c.createBuffer(2, wLen, sr); // stereo
+  const wBuf = c.createBuffer(2, wLen, sr);
   for (let ch = 0; ch < 2; ch++) {
     const d = wBuf.getChannelData(ch);
     for (let i = 0; i < wLen; i++) {
@@ -845,12 +869,12 @@ function nature(vol) {
     }
   }
   const wSrc = c.createBufferSource(); wSrc.buffer = wBuf; wSrc.loop = true;
-  const wFlt = c.createBiquadFilter(); wFlt.type = 'lowpass'; wFlt.frequency.value = 420; wFlt.Q.value = 0.8;
+  const wFlt = c.createBiquadFilter(); wFlt.type = 'lowpass'; wFlt.frequency.value = 420;
   const wGn  = c.createGain(); wGn.gain.value = 0.55;
   wSrc.connect(wFlt); wFlt.connect(wGn); wGn.connect(mg); wSrc.start();
   srcs.push(wSrc);
 
-  // Amazon forest — bandpass pink noise
+  // Amazon forest: bandpass pink noise
   const fLen = sr * 3;
   const fBuf = c.createBuffer(1, fLen, sr);
   const fData = fBuf.getChannelData(0);
@@ -865,13 +889,13 @@ function nature(vol) {
   fSrc.connect(fFlt); fFlt.connect(fGn); fGn.connect(mg); fSrc.start();
   srcs.push(fSrc);
 
-  // 528 Hz love/DNA repair tone (very soft)
-  const sO = c.createOscillator(); const sG = c.createGain();
+  // 528 Hz love/DNA repair undertone (very soft)
+  const sO = c.createOscillator(), sG = c.createGain();
   sO.type = 'sine'; sO.frequency.value = 528; sG.gain.value = 0.04;
   sO.connect(sG); sG.connect(mg); sO.start();
   srcs.push(sO);
 
-  mg.gain.value = Math.min(Math.max(vol, 0), 0.9);
+  mg.gain.value = Math.min(Math.max(vol, 0.001), 0.9);
 
   return {
     masterGain: mg,
@@ -879,14 +903,13 @@ function nature(vol) {
   };
 }
 
-// ── binaural(): named binaural (Love/Vortex modules) ─────────
+// ── binaural(): Love/Vortex module binaural ──────────────────────
 function binaural(base, beat) {
   const c    = getCtx();
   const comp = makeCompressor(c);
   const mg   = c.createGain();
   mg.connect(comp);
   const oscs = [];
-
   const merger = c.createChannelMerger(2);
   merger.connect(mg);
 
@@ -907,7 +930,7 @@ function binaural(base, beat) {
   };
 }
 
-// ── fade(): graceful silence → stop ───────────────────────────
+// ── fade(): instant silence, deferred stop ───────────────────────
 function fade(nodes) {
   if (!nodes || !nodes.length) return;
   nodes.forEach(n => {
@@ -917,13 +940,18 @@ function fade(nodes) {
   });
 }
 
-// ── startPlay(): play selected track ─────────────────────────
+// ── startPlay() ──────────────────────────────────────────────────
 function startPlay() {
   fade(activeNodes); activeNodes = [];
   if (!selTrack) return;
   const c = getCtx();
+  let attempts = 0;
   const go = () => {
-    if (c.state !== 'running') { setTimeout(go, 100); return; }
+    attempts++;
+    if (c.state !== 'running') {
+      if (attempts < 20) { setTimeout(go, 100); return; }
+      // Force attempt anyway after 2s
+    }
     const node = tone(selTrack.hz, masterVol * 0.7);
     activeNodes.push(node);
     startTime = Date.now(); isPlaying = true;
@@ -932,11 +960,12 @@ function startPlay() {
     const bar = document.getElementById('pBar'); if (bar) bar.style.width = '0%';
     clearInterval(timerIv); timerIv = setInterval(timerTick, 1000);
     const affEl = document.getElementById('pAff'); if (affEl) affEl.style.display = 'block';
+    console.log('🎵 Playing', selTrack.hz, 'Hz | ctx.state:', c.state);
   };
   c.resume().then(go).catch(go);
 }
 
-// ── stopPlay(): stop and reset ────────────────────────────────
+// ── stopPlay() ───────────────────────────────────────────────────
 function stopPlay() {
   fade(activeNodes); activeNodes = [];
   clearInterval(timerIv); isPlaying = false;
@@ -946,15 +975,13 @@ function stopPlay() {
   const tmr = document.getElementById('pTimer'); if (tmr) tmr.textContent = '0:00';
 }
 
-// ── playerToggle(): ▶/⏹ button handler ───────────────────────
+// ── playerToggle() ───────────────────────────────────────────────
 function playerToggle() {
   if (!selTrack) {
     alert('Tap a frequency track first, then press Play.');
     return;
   }
-  // Step 1: unlock (must be inside gesture)
-  unlockAudio();
-  // Step 2: play or stop
+  unlockAudio(); // Must be called inside gesture event
   if (isPlaying) {
     stopPlay();
   } else {
@@ -963,7 +990,7 @@ function playerToggle() {
   }
 }
 
-// ── playerNature(): nature ambience toggle ────────────────────
+// ── playerNature() ───────────────────────────────────────────────
 function playerNature() {
   unlockAudio();
   const btn = document.getElementById('natBtn');
@@ -980,6 +1007,7 @@ function playerNature() {
   };
   c.resume().then(go).catch(go);
 }
+
 
 // ── Volume ────────────────────────────────────────────
 var masterVol = 0.70;
