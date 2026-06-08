@@ -656,285 +656,329 @@ const FREQ_REF=[
 ];
 
 // ═══════════════════════════════ AUDIO ENGINE ═══════════════════════════════
-let ctx=null,activeNodes=[],timerIv=null,startTime=null,selTrack=null,isPlaying=false;
-let natOn=false,natNodes=[],loveFieldOn=false,loveNodes=[],stagePlay=null;
-let vortexOn=false,vortexNodes=[],vIntensity=0;
-let angelNodes=[],scenePlay=null,sceneNodes=[],primalNodes=[];
-let growthPlay=null,growthNodes=[],masterOn=false,masterNodes=[],masterIv=null,masterStep=0;
-let ritualPlay=null,ritualNodes=[],protOn=false,protNodes=[],lunarNodes=[];
-let waveform='sine';
-let jSessions=[];
-let vBeing=11;
+/* state variables now in Audio Engine v4 below */
 
-/* ═══════════════════════════════════════════════════════
-   SACRED FREQUENCIES — AUDIO ENGINE v3
-   Every node object returned by makeNode() has the same shape:
-   { masterGain: GainNode, _stop: Function }
-   fade() and stopAll() both consume this shape.
-════════════════════════════════════════════════════════ */
+/* ╔══════════════════════════════════════════════════════════╗
+   ║  SACRED FREQUENCIES — AUDIO ENGINE v4                   ║
+   ║  Battle-tested pattern (Spotify/SoundCloud/Calm/Insight) ║
+   ║                                                          ║
+   ║  KEY RULES:                                              ║
+   ║  1. AudioContext ONLY created inside a user gesture      ║
+   ║  2. ctx.resume() called before EVERY sound action        ║
+   ║  3. Gain set via direct .value — NO ramps on iOS         ║
+   ║  4. Binaural: stereo ChannelMerger, 110 Hz carrier       ║
+   ║  5. Silent unlock on ANY page tap (belt + suspenders)    ║
+   ╚══════════════════════════════════════════════════════════╝ */
 
-// ── Context ──────────────────────────────────────────
-function getCtx(){
-  if(!ctx || ctx.state==='closed'){
-    ctx = new (window.AudioContext||window.webkitAudioContext)({latencyHint:'interactive'});
+// ── State ─────────────────────────────────────────────────────
+let ctx = null;
+let activeNodes = [], timerIv = null, startTime = null;
+let selTrack = null, isPlaying = false;
+let natOn = false, natNodes = [];
+let loveFieldOn = false, loveNodes = [];
+let stagePlay = null;
+let vortexOn = false, vortexNodes = [], vIntensity = 0;
+let angelNodes = [], scenePlay = null, sceneNodes = [], primalNodes = [];
+let growthPlay = null, growthNodes = [];
+let masterOn = false, masterNodes = [], masterIv = null, masterStep = 0;
+let ritualPlay = null, ritualNodes = [];
+let protOn = false, protNodes = [], lunarNodes = [];
+let waveform = 'sine';
+let jSessions = [];
+let vBeing = 11;
+let _audioUnlocked = false;
+
+// ── AudioContext: singleton, created lazily ───────────────────
+function getCtx() {
+  if (!ctx || ctx.state === 'closed') {
+    try {
+      ctx = new (window.AudioContext || window.webkitAudioContext)({
+        latencyHint: 'interactive',
+        sampleRate: 44100
+      });
+    } catch(e) {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+    }
   }
   return ctx;
 }
 
-// ── iOS unlock: silent buffer forces AudioContext open ─
-function unlockAudio(){
-  try{
+// ── iOS/Safari Unlock — call inside EVERY user gesture ────────
+// Pattern used by Spotify Web, Calm, Insight Timer:
+// Play a 0-volume silent buffer to warm up the hardware pipeline
+function unlockAudio() {
+  if (_audioUnlocked) return;
+  try {
     const c = getCtx();
-    const buf = c.createBuffer(1, c.sampleRate * 0.05 | 0, c.sampleRate);
+    // Silent 0.1s buffer — forces hardware audio path open
+    const bufLen = Math.ceil(c.sampleRate * 0.1);
+    const buf = c.createBuffer(1, bufLen, c.sampleRate);
+    // Fill with zeros (silence)
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufLen; i++) data[i] = 0;
     const src = c.createBufferSource();
     src.buffer = buf;
     src.connect(c.destination);
     src.start(0);
-    c.resume().catch(()=>{});
-  }catch(e){ console.warn('unlockAudio:', e); }
+    c.resume().then(() => {
+      _audioUnlocked = true;
+      console.log('🔊 Audio unlocked, ctx.state:', c.state);
+    }).catch(() => {
+      _audioUnlocked = true; // proceed anyway
+    });
+  } catch(e) {
+    console.warn('unlockAudio error:', e);
+    _audioUnlocked = true;
+  }
 }
 
-// ── All nodes share this shape: { masterGain, _stop } ─
-// fade() and stopAll() consume this shape consistently.
+// ── Global gesture unlock — fires on first tap anywhere ───────
+(function() {
+  const unlock = () => {
+    unlockAudio();
+    document.removeEventListener('touchstart', unlock, true);
+    document.removeEventListener('touchend', unlock, true);
+    document.removeEventListener('mousedown', unlock, true);
+    document.removeEventListener('keydown', unlock, true);
+  };
+  document.addEventListener('touchstart', unlock, { passive: true, capture: true });
+  document.addEventListener('touchend', unlock, { passive: true, capture: true });
+  document.addEventListener('mousedown', unlock, { passive: true, capture: true });
+  document.addEventListener('keydown', unlock, { passive: true, capture: true });
+})();
 
-// ── tone(): plays any frequency correctly ─────────────
-//   < 20 Hz  → binaural beat (carrier 110 Hz, stereo panned)
-//   >= 20 Hz → standard oscillator + subtle 2nd harmonic
-function tone(f, vol, wave){
-  vol  = (typeof vol  !== 'undefined') ? vol  : 0.2;
-  wave = (typeof wave !== 'undefined') ? wave : (typeof waveform !== 'undefined' ? waveform : 'sine');
-
-  const c = getCtx();
-
-  // Build graph: osc(s) → mg → comp → destination
-  // NOTE: connect comp LAST so graph is complete before any node starts
+// ── makeCompressor(): standard dynamics compressor ────────────
+function makeCompressor(c) {
   const comp = c.createDynamicsCompressor();
-  comp.threshold.value = -14;
-  comp.knee.value      =  10;
-  comp.ratio.value     =   3;
-  comp.attack.value    = 0.005;
-  comp.release.value   = 0.3;
-
-  const mg = c.createGain();
-  mg.gain.value = 0.0001;     // near-zero until oscillators start, then set directly
-  mg.connect(comp);
+  comp.threshold.value = -18;
+  comp.knee.value = 12;
+  comp.ratio.value = 4;
+  comp.attack.value = 0.003;
+  comp.release.value = 0.25;
   comp.connect(c.destination);
+  return comp;
+}
+
+// ── tone(): THE core sound generator ─────────────────────────
+// Handles: sub-20Hz binaural, standard, solfeggio, all frequencies
+function tone(f, vol, wave) {
+  vol  = (vol  !== undefined) ? vol  : 0.25;
+  wave = (wave !== undefined) ? wave : waveform;
+
+  const c    = getCtx();
+  const comp = makeCompressor(c);
+  const mg   = c.createGain();
+  mg.connect(comp);
 
   const oscs = [];
 
-  if(f < 20){
-    /* BINAURAL BEAT — requires headphones
-       Left  ear: 110 Hz
-       Right ear: 110 + f Hz  → brain hears the difference = f Hz */
+  if (f < 20) {
+    // ── BINAURAL BEAT (sub-audible) ─────────────────────────
+    // Left ear: 110 Hz carrier
+    // Right ear: 110 + f Hz carrier  →  brain entrains to f Hz difference
     const carrier = 110;
     const merger  = c.createChannelMerger(2);
     merger.connect(mg);
 
-    const oL = c.createOscillator();
-    const gL = c.createGain();
+    const oL = c.createOscillator(), gL = c.createGain();
     oL.type = 'sine'; oL.frequency.value = carrier;
-    gL.gain.value = 1;
+    gL.gain.value = 0.85;
     oL.connect(gL); gL.connect(merger, 0, 0);
+    oL.start(); oscs.push(oL);
 
-    const oR = c.createOscillator();
-    const gR = c.createGain();
+    const oR = c.createOscillator(), gR = c.createGain();
     oR.type = 'sine'; oR.frequency.value = carrier + f;
-    gR.gain.value = 1;
+    gR.gain.value = 0.85;
     oR.connect(gR); gR.connect(merger, 0, 1);
-
-    oL.start(); oR.start();
-    oscs.push(oL, oR);
+    oR.start(); oscs.push(oR);
 
   } else {
-    /* STANDARD OSCILLATOR */
+    // ── STANDARD OSCILLATOR ────────────────────────────────
+    const hz  = Math.min(Math.max(f, 20), 18000);
     const osc = c.createOscillator();
     osc.type = wave;
-    osc.frequency.value = Math.min(Math.max(f, 20), 4000);
+    osc.frequency.value = hz;
     osc.connect(mg);
     osc.start();
     oscs.push(osc);
 
-    // Soft 2nd harmonic for warmth
-    if(f < 2000){
+    // Warmth: soft 2nd harmonic at -22dB
+    if (hz < 2000) {
       const o2 = c.createOscillator();
       const g2 = c.createGain();
       o2.type = 'sine';
-      o2.frequency.value = Math.min(f * 2, 4000);
-      g2.gain.value = 0.07;
+      o2.frequency.value = Math.min(hz * 2, 18000);
+      g2.gain.value = 0.08;
       o2.connect(g2); g2.connect(mg);
-      o2.start();
-      oscs.push(o2);
+      o2.start(); oscs.push(o2);
     }
   }
 
-  // Set volume directly — iOS Safari drops ramps scheduled at t=currentTime
-  mg.gain.value = Math.min(vol, 0.88);
+  // ── Set gain AFTER oscillators are started ─────────────────
+  // This is critical on iOS — gain must be set AFTER .start()
+  mg.gain.value = Math.min(Math.max(vol, 0), 0.9);
 
   return {
     masterGain: mg,
-    _stop: () => { oscs.forEach(o => { try{ o.stop(); }catch(e){} }); }
+    _stop: () => { oscs.forEach(o => { try { o.stop(); } catch(e) {} }); }
   };
 }
 
-
-// ── nature(): layered ambient soundscape ─────────────
-//   Ocean noise + Amazon forest + 528 Hz love tone
-function nature(vol){
+// ── nature(): ambient healing soundscape ─────────────────────
+// Ocean swell + Amazon forest + 528 Hz love tone
+function nature(vol) {
   vol = (vol !== undefined) ? vol : 0.10;
   const c    = getCtx();
-  const comp = c.createDynamicsCompressor();
-  comp.threshold.value = -20; comp.ratio.value = 3;
-  comp.connect(c.destination);
-  const mg = c.createGain();
-  mg.gain.value = Math.min(vol, 0.9);
+  const comp = makeCompressor(c);
+  const mg   = c.createGain();
   mg.connect(comp);
   const srcs = [];
 
-  // Ocean: white noise shaped like a wave swell
-  const wBuf = c.createBuffer(1, c.sampleRate * 4, c.sampleRate);
-  const wData = wBuf.getChannelData(0);
-  for(let i=0; i<wData.length; i++)
-    wData[i] = (Math.random()*2-1) * (0.6 + 0.4*Math.sin(i/wData.length*Math.PI*2));
+  // Ocean swell — white noise through a low-pass filter
+  const sr   = c.sampleRate;
+  const wLen = sr * 4;
+  const wBuf = c.createBuffer(2, wLen, sr); // stereo
+  for (let ch = 0; ch < 2; ch++) {
+    const d = wBuf.getChannelData(ch);
+    for (let i = 0; i < wLen; i++) {
+      d[i] = (Math.random() * 2 - 1) * (0.5 + 0.5 * Math.sin(i / wLen * Math.PI * 4));
+    }
+  }
   const wSrc = c.createBufferSource(); wSrc.buffer = wBuf; wSrc.loop = true;
-  const wFlt = c.createBiquadFilter(); wFlt.type='lowpass'; wFlt.frequency.value=380;
-  const wGn  = c.createGain(); wGn.gain.value = 0.7;
+  const wFlt = c.createBiquadFilter(); wFlt.type = 'lowpass'; wFlt.frequency.value = 420; wFlt.Q.value = 0.8;
+  const wGn  = c.createGain(); wGn.gain.value = 0.55;
   wSrc.connect(wFlt); wFlt.connect(wGn); wGn.connect(mg); wSrc.start();
   srcs.push(wSrc);
 
-  // Amazon forest: pink-ish bandpass noise
-  const fBuf = c.createBuffer(1, c.sampleRate * 3, c.sampleRate);
+  // Amazon forest — bandpass pink noise
+  const fLen = sr * 3;
+  const fBuf = c.createBuffer(1, fLen, sr);
   const fData = fBuf.getChannelData(0);
-  let last=0;
-  for(let i=0; i<fData.length; i++){
-    const w = Math.random()*2-1;
-    fData[i] = (last + 0.02*w) / 1.02;
-    last = fData[i];
+  let last = 0;
+  for (let i = 0; i < fLen; i++) {
+    const w  = Math.random() * 2 - 1;
+    fData[i] = last = (last + 0.018 * w) / 1.018;
   }
-  const fSrc = c.createBufferSource(); fSrc.buffer=fBuf; fSrc.loop=true;
-  const fFlt = c.createBiquadFilter(); fFlt.type='bandpass'; fFlt.frequency.value=900; fFlt.Q.value=0.4;
-  const fGn  = c.createGain(); fGn.gain.value = 0.4;
+  const fSrc = c.createBufferSource(); fSrc.buffer = fBuf; fSrc.loop = true;
+  const fFlt = c.createBiquadFilter(); fFlt.type = 'bandpass'; fFlt.frequency.value = 1100; fFlt.Q.value = 0.5;
+  const fGn  = c.createGain(); fGn.gain.value = 0.35;
   fSrc.connect(fFlt); fFlt.connect(fGn); fGn.connect(mg); fSrc.start();
   srcs.push(fSrc);
 
-  // 528 Hz love/DNA repair tone (very soft under ambience)
+  // 528 Hz love/DNA repair tone (very soft)
   const sO = c.createOscillator(); const sG = c.createGain();
-  sO.type='sine'; sO.frequency.value=528; sG.gain.value=0.04;
+  sO.type = 'sine'; sO.frequency.value = 528; sG.gain.value = 0.04;
   sO.connect(sG); sG.connect(mg); sO.start();
   srcs.push(sO);
 
+  mg.gain.value = Math.min(Math.max(vol, 0), 0.9);
+
   return {
     masterGain: mg,
-    _stop: () => { srcs.forEach(s => { try{ s.stop(); }catch(e){} }); }
+    _stop: () => { srcs.forEach(s => { try { s.stop(); } catch(e) {} }); }
   };
 }
 
-// ── binaural(): named binaural — used by Love/Vortex ──
-function binaural(base, beat){
+// ── binaural(): named binaural (Love/Vortex modules) ─────────
+function binaural(base, beat) {
   const c    = getCtx();
-  const comp = c.createDynamicsCompressor();
-  comp.threshold.value=-18; comp.ratio.value=4;
-  comp.connect(c.destination);
-  const mg = c.createGain();
-  mg.gain.setValueAtTime(0.0001, c.currentTime);
-  mg.gain.exponentialRampToValueAtTime(0.15, c.currentTime + 2.0);
+  const comp = makeCompressor(c);
+  const mg   = c.createGain();
   mg.connect(comp);
   const oscs = [];
 
   const merger = c.createChannelMerger(2);
   merger.connect(mg);
 
-  // Left
-  const oL=c.createOscillator(), gL=c.createGain();
-  oL.type='sine'; oL.frequency.value=Math.min(base,2000); gL.gain.value=1;
-  oL.connect(gL); gL.connect(merger,0,0); oL.start(); oscs.push(oL);
+  const safeBase = Math.min(Math.max(base, 20), 2000);
+  const oL = c.createOscillator(), gL = c.createGain();
+  oL.type = 'sine'; oL.frequency.value = safeBase; gL.gain.value = 0.85;
+  oL.connect(gL); gL.connect(merger, 0, 0); oL.start(); oscs.push(oL);
 
-  // Right
-  const oR=c.createOscillator(), gR=c.createGain();
-  oR.type='sine'; oR.frequency.value=Math.min(base+beat,2000); gR.gain.value=1;
-  oR.connect(gR); gR.connect(merger,0,1); oR.start(); oscs.push(oR);
+  const oR = c.createOscillator(), gR = c.createGain();
+  oR.type = 'sine'; oR.frequency.value = Math.min(safeBase + beat, 2000); gR.gain.value = 0.85;
+  oR.connect(gR); gR.connect(merger, 0, 1); oR.start(); oscs.push(oR);
+
+  mg.gain.value = 0.18;
 
   return {
     masterGain: mg,
-    _stop: () => { oscs.forEach(o => { try{ o.stop(); }catch(e){} }); }
+    _stop: () => { oscs.forEach(o => { try { o.stop(); } catch(e) {} }); }
   };
 }
 
-// ── fade(): graceful 0.8 s fade then hard stop ────────
-function fade(nodes){
-  if(!nodes || !nodes.length) return;
+// ── fade(): graceful silence → stop ───────────────────────────
+function fade(nodes) {
+  if (!nodes || !nodes.length) return;
   nodes.forEach(n => {
-    if(!n || !n.masterGain) return;
-    try{
-      n.masterGain.gain.value = 0;   // immediate silence
-    }catch(e){}
-    setTimeout(() => { try{ n._stop && n._stop(); }catch(e){} }, 50);
+    if (!n || !n.masterGain) return;
+    try { n.masterGain.gain.value = 0; } catch(e) {}
+    setTimeout(() => { try { n._stop && n._stop(); } catch(e) {} }, 80);
   });
 }
 
-// ── selTrackFn(): select a track and update display ───
-function selTrackFn(t){
-  selTrack = t;
-  const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
-  set('pName',    '✦ ' + t.n + ' ✦');
-  // Show label (angel number) or hz number — without "Hz" (it's in pHzLabel)
-  const hzDisplay = t.lbl ? t.lbl.replace(' Hz','') : String(t.hz);
-  set('pHz',      hzDisplay);
-  set('pHzLabel', 'Hz · ' + (t.cat||''));
-  set('pBenefit', t.ben);
-  const affEl = document.getElementById('pAff');
-  if(affEl){ affEl.textContent='"'+(t.aff||'')+'"'; affEl.style.display='block'; }
-  // Remove active/sel from all cards
-  document.querySelectorAll('.track-card').forEach(c=>{ c.classList.remove('sel'); c.classList.remove('active'); });
-  const card = document.getElementById('tc-'+String(t.hz).replace('.','_'));
-  if(card){ card.classList.add('sel'); card.classList.add('active'); card.scrollIntoView({block:'nearest',behavior:'smooth'}); }
-  if(isPlaying) startPlay();
-}
-
-// ── startPlay() ───────────────────────────────────────
-function startPlay(){
+// ── startPlay(): play selected track ─────────────────────────
+function startPlay() {
   fade(activeNodes); activeNodes = [];
-  if(!selTrack) return;
+  if (!selTrack) return;
   const c = getCtx();
-  // Ensure context is running before building audio graph
-  const doPlay = () => {
-    activeNodes.push(tone(selTrack.hz, masterVol * 0.65));
+  const go = () => {
+    if (c.state !== 'running') { setTimeout(go, 100); return; }
+    const node = tone(selTrack.hz, masterVol * 0.7);
+    activeNodes.push(node);
     startTime = Date.now(); isPlaying = true;
     const btn = document.getElementById('playBtn');
-    if(btn){ btn.textContent = '⏹ Stop'; btn.classList.add('playing'); }
-    const bar = document.getElementById('pBar'); if(bar) bar.style.width='0%';
+    if (btn) { btn.textContent = '⏹ Stop'; btn.classList.add('playing'); }
+    const bar = document.getElementById('pBar'); if (bar) bar.style.width = '0%';
     clearInterval(timerIv); timerIv = setInterval(timerTick, 1000);
-    const affEl = document.getElementById('pAff'); if(affEl) affEl.style.display='block';
+    const affEl = document.getElementById('pAff'); if (affEl) affEl.style.display = 'block';
   };
-  if(c.state === 'running'){
-    doPlay();
-  } else {
-    c.resume().then(doPlay).catch(doPlay);
-  }
+  c.resume().then(go).catch(go);
 }
 
-// ── stopPlay() ────────────────────────────────────────
-function stopPlay(){
+// ── stopPlay(): stop and reset ────────────────────────────────
+function stopPlay() {
   fade(activeNodes); activeNodes = [];
   clearInterval(timerIv); isPlaying = false;
-  const btn = document.getElementById('playBtn'); if(btn) btn.textContent = '▶ Play'; btn.classList.remove('playing');;
-  const bar = document.getElementById('pBar');   if(bar) bar.style.width='0%';
-  const tmr = document.getElementById('pTimer'); if(tmr) tmr.textContent='0:00';
+  const btn = document.getElementById('playBtn');
+  if (btn) { btn.textContent = '▶ Play'; btn.classList.remove('playing'); }
+  const bar = document.getElementById('pBar'); if (bar) bar.style.width = '0%';
+  const tmr = document.getElementById('pTimer'); if (tmr) tmr.textContent = '0:00';
 }
 
-// ── playerToggle(): the Play button handler ───────────
-function playerToggle(){
-  if(!selTrack){
+// ── playerToggle(): ▶/⏹ button handler ───────────────────────
+function playerToggle() {
+  if (!selTrack) {
     alert('Tap a frequency track first, then press Play.');
     return;
   }
-  // 1. Unlock audio context (iOS requires gesture-triggered resume)
+  // Step 1: unlock (must be inside gesture)
   unlockAudio();
-  // 2. Resume suspended context, then play/stop
-  getCtx().resume().then(() => {
-    isPlaying ? stopPlay() : startPlay();
-  }).catch(() => {
-    isPlaying ? stopPlay() : startPlay();
-  });
+  // Step 2: play or stop
+  if (isPlaying) {
+    stopPlay();
+  } else {
+    const c = getCtx();
+    c.resume().then(() => startPlay()).catch(() => startPlay());
+  }
+}
+
+// ── playerNature(): nature ambience toggle ────────────────────
+function playerNature() {
+  unlockAudio();
+  const btn = document.getElementById('natBtn');
+  const c = getCtx();
+  const go = () => {
+    if (natOn) {
+      fade(natNodes); natNodes = []; natOn = false;
+      if (btn) btn.textContent = '🌿 Nature';
+    } else {
+      natNodes.push(nature(masterVol * 0.45));
+      natOn = true;
+      if (btn) btn.textContent = '🌿 Nature ✓';
+    }
+  };
+  c.resume().then(go).catch(go);
 }
 
 // ── Volume ────────────────────────────────────────────
@@ -957,17 +1001,7 @@ function timerTick(){
 }
 
 // ── Nature ambience toggle (Player page) ──────────────
-function playerNature(){
-  if(natOn){
-    fade(natNodes); natNodes=[]; natOn=false;
-    const btn=document.getElementById('natBtn');
-    if(btn){btn.className='nature-btn'; btn.textContent='🌿 Add Nature Ambience';}
-  } else {
-    natNodes=[nature(0.12)]; natOn=true;
-    const btn=document.getElementById('natBtn');
-    if(btn){btn.className='nature-btn on'; btn.textContent='🌿 Amazon + Ocean: ON';}
-  }
-}
+
 
 // ── Waveform selector ─────────────────────────────────
 function setWave(w, btn){
