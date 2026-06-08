@@ -109,17 +109,17 @@ nav{z-index:200}
   <div class="nav-inner">
     <div class="nav-logo">✦ Sacred Frequencies</div>
     <div class="nav-tabs">
-      <button class="tab active" onclick="go('home')">🏠 Home</button>
-      <button class="tab" onclick="go('player')">🎵 Player</button>
-      <button class="tab" onclick="go('angels')">👼 Angels</button>
-      <button class="tab" onclick="go('love')">💗 Love</button>
-      <button class="tab" onclick="go('vortex')">🌀 Vortex</button>
-      <button class="tab" onclick="go('nature')">🌿 Nature</button>
-      <button class="tab" onclick="go('growth')">🌱 Growth</button>
-      <button class="tab" onclick="go('rituals')">🔮 Rituals</button>
-      <button class="tab" onclick="go('journal')">📓 Journal</button>
-      <button class="tab" onclick="go('guide')">📖 Guide</button>
-      <button class="tab" onclick="go('protocol')">⚡ Protocol</button>
+      <button class="tab active" data-page="home" onclick="go('home')">🏠 Home</button>
+      <button class="tab" data-page="player" onclick="go('player')">🎵 Player</button>
+      <button class="tab" data-page="angels" onclick="go('angels')">👼 Angels</button>
+      <button class="tab" data-page="love" onclick="go('love')">💗 Love</button>
+      <button class="tab" data-page="vortex" onclick="go('vortex')">🌀 Vortex</button>
+      <button class="tab" data-page="nature" onclick="go('nature')">🌿 Nature</button>
+      <button class="tab" data-page="growth" onclick="go('growth')">🌱 Growth</button>
+      <button class="tab" data-page="rituals" onclick="go('rituals')">🔮 Rituals</button>
+      <button class="tab" data-page="journal" onclick="go('journal')">📓 Journal</button>
+      <button class="tab" data-page="guide" onclick="go('guide')">📖 Guide</button>
+      <button class="tab" data-page="protocol" onclick="go('protocol')">⚡ Protocol</button>
     </div>
   </div>
 </nav>
@@ -888,20 +888,25 @@ function lunarPlay(hz,btn){
 // ═══ NAV ═══
 function go(id){
   try{
+    // Unlock audio on every navigation tap
     unlockAudio();
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+    // Show target page
     const target=document.getElementById('page-'+id);
-    if(!target){console.warn('Page not found: page-'+id);return;}
-    target.classList.add('active');
+    if(!target){console.warn('go(): page-'+id+' not found');return;}
+    target.style.display='block';
+    // Update active tab using data-page attribute (reliable on iOS)
     document.querySelectorAll('.tab').forEach(t=>{
       t.classList.remove('active');
-      if(t.getAttribute('onclick')==="go('"+id+"')")t.classList.add('active');
+      if(t.getAttribute('data-page')===id) t.classList.add('active');
     });
-    window.scrollTo({top:0,behavior:'instant'});
-    // If going to player, render tracks
-    if(id==='player'&&document.getElementById('trackList')&&
-       document.getElementById('trackList').children.length===0){
-      rTracks('All');
+    // Scroll to top
+    window.scrollTo(0,0);
+    // Render player tracks on first visit
+    if(id==='player'){
+      const tl=document.getElementById('trackList');
+      if(tl&&tl.children.length===0) rTracks('All');
     }
   }catch(e){console.error('go() error:',e);}
 }
@@ -1118,12 +1123,16 @@ document.addEventListener('click', function onFirstClick(){
 }, {passive:true});
 
 // ═══ INIT ═══
-// iOS hint always shown
 makeStars();
 rTracks();rAngels();rLoveStages();rVortex();rNature();rGrowth();rRituals();rGuide();rProtocol();
 rMoodBtns();jLoad();rJournal();
 document.getElementById('wSine').classList.add('active');
 selTrackFn(TRACKS.find(t=>t.feat)||TRACKS[0]);
+// Show home page explicitly via go() so inline display styles are set
+// First hide all pages inline, then show home
+document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+const homePg=document.getElementById('page-home');
+if(homePg) homePg.style.display='block';
 </script>
 </body>
 </html>
