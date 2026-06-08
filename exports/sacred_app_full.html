@@ -631,9 +631,9 @@ function tone(f, vol, wave){
   comp.release.value   = 0.3;
 
   const mg = c.createGain();
-  mg.gain.value = 0;          // start silent — set directly, no scheduling yet
+  mg.gain.value = 0.0001;     // near-zero until oscillators start, then set directly
   mg.connect(comp);
-  comp.connect(c.destination);  // connect to dest after full chain is built
+  comp.connect(c.destination);
 
   const oscs = [];
 
@@ -682,10 +682,8 @@ function tone(f, vol, wave){
     }
   }
 
-  // Ramp up AFTER oscillators started — avoids iOS scheduling drop
-  const targetVol = Math.min(vol, 0.88);
-  mg.gain.setValueAtTime(0.0001, c.currentTime);
-  mg.gain.linearRampToValueAtTime(targetVol, c.currentTime + 0.5);
+  // Set volume directly — iOS Safari drops ramps scheduled at t=currentTime
+  mg.gain.value = Math.min(vol, 0.88);
 
   return {
     masterGain: mg,
@@ -703,8 +701,7 @@ function nature(vol){
   comp.threshold.value = -20; comp.ratio.value = 3;
   comp.connect(c.destination);
   const mg = c.createGain();
-  mg.gain.setValueAtTime(0.0001, c.currentTime);
-  mg.gain.exponentialRampToValueAtTime(Math.min(vol, 0.9), c.currentTime + 1.5);
+  mg.gain.value = Math.min(vol, 0.9);
   mg.connect(comp);
   const srcs = [];
 
@@ -779,16 +776,13 @@ function binaural(base, beat){
 
 // ── fade(): graceful 0.8 s fade then hard stop ────────
 function fade(nodes){
-  if(!ctx || !nodes) return;
+  if(!nodes || !nodes.length) return;
   nodes.forEach(n => {
     if(!n || !n.masterGain) return;
     try{
-      const g = n.masterGain.gain;
-      g.cancelScheduledValues(ctx.currentTime);
-      g.setValueAtTime(Math.max(g.value, 0.0001), ctx.currentTime);
-      g.linearRampToValueAtTime(0.0001, ctx.currentTime + 0.8);
+      n.masterGain.gain.value = 0;   // immediate silence
     }catch(e){}
-    setTimeout(() => { try{ n._stop && n._stop(); }catch(e){} }, 950);
+    setTimeout(() => { try{ n._stop && n._stop(); }catch(e){} }, 50);
   });
 }
 
