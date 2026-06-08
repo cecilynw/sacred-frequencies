@@ -600,31 +600,57 @@ function unlockAudio(){
     c.resume().catch(()=>{});
   }catch(e){console.warn('unlockAudio:',e);}
 }
-function tone(f,vol=0.2,wave=waveform){
-  const c=getCtx();
-  const o=c.createOscillator();
-  const g=c.createGain();
-  const comp=c.createDynamicsCompressor();
-  o.connect(g);g.connect(comp);comp.connect(c.destination);
-  o.type=wave;
-  // For very low frequencies use audible carrier with binaural
-  if(f<20){
-    // Binaural: L=100Hz, R=100+fHz
-    o.frequency.value=100;
-    const o2=c.createOscillator();const g2=c.createGain();
-    const merger=c.createChannelMerger(2);
-    o2.type='sine';o2.frequency.value=100+f;
-    g2.gain.value=Math.min(vol,0.7);g.gain.value=Math.min(vol,0.7);
-    o.connect(g);o2.connect(g2);
-    g.connect(merger,0,0);g2.connect(merger,0,1);
-    merger.connect(comp);o2.start();o.start();
-    return{osc:o,gain:g,extra:[{osc:o2,gain:g2}]};
+function tone(f, vol=0.2, wave=waveform){
+  const c = getCtx();
+  const comp = c.createDynamicsCompressor();
+  comp.threshold.value = -18;
+  comp.knee.value = 6;
+  comp.ratio.value = 4;
+  comp.attack.value = 0.003;
+  comp.release.value = 0.25;
+  comp.connect(c.destination);
+
+  const masterGain = c.createGain();
+  masterGain.gain.setValueAtTime(0.001, c.currentTime);
+  masterGain.gain.exponentialRampToValueAtTime(Math.min(vol, 0.85), c.currentTime + 0.5);
+  masterGain.connect(comp);
+
+  if(f < 20){
+    // Sub-audible: use binaural beat at carrier 110Hz
+    const carrier = 110;
+    const merger = c.createChannelMerger(2);
+    merger.connect(masterGain);
+
+    const oL = c.createOscillator();
+    const gL = c.createGain();
+    oL.type = 'sine';
+    oL.frequency.value = carrier;
+    gL.gain.value = 1;
+    oL.connect(gL);
+    gL.connect(merger, 0, 0);
+    oL.start();
+
+    const oR = c.createOscillator();
+    const gR = c.createGain();
+    oR.type = 'sine';
+    oR.frequency.value = carrier + f;
+    gR.gain.value = 1;
+    oR.connect(gR);
+    gR.connect(merger, 0, 1);
+    oR.start();
+
+    return { masterGain, _stop: ()=>{ oL.stop(); oR.stop(); } };
   }
-  o.frequency.value=Math.min(Math.max(f,20),4000);
-  g.gain.setValueAtTime(0.001,c.currentTime);
-  g.gain.exponentialRampToValueAtTime(Math.min(vol,0.7),c.currentTime+0.3);
-  o.start();return{osc:o,gain:g};
+
+  // Audible frequency: single oscillator
+  const osc = c.createOscillator();
+  osc.type = wave;
+  osc.frequency.value = Math.min(Math.max(f, 20), 4000);
+  osc.connect(masterGain);
+  osc.start();
+  return { masterGain, _stop: ()=>{ osc.stop(); } };
 }
+
 function binaural(base,beat){
   const c=getCtx(),nodes=[];
   [[-1,base],[1,base+beat]].forEach(([pan,f])=>{
@@ -657,41 +683,54 @@ function nature(vol=0.1){
   return{nodes:ns,masterGain:mg};
 }
 function fade(nodes){
-  if(!ctx)return;
-  nodes.forEach(n=>{
-    try{if(n.gain)n.gain.gain.linearRampToValueAtTime(0,ctx.currentTime+0.8);}catch{}
-    try{if(n.masterGain)n.masterGain.gain.linearRampToValueAtTime(0,ctx.currentTime+0.8);}catch{}
-    setTimeout(()=>{
-      try{n.osc&&n.osc.stop();}catch{}
-      try{n.extra&&n.extra.forEach(x=>{try{x.osc.stop();}catch{}});}catch{}
-      try{n.nodes&&n.nodes.forEach(x=>{try{x.stop();}catch{}});}catch{}
-    },1000);
+  nodes.forEach(n => {
+    try{
+      n.masterGain.gain.cancelScheduledValues(ctx.currentTime);
+      n.masterGain.gain.setValueAtTime(n.masterGain.gain.value, ctx.currentTime);
+      n.masterGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.8);
+    } catch(e){}
+    setTimeout(()=>{ try{ n._stop && n._stop(); } catch(e){} }, 900);
   });
 }
 
-// ═══ PLAYER ═══
 function selTrackFn(t){
-  selTrack=t;
-  document.getElementById('pName').textContent=t.n;
-  document.getElementById('pHz').textContent=t.hz+' Hz';
-  document.getElementById('pBenefit').textContent=t.ben;
-  document.getElementById('pAff').style.display='block';
-  document.getElementById('pAff').textContent='"'+t.aff+'"';
-  document.querySelectorAll('.track-card').forEach(c=>c.classList.remove('sel'));
-  const el=document.getElementById('tc-'+String(t.hz).replace('.','_'));
-  if(el)el.classList.add('sel');
-  if(isPlaying)startPlay();
+  selTrack = t;
+  // Update player display
+  const pName = document.getElementById('pName');
+  const pHz = document.getElementById('pHz');
+  const pBen = document.getElementById('pBenefit');
+  const pAff = document.getElementById('pAff');
+  if(pName) pName.textContent = t.n;
+  if(pHz)   pHz.textContent  = t.hz + ' Hz';
+  if(pBen)  pBen.textContent = t.ben;
+  if(pAff){ pAff.textContent = '"' + (t.aff||'') + '"'; pAff.style.display='block'; }
+  // Highlight selected card
+  document.querySelectorAll('.track-card').forEach(c => c.classList.remove('sel'));
+  const card = document.getElementById('tc-' + String(t.hz).replace('.','_'));
+  if(card){ card.classList.add('sel'); card.scrollIntoView({block:'nearest',behavior:'smooth'}); }
+  // If already playing, restart with new track immediately
+  if(isPlaying) startPlay();
 }
 function startPlay(){
-  fade(activeNodes);activeNodes=[];
-  const f=selTrack.hz;const nodes=[];
-  nodes.push(tone(f,masterVol*0.5));
-  if(f>=20&&f<3000)nodes.push(tone(Math.min(f*2,4000),masterVol*0.08,'sine'));
-  activeNodes=nodes;startTime=Date.now();isPlaying=true;
-  document.getElementById('playBtn').textContent='■ Stop';
-  document.getElementById('pBar').style.width='0%';
-  clearInterval(timerIv);timerIv=setInterval(timerTick,1000);
-  setTimeout(()=>{document.getElementById('pAff').style.display='block';},3000);
+  fade(activeNodes); activeNodes = [];
+  const f = selTrack.hz;
+  const nodes = [];
+  // Primary frequency
+  nodes.push(tone(f, masterVol * 0.6));
+  // Harmonic overtone for audible frequencies
+  if(f >= 20 && f < 2000){
+    nodes.push(tone(Math.min(f * 2, 4000), masterVol * 0.1, 'sine'));
+  }
+  activeNodes = nodes;
+  startTime = Date.now();
+  isPlaying = true;
+  document.getElementById('playBtn').textContent = '■ Stop';
+  document.getElementById('pBar').style.width = '0%';
+  clearInterval(timerIv);
+  timerIv = setInterval(timerTick, 1000);
+  // Show affirmation immediately
+  const affEl = document.getElementById('pAff');
+  if(affEl) affEl.style.display = 'block';
 }
 function stopPlay(){
   fade(activeNodes);activeNodes=[];clearInterval(timerIv);isPlaying=false;
@@ -709,14 +748,17 @@ function setVol(v){
   });
 }
 function playerToggle(){
-  if(!selTrack){alert('Tap a frequency first');return;}
-  unlockAudio();
-  // Always resume context right before play
-  if(ctx&&ctx.state==='suspended'){
-    ctx.resume().then(()=>{isPlaying?stopPlay():startPlay();});
-  } else {
-    isPlaying?stopPlay():startPlay();
+  if(!selTrack){
+    alert('Please tap a frequency track first, then press Play.');
+    return;
   }
+  const c = getCtx();
+  unlockAudio();
+  c.resume().then(()=>{
+    if(isPlaying){ stopPlay(); } else { startPlay(); }
+  }).catch(()=>{
+    if(isPlaying){ stopPlay(); } else { startPlay(); }
+  });
 }
 function timerTick(){
   const s=Math.floor((Date.now()-startTime)/1000);
@@ -924,14 +966,19 @@ function rTracks(cat='All'){
       '<div style="flex:1;min-width:0"><div class="hz-badge" style="background:'+c+'20;color:'+c+';margin-bottom:5px">'+t.hz+' Hz</div>'+
       '<div style="font-weight:700;font-size:13px">'+t.n+'</div>'+
       '<div style="font-size:11px;color:var(--dim);margin-top:2px">'+t.ben+'</div>'+
-      '<div style="font-size:10px;color:var(--dim);margin-top:1px">Chakra: '+t.chakra+'</div></div>'+
-      '<button class="play-mini" data-tidx="'+globalIdx+'" onclick="event.stopPropagation();selByIdx(this);playerToggle()">▶</button>'+
+      '<div style="font-size:10px;color:var(--dim);margin-top:1px">Chakra: '+t.ch||'—'+'</div></div>'+
+      '<button class="play-mini" data-tidx="'+globalIdx+'" style="touch-action:manipulation" onclick="event.stopPropagation();selByIdx(this);setTimeout(playerToggle,80)">▶</button>'+
       '</div></div>';
   }).join('');
 }
 function selByIdx(el){
-  const idx=parseInt(el.getAttribute('data-tidx'));
-  if(!isNaN(idx)&&TRACKS[idx])selTrackFn(TRACKS[idx]);
+  const idx = parseInt(el.getAttribute('data-tidx'));
+  if(!isNaN(idx) && TRACKS[idx]){
+    selTrackFn(TRACKS[idx]);
+    document.querySelectorAll('.track-card').forEach(c=>c.classList.remove('sel'));
+    const card = el.classList.contains('track-card') ? el : el.closest ? el.closest('.track-card') : null;
+    if(card) card.classList.add('sel');
+  }
 }
 
 function rAngels(){
