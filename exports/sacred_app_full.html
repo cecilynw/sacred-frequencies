@@ -149,7 +149,7 @@ nav{z-index:200}
 #page-player h1{font-size:clamp(22px,5vw,32px);margin-bottom:4px}
 </style>
 
-<script src="https://unpkg.com/tone@14.8.49/build/Tone.js" crossorigin="anonymous"></script>
+
 </head>
 <body style="touch-action:pan-y;-webkit-text-size-adjust:100%;">
 
@@ -1547,14 +1547,15 @@ rMoodBtns();jLoad();rJournal();
 document.getElementById('wSine').classList.add('active');
 selTrackFn(TRACKS.find(t=>t.feat)||TRACKS[0]);
 // Show home page explicitly via go() so inline display styles are set
-// First hide all pages inline, then show home
-document.querySelectorAll('.page').forEach(p=>p.style.display='none');
-const homePg=document.getElementById('page-home');
-if(homePg) homePg.style.display='block';
+// Pages shown via CSS .page.active class — see go()
 </script>
 
-// ── Initialize: show home page via CSS class ──
-go('home');
+// ── Initialize after full DOM parse ──
+document.addEventListener('DOMContentLoaded', function() {
+  go('home');
+});
+// Fallback if DOMContentLoaded already fired
+if (document.readyState !== 'loading') { go('home'); }
 
 <script>
 /* ══ PLAYER REDESIGN JS ══ */

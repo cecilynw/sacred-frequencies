@@ -3,21 +3,24 @@ Deno.serve(async (_req) => {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#030712">
 <title>Sacred Frequencies — Heal. Align. Ascend.</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#030712;--card:#0f172a;--border:#1e293b;--text:#e2e8f0;--muted:#94a3b8;--dim:#475569}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-nav{position:fixed;top:0;left:0;right:0;z-index:200;background:#03071295;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid #ffffff12}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;background:#03071295;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid #ffffff12;padding-top:env(safe-area-inset-top,0px)}
 .nav-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;gap:16px;height:54px;padding:0 16px}
 .nav-logo{font-weight:900;font-size:15px;background:linear-gradient(135deg,#fbbf24,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;flex-shrink:0}
 .nav-tabs{display:flex;gap:2px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex:1}
 .nav-tabs::-webkit-scrollbar{display:none}
-.tab{padding:5px 11px;border-radius:8px;font-size:11.5px;font-weight:600;cursor:pointer;white-space:nowrap;border:none;background:transparent;color:#ffffff55;transition:all 0.15s;-webkit-tap-highlight-color:transparent}
+.tab{padding:5px 11px;border-radius:8px;font-size:11.5px;font-weight:600;cursor:pointer;white-space:nowrap;border:none;background:transparent;color:#ffffff55;transition:all 0.15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-tap-highlight-color:rgba(167,139,250,0.2)}
 .tab.active{background:#ffffff18;color:#fff}
-.page{display:none;max-width:960px;margin:0 auto;padding:66px 16px 48px}
-.page.active{display:block}
+.page{display:none;max-width:960px;margin:0 auto;padding:66px 16px 80px;padding-bottom:max(80px,env(safe-area-inset-bottom,80px));position:relative;z-index:1}
+.page.active{display:block;position:relative;z-index:1}
 .hero{text-align:center;padding:36px 0 28px}
 .hero-badge{display:inline-block;padding:4px 14px;border:1px solid #7c3aed55;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:0.2em;color:#a78bfa;margin-bottom:14px;text-transform:uppercase}
 .hero h1{font-size:clamp(26px,6vw,42px);font-weight:900;line-height:1.1;margin-bottom:10px}
@@ -31,7 +34,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:#03071295;backdro
 p.sub{color:var(--muted);font-size:14px;line-height:1.75;max-width:600px;margin:0 auto}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:11px 22px;border-radius:999px;font-weight:700;font-size:13px;cursor:pointer;border:none;transition:transform 0.12s,opacity 0.12s;-webkit-tap-highlight-color:transparent;text-decoration:none}
 .btn:active{transform:scale(0.96)}
-.btn-primary{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;box-shadow:0 0 24px #7c3aed40}
+.btn-primary{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;box-shadow:0 0 24px #7c3aed40;min-height:44px;-webkit-appearance:none}
 .btn-secondary{background:transparent;color:var(--muted);border:1px solid #334155}
 .btn-rose{background:linear-gradient(135deg,#be185d,#7c3aed);color:#fff;box-shadow:0 0 24px #be185d40}
 .btn-green{background:linear-gradient(135deg,#059669,#0891b2);color:#fff}
@@ -39,19 +42,21 @@ p.sub{color:var(--muted);font-size:14px;line-height:1.75;max-width:600px;margin:
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:10px}
 .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .section-label{font-size:10.5px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);margin-bottom:10px;margin-top:24px}
-.hz-badge{display:inline-block;padding:3px 11px;border-radius:999px;font-size:12px;font-weight:800}
-.filter-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px}
-.filter-btn{padding:4px 11px;border-radius:999px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);transition:all 0.12s;-webkit-tap-highlight-color:transparent}
+.hz-badge{display:inline-block;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:0.03em;box-shadow:0 0 8px currentColor22}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;-webkit-overflow-scrolling:touch}
+.filter-btn{padding:6px 14px;border-radius:999px;font-size:11.5px;font-weight:700;cursor:pointer;border:1px solid #334155;background:transparent;color:#94a3b8;transition:all 0.18s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;white-space:nowrap}
 .filter-btn.active{border-color:#ffffff50;background:#ffffff18;color:#fff}
 /* Player */
-.player-box{background:linear-gradient(135deg,#0f0726,#0c1a2e,#0a1a0f);border:1px solid #7c3aed40;border-radius:18px;padding:22px 20px;margin-bottom:18px;text-align:center}
-.player-hz{font-size:clamp(36px,8vw,56px);font-weight:900;background:linear-gradient(135deg,#fbbf24,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
-.affirmation{font-style:italic;font-size:13px;color:#c4b5fd;padding:10px 14px;background:#7c3aed12;border-radius:10px;border:1px solid #7c3aed30;margin-top:10px;display:none}
-.progress-bar{height:3px;background:#1e293b;border-radius:2px;margin:10px 0;overflow:hidden}
-.progress-fill{height:100%;background:linear-gradient(90deg,#a78bfa,#f472b6);border-radius:2px;transition:width 1s linear;width:0%}
-.nature-btn{padding:7px 16px;border-radius:999px;font-size:11.5px;font-weight:700;cursor:pointer;border:1px solid #334155;background:transparent;color:var(--dim);transition:all 0.15s;-webkit-tap-highlight-color:transparent}
+.player-box{background:linear-gradient(160deg,#0d0520 0%,#0c1a2e 50%,#0a0f1e 100%);border:1.5px solid transparent;border-radius:24px;padding:24px 18px 20px;margin-bottom:20px;text-align:center;overflow:visible;-webkit-overflow-scrolling:touch;position:relative;box-shadow:0 0 40px #7c3aed22,0 0 80px #a78bfa10,inset 0 1px 0 #ffffff08;background-clip:padding-box}
+.player-hz{font-size:clamp(38px,10vw,68px);font-weight:900;background:linear-gradient(135deg,#fbbf24 0%,#f472b6 40%,#a78bfa 80%,#60a5fa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px;line-height:1;margin-bottom:4px;filter:drop-shadow(0 0 20px #fbbf2440)}
+.affirmation{font-style:italic;font-size:13.5px;color:#e2d9ff;padding:12px 16px;background:linear-gradient(135deg,#7c3aed18,#a78bfa08);border-radius:12px;border:1px solid #a78bfa35;margin-top:14px;display:none;line-height:1.6;letter-spacing:0.01em}
+.progress-bar{height:6px;background:#1e293b;border-radius:4px;margin:14px 0 6px;overflow:hidden;box-shadow:inset 0 1px 3px #00000060}
+.progress-fill{height:100%;background:linear-gradient(90deg,#7c3aed,#a78bfa,#f472b6,#fb923c);background-size:200% 100%;border-radius:4px;transition:width 1s linear;width:0%;box-shadow:0 0 8px #a78bfa80;animation:shimmer 3s linear infinite}@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.nature-btn{padding:10px 20px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid #22543d;background:linear-gradient(135deg,#052e1640,#0a3320);color:#86efac;transition:all 0.18s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .nature-btn.on{border-color:#34d39970;background:#10b98118;color:#34d399}
-.track-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px 15px;cursor:pointer;transition:border-color 0.15s,background 0.15s;margin-bottom:7px;-webkit-tap-highlight-color:transparent}
+.track-card{background:linear-gradient(135deg,#0f172a,#0d1117);border:1px solid #1e293b;border-radius:16px;padding:14px 16px;cursor:pointer;transition:border-color 0.2s,background 0.2s,box-shadow 0.2s,transform 0.15s;margin-bottom:8px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.play-mini{width:40px;height:40px;border-radius:50%;border:1px solid #7c3aed50;background:linear-gradient(135deg,#7c3aed18,#a78bfa0a);color:#a78bfa;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.play-mini:hover,.play-mini:active{background:linear-gradient(135deg,#7c3aed55,#a78bfa35);box-shadow:0 0 12px #a78bfa50;transform:scale(1.1)}
 .track-card.sel{border-color:#a78bfa80;background:#a78bfa0a}
 /* Love */
 .love-btn{width:154px;height:154px;border-radius:50%;border:none;cursor:pointer;background:radial-gradient(circle at 40% 40%,#be185d,#7c3aed);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;margin:0 auto;box-shadow:0 0 50px #be185d50;font-weight:800;font-size:13px;text-align:center;padding:16px;-webkit-tap-highlight-color:transparent}
@@ -96,9 +101,58 @@ textarea{resize:none}
 @keyframes twinkle{0%,100%{opacity:0.1}50%{opacity:var(--op)}}
 .page{position:relative;z-index:1}
 nav{z-index:200}
+
+/* ══ PLAYER REDESIGN EXTRAS ══ */
+/* Glowing border ring on player-box */
+.player-box::before{content:'';position:absolute;inset:-1.5px;border-radius:25px;background:linear-gradient(135deg,#7c3aed60,#a78bfa40,#f472b6 40%,#fbbf2430,#a78bfa50);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;padding:1.5px;pointer-events:none;animation:borderPulse 4s ease-in-out infinite}
+@keyframes borderPulse{0%,100%{opacity:0.5}50%{opacity:1}}
+
+/* Sacred geometry orb behind Hz display */
+.player-orb{width:100px;height:100px;margin:0 auto 8px;position:relative;display:flex;align-items:center;justify-content:center}
+.player-orb::before{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,#7c3aed30 0%,#a78bfa15 50%,transparent 75%);animation:orbPulse 3s ease-in-out infinite}
+.player-orb::after{content:'';position:absolute;inset:8px;border-radius:50%;border:1px solid #a78bfa30;animation:orbSpin 12s linear infinite}
+@keyframes orbPulse{0%,100%{transform:scale(1);opacity:0.6}50%{transform:scale(1.15);opacity:1}}
+@keyframes orbSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+/* Frequency visualizer bars */
+#vizCanvas{width:100%;height:48px;display:block;margin:8px 0 0;border-radius:8px;opacity:0.85}
+
+/* Play button cosmic glow */
+.btn-play-cosmic{background:linear-gradient(135deg,#7c3aed,#a78bfa,#c084fc)!important;box-shadow:0 0 24px #a78bfa60,0 4px 16px #7c3aed40;border:none!important;color:#fff!important;font-weight:800;letter-spacing:0.5px;transition:all 0.2s!important}
+.btn-play-cosmic:hover,.btn-play-cosmic:active{box-shadow:0 0 40px #a78bfa90,0 4px 24px #7c3aed60;transform:scale(1.04)}
+.btn-play-cosmic.playing{background:linear-gradient(135deg,#be185d,#f472b6,#fb7185)!important;box-shadow:0 0 28px #f472b660,0 4px 16px #be185d50!important;animation:playPulse 2s ease-in-out infinite}
+@keyframes playPulse{0%,100%{box-shadow:0 0 24px #f472b660}50%{box-shadow:0 0 44px #f472b690,0 0 60px #fb7185 30}}
+
+/* Track card selected state */
+.track-card.active{background:linear-gradient(135deg,#1e0a3c,#0f1e35)!important;border-color:#a78bfa70!important;box-shadow:0 0 16px #7c3aed30,inset 0 0 20px #a78bfa08;transform:translateX(3px)}
+.track-card:hover{border-color:#334155;box-shadow:0 2px 12px #00000040}
+
+/* Wave type buttons */
+.wave-btn{padding:7px 16px;border-radius:999px;font-size:11.5px;font-weight:700;cursor:pointer;border:1px solid #334155;background:transparent;color:#94a3b8;transition:all 0.18s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.wave-btn.active{background:linear-gradient(135deg,#7c3aed30,#a78bfa20);border-color:#a78bfa80;color:#c4b5fd;box-shadow:0 0 10px #a78bfa30}
+
+/* Filter active state */
+.filter-btn.active{background:linear-gradient(135deg,#7c3aed40,#a78bfa20);border-color:#a78bfa80;color:#e2d9ff;box-shadow:0 0 8px #7c3aed30}
+
+/* pName track subtitle */
+#pName{font-size:12px;color:#64748b;margin-bottom:2px;letter-spacing:0.03em;text-transform:uppercase;font-weight:600}
+#pBenefit{font-size:13px;color:#94a3b8;margin:4px 0 10px;line-height:1.5}
+#pTimer{font-size:11px;color:#475569;margin-bottom:10px;font-variant-numeric:tabular-nums}
+
+/* Volume slider */
+#volSlider{-webkit-appearance:none;appearance:none;height:5px;border-radius:3px;background:linear-gradient(90deg,#7c3aed,#a78bfa);outline:none;cursor:pointer}
+#volSlider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#7c3aed);box-shadow:0 0 8px #a78bfa60;cursor:pointer}
+
+/* iOS hint redesign */
+#iosHint{background:linear-gradient(135deg,#3b0764 20%,#1e1b4b);border:1px solid #7c3aed50;border-radius:14px;padding:12px 16px;margin-bottom:16px;font-size:12.5px;color:#ddd6fe;text-align:center;line-height:1.6;box-shadow:0 2px 12px #7c3aed20}
+
+/* Section header */
+#page-player h1{font-size:clamp(22px,5vw,32px);margin-bottom:4px}
 </style>
+
+
 </head>
-<body>
+<body style="touch-action:pan-y;-webkit-text-size-adjust:100%;">
 
 <div class="stars" id="starsContainer"></div>
 
@@ -106,39 +160,39 @@ nav{z-index:200}
   <div class="nav-inner">
     <div class="nav-logo">✦ Sacred Frequencies</div>
     <div class="nav-tabs">
-      <button class="tab active" onclick="go('home')">🏠 Home</button>
-      <button class="tab" onclick="go('player')">🎵 Player</button>
-      <button class="tab" onclick="go('angels')">👼 Angels</button>
-      <button class="tab" onclick="go('love')">💗 Love</button>
-      <button class="tab" onclick="go('vortex')">🌀 Vortex</button>
-      <button class="tab" onclick="go('nature')">🌿 Nature</button>
-      <button class="tab" onclick="go('growth')">🌱 Growth</button>
-      <button class="tab" onclick="go('rituals')">🔮 Rituals</button>
-      <button class="tab" onclick="go('journal')">📓 Journal</button>
-      <button class="tab" onclick="go('guide')">📖 Guide</button>
-      <button class="tab" onclick="go('protocol')">⚡ Protocol</button>
+      <button class="tab active" data-page="home" onclick="go('home')">🏠 Home</button>
+      <button class="tab" data-page="player" onclick="go('player')">🎵 Player</button>
+      <button class="tab" data-page="angels" onclick="go('angels')">👼 Angels</button>
+      <button class="tab" data-page="love" onclick="go('love')">💗 Love</button>
+      <button class="tab" data-page="vortex" onclick="go('vortex')">🌀 Vortex</button>
+      <button class="tab" data-page="nature" onclick="go('nature')">🌿 Nature</button>
+      <button class="tab" data-page="growth" onclick="go('growth')">🌱 Growth</button>
+      <button class="tab" data-page="rituals" onclick="go('rituals')">🔮 Rituals</button>
+      <button class="tab" data-page="journal" onclick="go('journal')">📓 Journal</button>
+      <button class="tab" data-page="guide" onclick="go('guide')">📖 Guide</button>
+      <button class="tab" data-page="protocol" onclick="go('protocol')">⚡ Protocol</button>
     </div>
   </div>
 </nav>
 
 <!-- ════════════ HOME ════════════ -->
-<div class="page active" id="page-home">
+<div class="page" id="page-home">
   <div class="hero">
     <div class="hero-badge">✦ Sacred Frequencies · Complete Healing App</div>
     <h1 class="grad-main">Heal. Align. Ascend.</h1>
     <p class="sub" style="margin-bottom:22px">40 sacred frequencies · Epigenetic Love · 9-Ether Protocol · Angel Numbers · Quantum Vortex · Healing Journal. Your complete sonic healing toolkit — works on any device.</p>
-    <button class="btn btn-primary" onclick="go('player')">▶ Start Healing Now</button>
+    <button class="btn btn-primary" onclick="go('player')" style="touch-action:manipulation;cursor:pointer;font-size:15px;padding:14px 32px;">▶ Start Healing Now</button>
   </div>
   <div class="grid3" style="margin-bottom:12px">
-    <div class="card" style="text-align:center;cursor:pointer;border-color:#fbbf2430" onclick="go('player')"><div style="font-size:26px;margin-bottom:6px">🎵</div><div style="font-weight:800;color:#fbbf24;font-size:14px">40 Frequencies</div><div style="font-size:11px;color:var(--dim);margin-top:4px">Solfeggio · Angels · Schumann</div></div>
-    <div class="card" style="text-align:center;cursor:pointer;border-color:#34d39930" onclick="go('nature')"><div style="font-size:26px;margin-bottom:6px">🌿</div><div style="font-weight:800;color:#34d399;font-size:14px">Nature Portal</div><div style="font-size:11px;color:var(--dim);margin-top:4px">6 immersive soundscapes</div></div>
-    <div class="card" style="text-align:center;cursor:pointer;border-color:#a78bfa30" onclick="go('protocol')"><div style="font-size:26px;margin-bottom:6px">⚡</div><div style="font-weight:800;color:#a78bfa;font-size:14px">9-Ether Protocol</div><div style="font-size:11px;color:var(--dim);margin-top:4px">7.83 Hz → 3,168 Hz</div></div>
-    <div class="card" style="text-align:center;cursor:pointer;border-color:#fb718530" onclick="go('love')"><div style="font-size:26px;margin-bottom:6px">💗</div><div style="font-weight:800;color:#fb7185;font-size:14px">Epigenetic Love</div><div style="font-size:11px;color:var(--dim);margin-top:4px">6-stage DNA repair</div></div>
-    <div class="card" style="text-align:center;cursor:pointer;border-color:#7c3aed30" onclick="go('vortex')"><div style="font-size:26px;margin-bottom:6px">🌀</div><div style="font-weight:800;color:#a78bfa;font-size:14px">Quantum Vortex</div><div style="font-size:11px;color:var(--dim);margin-top:4px">9-ether healing</div></div>
-    <div class="card" style="text-align:center;cursor:pointer;border-color:#fbbf2430" onclick="go('angels')"><div style="font-size:26px;margin-bottom:6px">👼</div><div style="font-weight:800;color:#fbbf24;font-size:14px">Angel Numbers</div><div style="font-size:11px;color:var(--dim);margin-top:4px">20 sacred frequencies</div></div>
-    <div class="card" style="text-align:center;cursor:pointer;border-color:#22c55e30" onclick="go('growth')"><div style="font-size:26px;margin-bottom:6px">🌱</div><div style="font-weight:800;color:#22c55e;font-size:14px">Growth Sound</div><div style="font-size:11px;color:var(--dim);margin-top:4px">8-step ascension journey</div></div>
-    <div class="card" style="text-align:center;cursor:pointer;border-color:#2dd4bf30" onclick="go('rituals')"><div style="font-size:26px;margin-bottom:6px">🔮</div><div style="font-weight:800;color:#2dd4bf;font-size:14px">Healing Rituals</div><div style="font-size:11px;color:var(--dim);margin-top:4px">6 complete protocols</div></div>
-    <div class="card" style="text-align:center;cursor:pointer;border-color:#60a5fa30" onclick="go('journal')"><div style="font-size:26px;margin-bottom:6px">📓</div><div style="font-weight:800;color:#60a5fa;font-size:14px">Healing Journal</div><div style="font-size:11px;color:var(--dim);margin-top:4px">Track your transformation</div></div>
+    <div class="card" style="text-align:center;cursor:pointer;touch-action:manipulation;border-color:#fbbf2430" onclick="go('player')"><div style="font-size:26px;margin-bottom:6px">🎵</div><div style="font-weight:800;color:#fbbf24;font-size:14px">40 Frequencies</div><div style="font-size:11px;color:var(--dim);margin-top:4px">Solfeggio · Angels · Schumann</div></div>
+    <div class="card" style="text-align:center;cursor:pointer;touch-action:manipulation;border-color:#34d39930" onclick="go('nature')"><div style="font-size:26px;margin-bottom:6px">🌿</div><div style="font-weight:800;color:#34d399;font-size:14px">Nature Portal</div><div style="font-size:11px;color:var(--dim);margin-top:4px">6 immersive soundscapes</div></div>
+    <div class="card" style="text-align:center;cursor:pointer;touch-action:manipulation;border-color:#a78bfa30" onclick="go('protocol')"><div style="font-size:26px;margin-bottom:6px">⚡</div><div style="font-weight:800;color:#a78bfa;font-size:14px">9-Ether Protocol</div><div style="font-size:11px;color:var(--dim);margin-top:4px">7.83 Hz → 3,168 Hz</div></div>
+    <div class="card" style="text-align:center;cursor:pointer;touch-action:manipulation;border-color:#fb718530" onclick="go('love')"><div style="font-size:26px;margin-bottom:6px">💗</div><div style="font-weight:800;color:#fb7185;font-size:14px">Epigenetic Love</div><div style="font-size:11px;color:var(--dim);margin-top:4px">6-stage DNA repair</div></div>
+    <div class="card" style="text-align:center;cursor:pointer;touch-action:manipulation;border-color:#7c3aed30" onclick="go('vortex')"><div style="font-size:26px;margin-bottom:6px">🌀</div><div style="font-weight:800;color:#a78bfa;font-size:14px">Quantum Vortex</div><div style="font-size:11px;color:var(--dim);margin-top:4px">9-ether healing</div></div>
+    <div class="card" style="text-align:center;cursor:pointer;touch-action:manipulation;border-color:#fbbf2430" onclick="go('angels')"><div style="font-size:26px;margin-bottom:6px">👼</div><div style="font-weight:800;color:#fbbf24;font-size:14px">Angel Numbers</div><div style="font-size:11px;color:var(--dim);margin-top:4px">20 sacred frequencies</div></div>
+    <div class="card" style="text-align:center;cursor:pointer;touch-action:manipulation;border-color:#22c55e30" onclick="go('growth')"><div style="font-size:26px;margin-bottom:6px">🌱</div><div style="font-weight:800;color:#22c55e;font-size:14px">Growth Sound</div><div style="font-size:11px;color:var(--dim);margin-top:4px">8-step ascension journey</div></div>
+    <div class="card" style="text-align:center;cursor:pointer;touch-action:manipulation;border-color:#2dd4bf30" onclick="go('rituals')"><div style="font-size:26px;margin-bottom:6px">🔮</div><div style="font-weight:800;color:#2dd4bf;font-size:14px">Healing Rituals</div><div style="font-size:11px;color:var(--dim);margin-top:4px">6 complete protocols</div></div>
+    <div class="card" style="text-align:center;cursor:pointer;touch-action:manipulation;border-color:#60a5fa30" onclick="go('journal')"><div style="font-size:26px;margin-bottom:6px">📓</div><div style="font-weight:800;color:#60a5fa;font-size:14px">Healing Journal</div><div style="font-size:11px;color:var(--dim);margin-top:4px">Track your transformation</div></div>
   </div>
   <div class="card" style="text-align:center;margin-top:4px"><div style="font-size:11px;color:var(--dim)">🔒 Universal Safety Promise · 528 Hz love carrier + 7.83 Hz Schumann anchor · Safe for all ages and animals</div></div>
 </div>
@@ -147,22 +201,49 @@ nav{z-index:200}
 <div class="page" id="page-player">
   <h1 class="grad-amber" style="margin-bottom:6px">🎵 Frequency Player</h1>
   <p class="sub" style="margin-bottom:18px;text-align:left">Use headphones for binaural effect · Set your intention · Tap a track then press Play</p>
-  <div class="player-box">
-    <div id="pName" style="font-size:12px;color:var(--dim);margin-bottom:4px">Select a frequency below</div>
-    <div class="player-hz" id="pHz">— Hz</div>
-    <div id="pBenefit" style="font-size:12px;color:var(--muted);margin:6px 0"></div>
-    <div class="progress-bar"><div class="progress-fill" id="pBar"></div></div>
-    <div id="pTimer" style="font-size:11px;color:var(--dim);margin-bottom:14px">0:00</div>
-    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:10px">
-      <button class="btn btn-primary" id="playBtn" onclick="playerToggle()">▶ Play</button>
-      <button class="nature-btn" id="natBtn" onclick="playerNature()">🌿 Add Nature Ambience</button>
+  <div id="iosHint" style="background:#a78bfa15;border:1px solid #a78bfa40;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#c4b5fd;text-align:center;line-height:1.5">
+  📱 <strong>Tip:</strong> Silent switch OFF · Volume up · Tap a track, then tap ▶ Play
+</div>
+  <div class="player-box" style="position:relative;">
+    <!-- Track info -->
+    <div id="pName" style="text-transform:uppercase;letter-spacing:0.08em;font-size:11px;color:#64748b;margin-bottom:6px;font-weight:700">✦ Select a frequency below ✦</div>
+
+    <!-- Sacred orb + Hz display -->
+    <div class="player-orb">
+      <div class="player-hz" id="pHz" style="position:relative;z-index:2">—</div>
     </div>
+    <div style="font-size:13px;color:#94a3b8;margin:-4px 0 2px;letter-spacing:0.05em;font-weight:600" id="pHzLabel">Hz</div>
+    <div id="pBenefit" style="font-size:13px;color:#94a3b8;margin:6px 0 10px;line-height:1.5;min-height:18px"></div>
+
+    <!-- Frequency visualizer canvas -->
+    <canvas id="vizCanvas" height="48"></canvas>
+
+    <!-- Progress bar -->
+    <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" id="pBar"></div></div>
+    <div id="pTimer" style="font-size:11px;color:#475569;margin-bottom:12px;font-variant-numeric:tabular-nums">0:00</div>
+
+    <!-- Play + Nature buttons -->
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;align-items:center">
+      <button class="btn btn-primary btn-play-cosmic" id="playBtn" data-action="toggle" style="touch-action:manipulation;-webkit-appearance:none;min-width:150px;min-height:54px;font-size:18px;letter-spacing:0.5px;border-radius:30px;">▶ Play</button>
+      <button class="nature-btn" id="natBtn" data-action="nature" style="touch-action:manipulation;-webkit-appearance:none;min-height:48px;">🌿 Nature</button>
+    </div>
+
+    <!-- Volume -->
+    <div style="display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:0 6px">
+      <span style="font-size:15px;line-height:1">🔊</span>
+      <input type="range" id="volSlider" min="1" max="100" value="70" oninput="setVol(this.value)" style="flex:1;touch-action:manipulation">
+      <span id="volLabel" style="font-size:12px;color:#64748b;min-width:34px;text-align:right;font-variant-numeric:tabular-nums">70%</span>
+    </div>
+
+    <!-- Affirmation -->
     <div class="affirmation" id="pAff"></div>
-    <div style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">
-      <button class="filter-btn" onclick="setWave('sine',this)" id="wSine" style="font-size:11px">Sine</button>
-      <button class="filter-btn" onclick="setWave('triangle',this)" id="wTri" style="font-size:11px">Triangle</button>
-      <button class="filter-btn" onclick="setWave('sawtooth',this)" id="wSaw" style="font-size:11px">Sawtooth</button>
-      <button class="filter-btn" onclick="setWave('square',this)" id="wSq" style="font-size:11px">Square</button>
+
+    <!-- Wave type selector -->
+    <div style="display:flex;gap:6px;justify-content:center;margin-top:16px;flex-wrap:wrap">
+      <button class="wave-btn active" id="wSine" data-wave="sine" style="touch-action:manipulation">Sine</button>
+      <button class="wave-btn" id="wTri" data-wave="triangle" style="touch-action:manipulation">Triangle</button>
+      <button class="wave-btn" id="wSaw" data-wave="sawtooth" style="touch-action:manipulation">Sawtooth</button>
+      <button class="wave-btn" id="wSq" data-wave="square" style="touch-action:manipulation">Square</button>
     </div>
   </div>
   <div class="filter-row" id="catFilter">
@@ -351,28 +432,46 @@ nav{z-index:200}
 <script>
 // ═══════════════════════════════ DATA ═══════════════════════════════
 const TRACKS=[
-  {n:"7.83 Hz — Schumann Resonance",hz:7.83,cat:"Nature",ben:"Earth frequency grounding and cellular protection",ch:"Root",aff:"I am grounded in the frequency of the Earth. I am safe, stable, and connected.",feat:true},
-  {n:"40 Hz — Gamma Brain",hz:40,cat:"Mind",ben:"Neuroplasticity, whole-brain coherence, longevity",ch:"Mind",aff:"I activate my full cognitive power. My mind is sharp, clear, and luminous.",feat:false},
-  {n:"111 Hz — Angel · New Beginnings",hz:111,cat:"Spirit",ben:"Cell regeneration · manifestation activation",ch:"Crown",aff:"I am aligned with divine timing. My thoughts create my reality now.",feat:true},
-  {n:"174 Hz — Pain Relief",hz:174,cat:"Body",ben:"Natural anesthetic · deep tissue healing",ch:"Root",aff:"I am free from pain. My body heals itself perfectly and naturally.",feat:false},
-  {n:"222 Hz — Angel · Balance & Harmony",hz:222,cat:"Love",ben:"Brain hemisphere balance · soul partnerships",ch:"Heart",aff:"Everything is in divine balance. My partnerships are blessed and harmonious.",feat:true},
-  {n:"285 Hz — Tissue Regeneration",hz:285,cat:"Body",ben:"Restores damaged organs · cellular renewal",ch:"Sacral",aff:"I regenerate fully. Every cell of my body is restored to perfect health.",feat:false},
-  {n:"333 Hz — Angel · Ascended Masters",hz:333,cat:"Spirit",ben:"Connects to ascended masters · divine guidance",ch:"Throat & Crown",aff:"I am surrounded by divine masters. Creative wisdom flows through me perfectly.",feat:true},
-  {n:"396 Hz — Fear & Guilt Release",hz:396,cat:"Mind",ben:"Liberates from fear, guilt, and shame",ch:"Root",aff:"I release all fear and guilt. I stand in pure power and love.",feat:false},
-  {n:"417 Hz — Trauma Clearing",hz:417,cat:"Cleansing",ben:"Dissolves trauma · negative pattern removal",ch:"Sacral",aff:"I release all trauma. My past no longer defines me. I step into freedom.",feat:false},
-  {n:"432 Hz — Nature Tuning",hz:432,cat:"Nature",ben:"Universal harmony · nature alignment",ch:"Heart",aff:"I am in harmony with all of nature. I vibrate at the frequency of life.",feat:true},
-  {n:"444 Hz — Angel · Angelic Protection",hz:444,cat:"Body",ben:"Foundation strengthening · divine protection",ch:"Root",aff:"I am divinely protected. My foundations are solid, strong, and eternal.",feat:false},
-  {n:"528 Hz — DNA Repair · Love Frequency",hz:528,cat:"Body",ben:"Repairs DNA · activates love codes in cells",ch:"Heart",aff:"I am healed at the cellular level. Love flows through every strand of my DNA.",feat:true},
-  {n:"555 Hz — Angel · Transformation",hz:555,cat:"Cleansing",ben:"Accelerates positive change · dissolves old structures",ch:"Solar Plexus",aff:"I welcome transformation. I release the old with grace and embrace my new reality.",feat:true},
-  {n:"639 Hz — Heart Coherence",hz:639,cat:"Love",ben:"Heart toroidal field · relationship healing",ch:"Heart",aff:"I am open to giving and receiving love fully and freely.",feat:true},
-  {n:"666 Hz — Angel · Rebalance",hz:666,cat:"Mind",ben:"Mind-heart harmony · dissolves anxiety loops",ch:"Heart & Third Eye",aff:"My mind and heart are in perfect harmony. I think and feel with love.",feat:false},
-  {n:"741 Hz — Toxin Cleanse",hz:741,cat:"Cleansing",ben:"Electromagnetic toxin removal · cellular detox",ch:"Throat",aff:"I am pure. My cells release all toxins and radiate perfect health.",feat:false},
-  {n:"777 Hz — Angel · Divine Luck",hz:777,cat:"Spirit",ben:"Spiritual mastery · Akashic access · divine fortune",ch:"Crown",aff:"I walk the sacred path. Divine wisdom and luck flow to me effortlessly.",feat:true},
-  {n:"852 Hz — Pineal Activation",hz:852,cat:"Spirit",ben:"Third eye opening · pineal decalcification",ch:"Third Eye",aff:"I see clearly. My third eye opens to divine truth and higher dimensions.",feat:false},
-  {n:"888 Hz — Angel · Infinite Abundance",hz:888,cat:"Wealth",ben:"Opens all channels of financial abundance",ch:"Solar Plexus",aff:"I am an infinite channel for abundance. Wealth flows to me from all directions.",feat:true},
-  {n:"963 Hz — God Frequency",hz:963,cat:"Spirit",ben:"Pineal activation · divine source connection",ch:"Crown",aff:"I am one with source. Divine light flows through me in all directions.",feat:true},
-  {n:"999 Hz — Angel · Completion",hz:999,cat:"Cleansing",ben:"Karmic cycle completion · soul clearing",ch:"All Chakras",aff:"I complete all karmic cycles with grace. I am free and ready for my highest calling.",feat:false},
-  {n:"1111 Hz — Angel · Manifestation Portal",hz:1111,cat:"Spirit",ben:"Dimensional gateway · thoughts become reality",ch:"Soul Star",aff:"The portal is open. My highest intentions are now manifesting in perfect divine timing.",feat:true},
+  {n:"111 Hz — Angel Number · New Beginnings",hz:111,cat:"Spirit",ben:"Awakens manifestation power and new beginnings",ch:"Crown",aff:"I am aligned with divine timing. My thoughts create my reality now."},
+  {n:"222 Hz — Angel Number · Balance & Harmony",hz:222,cat:"Love",ben:"Restores balance, harmony, and divine partnerships",ch:"Heart",aff:"Everything is in divine balance. My partnerships are blessed and harmonious."},
+  {n:"333 Hz — Angel Number · Ascended Masters",hz:333,cat:"Spirit",ben:"Connects with ascended masters and divine guidance",ch:"Throat & Crown",aff:"I am surrounded by divine masters. Creative wisdom flows through me perfectly."},
+  {n:"444 Hz — Angel Number · Protection & Foundation",hz:444,cat:"Body",ben:"Builds unshakeable foundations and angelic protection",ch:"Root & Earth Star",aff:"I am divinely protected. My foundations are solid, strong, and eternal."},
+  {n:"555 Hz — Angel Number · Transformation & Change",hz:555,cat:"Cleansing",ben:"Accelerates positive change and life transformation",ch:"Solar Plexus & Throat",aff:"I welcome transformation. I release the old with grace and embrace my new reality."},
+  {n:"666 Hz — Angel Number · Rebalance & Compassion",hz:666,cat:"Mind",ben:"Rebalances overthinking and activates heart wisdom",ch:"Heart & Third Eye",aff:"My mind and heart are in perfect harmony. I think and feel with love."},
+  {n:"777 Hz — Angel Number · Divine Luck & Wisdom",hz:777,cat:"Spirit",ben:"Activates divine luck, spiritual wisdom, and sacred knowledge",ch:"Crown & Soul Star",aff:"I walk the sacred path. Divine wisdom and luck flow to me effortlessly."},
+  {n:"888 Hz — Angel Number · Infinite Abundance",hz:888,cat:"Wealth",ben:"Opens infinite financial abundance and material mastery",ch:"Solar Plexus & Crown",aff:"I am an infinite channel for abundance. Wealth flows to me from all directions."},
+  {n:"999 Hz — Angel Number · Completion & Release",hz:999,cat:"Cleansing",ben:"Completes karmic cycles and clears what no longer serves",ch:"All Chakras",aff:"I complete all karmic cycles with grace. I am free and ready for my highest calling."},
+  {n:"1111 Hz — Angel Number · Manifestation Portal",hz:1111,cat:"Spirit",ben:"Opens the cosmic manifestation portal — thoughts become reality",ch:"Soul Star & Crown",aff:"The portal is open. My highest intentions are now manifesting in perfect divine timing."},
+  {n:"1212 Hz — Angel Number · Spiritual Growth",hz:1212,cat:"Spirit",ben:"Accelerates spiritual growth and divine awakening",ch:"Crown & Third Eye",aff:"I am rapidly evolving. My spirit expands into greater light with every breath."},
+  {n:"1234 Hz — Angel Number · Divine Progression",hz:1234,cat:"Mind",ben:"Aligns life steps with divine order and natural progression",ch:"Solar Plexus & Crown",aff:"I trust the divine steps of my journey. Each day I progress perfectly."},
+  {n:"2222 Hz — Angel Number · Master Builder",hz:2222,cat:"Wealth",ben:"Activates the master builder frequency for creating lasting legacy",ch:"Root & Crown",aff:"I am a master builder. What I create is magnificent, lasting, and divinely inspired."},
+  {n:"3333 Hz — Angel Number · Trinity Activation",hz:3333,cat:"Spirit",ben:"Activates the holy trinity of body, mind, and spirit simultaneously",ch:"All Chakras Unified",aff:"Body, mind and spirit are perfectly unified. I am whole, holy, and complete."},
+  {n:"4444 Hz — Angel Number · Celestial Fortress",hz:4000,lbl:"4444 Hz",cat:"Body",ben:"Maximum divine protection and physical fortress energy",ch:"Root, Sacral, Solar Plexus, Heart",aff:"I am fully protected on all levels. Nothing of low vibration may enter my field."},
+  {n:"5555 Hz — Angel Number · Mass Transformation",hz:4000,lbl:"5555 Hz",cat:"Cleansing",ben:"Quantum leap frequency — instant massive life transformation",ch:"All Chakras",aff:"I quantum leap into my highest timeline now. My transformation is total and immediate."},
+  {n:"6666 Hz — Angel Number · Unconditional Love Field",hz:4000,lbl:"6666 Hz",cat:"Love",ben:"Generates a field of pure unconditional love and compassion",ch:"Heart & Higher Heart",aff:"I radiate unconditional love. My heart is a sun that warms every soul I meet."},
+  {n:"7777 Hz — Angel Number · Supreme Sacred Luck",hz:4000,lbl:"7777 Hz",cat:"Wealth",ben:"Maximum divine luck and spiritual fortune activation",ch:"All Seven Major Chakras",aff:"I am divinely lucky. Miracles, synchronicities, and blessings surround me always."},
+  {n:"8888 Hz — Angel Number · Infinite Financial Mastery",hz:4000,lbl:"8888 Hz",cat:"Wealth",ben:"Opens all financial channels simultaneously — maximum abundance",ch:"All Chakras — Financial Axis",aff:"All doors of abundance are open to me. I am an infinite magnet for wealth and prosperity."},
+  {n:"9999 Hz — Angel Number · Divine Completion & Ascension",hz:4000,lbl:"9999 Hz",cat:"Spirit",ben:"Complete spiritual ascension and soul graduation frequency",ch:"Soul Star & Beyond",aff:"I have completed my karmic journey. I ascend into pure light and divine service."},
+  {n:"174 Hz — Pain Relief & Security",hz:174,cat:"Body",ben:"Natural anesthetic — reduces physical and energetic pain",ch:"Earth Star",aff:"I am safe. My body heals naturally and completely."},
+  {n:"285 Hz — Tissue Regeneration",hz:285,cat:"Body",ben:"Heals and regenerates tissues and organs",ch:"Root",aff:"Every cell in my body regenerates and thrives."},
+  {n:"396 Hz — Liberation from Fear & Guilt",hz:396,cat:"Cleansing",ben:"Releases fear, guilt, and grief — grounds and stabilizes",ch:"Root",aff:"I release all guilt and fear. I am free to live fully."},
+  {n:"417 Hz — Transmutation of Negativity",hz:417,cat:"Cleansing",ben:"Undoes situations and facilitates change — clears trauma",ch:"Sacral",aff:"I embrace change. All negative energy leaves my field now."},
+  {n:"432 Hz — Nature's Tuning — Heart Coherence",hz:432,cat:"Nature",ben:"Aligns with natural resonance of the universe and Earth",ch:"Heart",aff:"I am in perfect harmony with nature and the cosmos."},
+  {n:"528 Hz — DNA Repair & Miracle Frequency",hz:528,cat:"Body",ben:"Repairs DNA, increases life energy, clarity & peace",ch:"Solar Plexus",aff:"My DNA heals perfectly. I am a miracle in motion."},
+  {n:"639 Hz — Relationships & Heart Opening",hz:639,cat:"Love",ben:"Harmonizes relationships, enhances communication and love",ch:"Heart",aff:"Love flows freely through me. All my relationships are harmonious."},
+  {n:"741 Hz — Detox & Awakening Intuition",hz:741,cat:"Cleansing",ben:"Cleanses cells, detoxifies body, expands consciousness",ch:"Throat",aff:"I release all toxins. My intuition guides me clearly."},
+  {n:"852 Hz — Spiritual Order & Third Eye",hz:852,cat:"Spirit",ben:"Returns to spiritual order, awakens intuition and inner strength",ch:"Third Eye",aff:"My inner vision is clear. I am guided by divine wisdom."},
+  {n:"963 Hz — Crown Activation & Divine Connection",hz:963,cat:"Spirit",ben:"Activates the pineal gland and connects to higher consciousness",ch:"Crown",aff:"I am one with the divine. My crown is open and radiant."},
+  {n:"40 Hz — Gamma Brain — Focus & Longevity",hz:40,cat:"Mind",ben:"Enhances cognitive function, memory, and neuroplasticity",ch:"Crown",aff:"My mind is sharp, clear, and constantly evolving."},
+  {n:"7.83 Hz — Schumann Resonance — Earth Alignment",hz:7.83,cat:"Nature",ben:"Aligns with Earth's electromagnetic frequency",ch:"Root & Heart",aff:"I am grounded in the Earth. I move with the pulse of life."},
+  {n:"10 Hz — Alpha Relaxation — Stress Release",hz:10,cat:"Mind",ben:"Deep relaxation, stress reduction, pain relief",ch:"Third Eye",aff:"I am deeply relaxed. Peace is my natural state."},
+  {n:"528 Hz + 432 Hz Blend — Love & Nature Fusion",hz:528,cat:"Love",ben:"Supreme healing blend for heart and body",ch:"Heart & Crown",aff:"I am love. I heal completely. I am nature."},
+  {n:"888 Hz — Abundance & Wealth Activation",hz:888,cat:"Wealth",ben:"Activates abundance mindset and financial flow",ch:"Solar Plexus & Crown",aff:"Abundance flows to me easily and naturally. I am a magnet for wealth."},
+  {n:"111 Hz — Cellular Regeneration & Light Body",hz:111,cat:"Body",ben:"Activates cellular regeneration and light body awakening",ch:"Crown & Heart",aff:"I am light. Every cell in my body radiates perfect health and divine energy."},
+  {n:"432 Hz — Deep Sleep & Nervous System Reset",hz:432,cat:"Mind",ben:"Induces deep restorative sleep and resets the nervous system",ch:"All Chakras",aff:"I release the day with gratitude. I sleep deeply and wake renewed."},
+  {n:"528 Hz — Self Love & Worthiness",hz:528,cat:"Love",ben:"Cultivates deep self-love, self-worth, and inner radiance",ch:"Heart & Solar Plexus",aff:"I am worthy of all good things. I love and accept myself completely."},
+  {n:"963 Hz — Pineal Activation & Third Eye Opening",hz:963,cat:"Spirit",ben:"Activates the pineal gland for heightened intuition and vision",ch:"Third Eye & Crown",aff:"My third eye opens fully. I see the truth of all things with clarity and love."},
+  {n:"741 Hz — Electromagnetic Protection & Clarity",hz:741,cat:"Cleansing",ben:"Shields from EMF, clears confusion, and strengthens boundaries",ch:"Throat & Solar Plexus",aff:"I am protected from all harmful frequencies. My energy field is clear and strong."}
 ];
 const CC={Body:"#ef4444",Mind:"#60a5fa",Spirit:"#a78bfa",Wealth:"#fbbf24",Nature:"#34d399",Love:"#f472b6",Cleansing:"#2dd4bf"};
 
@@ -560,296 +659,700 @@ const FREQ_REF=[
 ];
 
 // ═══════════════════════════════ AUDIO ENGINE ═══════════════════════════════
-let ctx=null,activeNodes=[],timerIv=null,startTime=null,selTrack=null,isPlaying=false;
-let natOn=false,natNodes=[],loveFieldOn=false,loveNodes=[],stagePlay=null;
-let vortexOn=false,vortexNodes=[],vIntensity=0;
-let angelNodes=[],scenePlay=null,sceneNodes=[],primalNodes=[];
-let growthPlay=null,growthNodes=[],masterOn=false,masterNodes=[],masterIv=null,masterStep=0;
-let ritualPlay=null,ritualNodes=[],protOn=false,protNodes=[],lunarNodes=[];
-let waveform='sine';
-let jSessions=[];
-let vBeing=11;
+/* state variables now in Audio Engine v4 below */
 
-function getCtx(){
-  if(!ctx||ctx.state==='closed')ctx=new(window.AudioContext||window.webkitAudioContext)();
-  if(ctx.state==='suspended')ctx.resume();
-  return ctx;
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  SACRED FREQUENCIES — AUDIO ENGINE v6                       ║
+   ║  Powered by Tone.js (Brain.fm · Endel · Chrome Music Lab)   ║
+   ║                                                             ║
+   ║  WHY TONE.JS:                                               ║
+   ║  • Purpose-built for oscillator synthesis (not file play)   ║
+   ║  • Tone.start() = single-line iOS Safari bulletproof unlock  ║
+   ║  • Tone.Oscillator wraps all Safari AudioContext quirks      ║
+   ║  • Context auto-resumes on every user gesture               ║
+   ║  • Used by Brain.fm, Endel, Chrome Music Lab, Ableton Web   ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+// ── State ────────────────────────────────────────────────────────
+let activeNodes = [], timerIv = null, startTime = null;
+// ── Legacy aliases for selTrackFn compatibility ──
+var selTrack = null;
+
+
+
+// ══════════════════════════════════════════════════════
+// PURE WEB AUDIO ENGINE — no CDN, no Tone.js dependency
+// Works on every iOS Safari, Android, Chrome, Firefox
+// ══════════════════════════════════════════════════════
+
+// Global state
+var _sfCtx = null;
+var _sfUnlocked = false;
+var _currentNode = null;
+var isPlaying = false;
+
+// Get or create AudioContext (singleton)
+function getCtx() {
+  if (!_sfCtx) {
+    _sfCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return _sfCtx;
 }
-function tone(f,vol=0.2,wave=waveform){
-  const c=getCtx(),o=c.createOscillator(),g=c.createGain();
-  o.connect(g);g.connect(c.destination);
-  o.type=wave;o.frequency.value=Math.min(Math.max(f,1),4000);
-  g.gain.setValueAtTime(0,c.currentTime);
-  g.gain.linearRampToValueAtTime(vol,c.currentTime+1.5);
-  o.start();return{osc:o,gain:g};
+
+// Unlock AudioContext on first user gesture (iOS requirement)
+function ensureTone() {
+  var ctx = getCtx();
+  if (ctx.state === 'suspended') {
+    ctx.resume().catch(function(){});
+  }
+  if (!_sfUnlocked) {
+    _sfUnlocked = true;
+    // Play a silent buffer to fully unlock iOS audio
+    try {
+      var buf = ctx.createBuffer(1, 1, 22050);
+      var src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.connect(ctx.destination);
+      src.start(0);
+    } catch(e) {}
+  }
 }
-function binaural(base,beat){
-  const c=getCtx(),nodes=[];
-  [[-1,base],[1,base+beat]].forEach(([pan,f])=>{
-    const o=c.createOscillator(),g=c.createGain(),p=c.createStereoPanner();
-    p.pan.value=pan;o.type='sine';o.frequency.value=Math.min(f,2000);
-    g.gain.setValueAtTime(0,c.currentTime);g.gain.linearRampToValueAtTime(0.15,c.currentTime+2);
-    o.connect(g);g.connect(p);p.connect(c.destination);o.start();
-    nodes.push({osc:o,gain:g});
+
+// Master compressor for all audio
+function getMaster() {
+  var ctx = getCtx();
+  var comp = ctx.createDynamicsCompressor();
+  comp.threshold.value = -24;
+  comp.knee.value = 30;
+  comp.ratio.value = 12;
+  comp.attack.value = 0.003;
+  comp.release.value = 0.25;
+  comp.connect(ctx.destination);
+  return comp;
+}
+
+// Create a gain node connected to master
+function makeGain(vol) {
+  var ctx = getCtx();
+  var g = ctx.createGain();
+  g.gain.value = (vol === undefined ? 0.7 : vol);
+  g.connect(getMaster());
+  return g;
+}
+
+// Stop current audio node
+function stopNode(node) {
+  if (!node) return;
+  try {
+    if (node._stop) { node._stop(); return; }
+    if (node.stop) node.stop();
+    if (node.disconnect) node.disconnect();
+  } catch(e) {}
+}
+
+// TONE GENERATOR — single frequency sine/triangle/sawtooth/square
+function tone(hz, wave, vol) {
+  var ctx = getCtx();
+  var gain = makeGain(vol || 0.5);
+  var osc = ctx.createOscillator();
+  osc.type = wave || curWave || 'sine';
+  osc.frequency.value = hz;
+  osc.connect(gain);
+  osc.start();
+  return {
+    masterGain: gain,
+    _stop: function() {
+      try { osc.stop(); } catch(e) {}
+      try { gain.disconnect(); } catch(e) {}
+    }
+  };
+}
+
+// BINAURAL GENERATOR — stereo beats for sub-20Hz and brain entrainment
+// carrier = audible base tone, beatHz = difference between ears
+function binaural(carrier, beatHz, vol) {
+  var ctx = getCtx();
+  var merger = ctx.createChannelMerger(2);
+  var gain = ctx.createGain();
+  gain.gain.value = vol || 0.45;
+  gain.connect(getMaster());
+  merger.connect(gain);
+
+  var oscL = ctx.createOscillator();
+  oscL.type = 'sine';
+  oscL.frequency.value = carrier;
+  var panL = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+  if (panL) { panL.pan.value = -1; oscL.connect(panL); panL.connect(merger, 0, 0); }
+  else { oscL.connect(merger, 0, 0); }
+  oscL.start();
+
+  var freqR = carrier + Math.min(beatHz, 40);
+  var oscR = ctx.createOscillator();
+  oscR.type = 'sine';
+  oscR.frequency.value = freqR;
+  var panR = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+  if (panR) { panR.pan.value = 1; oscR.connect(panR); panR.connect(merger, 0, 1); }
+  else { oscR.connect(merger, 0, 1); }
+  oscR.start();
+
+  return {
+    masterGain: gain,
+    _stop: function() {
+      try { oscL.stop(); oscR.stop(); } catch(e) {}
+      try { gain.disconnect(); merger.disconnect(); } catch(e) {}
+    }
+  };
+}
+
+// NATURE GENERATOR — brown noise + nature ambience layer
+function nature(vol) {
+  var ctx = getCtx();
+  var gain = makeGain(vol || 0.3);
+  
+  // Brown noise via filtered white noise
+  var bufSize = ctx.sampleRate * 2;
+  var buffer = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+  var data = buffer.getChannelData(0);
+  var last = 0;
+  for (var i = 0; i < bufSize; i++) {
+    var white = Math.random() * 2 - 1;
+    data[i] = (last + 0.02 * white) / 1.02;
+    last = data[i];
+    data[i] *= 3.5;
+  }
+  var src = ctx.createBufferSource();
+  src.buffer = buffer;
+  src.loop = true;
+  
+  // Low-pass filter for forest warmth
+  var filter = ctx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = 800;
+  filter.Q.value = 0.5;
+  
+  src.connect(filter);
+  filter.connect(gain);
+  src.start();
+  
+  return {
+    masterGain: gain,
+    _stop: function() {
+      try { src.stop(); } catch(e) {}
+      try { gain.disconnect(); filter.disconnect(); } catch(e) {}
+    }
+  };
+}
+
+// Fade out and stop a node
+function fade(nodeObj) {
+  if (!nodeObj) return;
+  var g = nodeObj.masterGain;
+  if (g) {
+    g.gain.value = 0;
+  }
+  setTimeout(function() { stopNode(nodeObj); }, 300);
+}
+
+// ── Player state ──
+var curWave = 'sine';
+var curTrackIdx = 0;
+var playerNode = null;
+var natureNode = null;
+var timerInterval = null;
+var elapsedSeconds = 0;
+
+function setWave(w, btn) {
+  curWave = w;
+  if (isPlaying) {
+    // Restart with new waveform
+    stopCurrentAudio();
+    startPlay();
+  }
+}
+
+function stopCurrentAudio() {
+  if (playerNode) { fade(playerNode); playerNode = null; }
+  if (natureNode) { fade(natureNode); natureNode = null; }
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+function updatePlayBtn(playing) {
+  var btn = document.getElementById('playBtn');
+  if (!btn) return;
+  if (playing) {
+    btn.innerHTML = '⏹ Stop';
+    btn.classList.add('playing');
+    btn.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)';
+  } else {
+    btn.innerHTML = '▶ Play';
+    btn.classList.remove('playing');
+    btn.style.background = '';
+  }
+}
+
+function startTimer() {
+  elapsedSeconds = 0;
+  var timerEl = document.getElementById('pTimer');
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(function() {
+    elapsedSeconds++;
+    if (timerEl) {
+      var m = Math.floor(elapsedSeconds/60);
+      var s = elapsedSeconds % 60;
+      timerEl.textContent = m + ':' + (s<10?'0':'') + s;
+    }
+    // Update orb Hz display while playing
+    var orbHz = document.getElementById('pHz');
+    var t = TRACKS[curTrackIdx];
+    if (orbHz && t) orbHz.textContent = t.lbl || t.hz;
+  }, 1000);
+}
+
+function startPlay() {
+  var ctx = getCtx();
+  if (ctx.state === 'suspended') ctx.resume();
+  
+  stopCurrentAudio();
+  isPlaying = true;
+  updatePlayBtn(true);
+  startTimer();
+  
+  var t = TRACKS[curTrackIdx] || TRACKS[0];
+  var hz = t.hz;
+  
+  // Choose synthesis method based on frequency
+  if (hz < 20) {
+    // Sub-audible: use binaural beats with 110Hz carrier
+    playerNode = binaural(110, hz, 0.5);
+  } else {
+    // Audible tone
+    playerNode = tone(hz, curWave, 0.5);
+  }
+  
+  // Update display
+  var orbHz = document.getElementById('pHz');
+  var orbCat = document.getElementById('pHzLabel');
+  var affirmEl = document.getElementById('pAff');
+  if (orbHz) orbHz.textContent = t.lbl || t.hz;
+  if (orbCat) orbCat.textContent = (t.hz) + ' Hz — ' + t.cat;
+  if (affirmEl) affirmEl.textContent = '"' + (t.aff || '') + '"';
+}
+
+function stopPlay() {
+  stopCurrentAudio();
+  isPlaying = false;
+  updatePlayBtn(false);
+  elapsedSeconds = 0;
+  var timerEl = document.getElementById('pTimer');
+  if (timerEl) timerEl.textContent = '0:00';
+}
+
+function playerToggle() {
+  ensureTone();
+  if (isPlaying) {
+    stopPlay();
+  } else {
+    startPlay();
+  }
+}
+
+function playerNature() {
+  ensureTone();
+  var btn = document.getElementById('natBtn');
+  if (natureNode) {
+    fade(natureNode);
+    natureNode = null;
+    if (btn) { btn.textContent = '🌿 Nature'; btn.classList.remove('active'); }
+  } else {
+    natureNode = nature(0.25);
+    if (btn) { btn.textContent = '🌿 Nature ✓'; btn.classList.add('active'); }
+  }
+}
+
+function selectTrack(idx) {
+  curTrackIdx = idx;
+  var t = TRACKS[idx];
+  if (!t) return;
+  
+  // Update orb display
+  var orbHz = document.getElementById('pHz');
+  var orbCat = document.getElementById('pHzLabel');
+  var orbDesc = document.getElementById('pBenefit');
+  var affirmEl = document.getElementById('pAff');
+  if (orbHz) orbHz.textContent = t.lbl || t.hz;
+  if (orbCat) orbCat.textContent = (t.lbl || t.hz) + ' Hz — ' + t.cat;
+  if (orbDesc) orbDesc.textContent = t.ben || '';
+  if (affirmEl) affirmEl.textContent = '"' + (t.aff || '') + '"';
+  
+  // Highlight selected track card
+  document.querySelectorAll('.track-card').forEach(function(c,i) {
+    c.classList.toggle('selected', i === idx);
   });
-  return nodes;
-}
-function nature(vol=0.1){
-  const c=getCtx(),mg=c.createGain();mg.gain.value=vol;mg.connect(c.destination);
-  const ns=[];
-  // Ocean
-  const b=c.createBuffer(1,c.sampleRate*4,c.sampleRate);const d=b.getChannelData(0);
-  for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.sin(i/d.length*Math.PI*2);
-  const ws=c.createBufferSource();ws.buffer=b;ws.loop=true;
-  const wf=c.createBiquadFilter();wf.type='lowpass';wf.frequency.value=350;
-  ws.connect(wf);wf.connect(mg);ws.start();ns.push(ws);
-  // Forest
-  const fb=c.createBuffer(1,c.sampleRate*3,c.sampleRate);const fd=fb.getChannelData(0);let last=0;
-  for(let i=0;i<fd.length;i++){const w=Math.random()*2-1;fd[i]=(last+0.02*w)/1.02;last=fd[i];}
-  const fs=c.createBufferSource();fs.buffer=fb;fs.loop=true;
-  const ff=c.createBiquadFilter();ff.type='bandpass';ff.frequency.value=800;ff.Q.value=0.3;
-  const fg=c.createGain();fg.gain.value=0.5;fs.connect(ff);ff.connect(fg);fg.connect(mg);fs.start();ns.push(fs);
-  // Schumann
-  const eo=c.createOscillator(),eg=c.createGain();eo.type='sine';eo.frequency.value=7.83;eg.gain.value=0.04;
-  eo.connect(eg);eg.connect(mg);eo.start();ns.push(eo);
-  return{nodes:ns,masterGain:mg};
-}
-function fade(nodes){
-  nodes.forEach(n=>{
-    try{if(n.gain)n.gain.gain.linearRampToValueAtTime(0,ctx.currentTime+0.8);}catch{}
-    try{if(n.masterGain)n.masterGain.gain.linearRampToValueAtTime(0,ctx.currentTime+0.8);}catch{}
-    setTimeout(()=>{
-      try{n.osc&&n.osc.stop();}catch{}
-      try{n.nodes&&n.nodes.forEach(x=>{try{x.stop();}catch{}});}catch{}
-    },1000);
-  });
+  
+  // If already playing, restart with new track
+  if (isPlaying) {
+    stopCurrentAudio();
+    isPlaying = true;
+    startPlay();
+  }
 }
 
-// ═══ PLAYER ═══
-function selTrackFn(t){
-  selTrack=t;
-  document.getElementById('pName').textContent=t.n;
-  document.getElementById('pHz').textContent=t.hz+' Hz';
-  document.getElementById('pBenefit').textContent=t.ben;
-  document.getElementById('pAff').style.display='none';
-  document.getElementById('pAff').textContent='"'+t.aff+'"';
-  document.querySelectorAll('.track-card').forEach(c=>c.classList.remove('sel'));
-  const el=document.getElementById('tc-'+String(t.hz).replace('.','_'));
-  if(el)el.classList.add('sel');
-  if(isPlaying)startPlay();
-}
-function startPlay(){
-  fade(activeNodes);activeNodes=[];
-  const f=selTrack.hz;const nodes=[];
-  if(f<20){const bn=binaural(100,f);bn.forEach(n=>nodes.push(n));}
-  else{nodes.push(tone(Math.min(f,2000),0.25));if(f>200&&f<3000)nodes.push(tone(Math.min(f*2,4000),0.05,'sine'));}
-  activeNodes=nodes;startTime=Date.now();isPlaying=true;
-  document.getElementById('playBtn').textContent='■ Stop';
-  document.getElementById('pBar').style.width='0%';
-  clearInterval(timerIv);timerIv=setInterval(timerTick,1000);
-  setTimeout(()=>{document.getElementById('pAff').style.display='block';},3000);
-}
-function stopPlay(){
-  fade(activeNodes);activeNodes=[];clearInterval(timerIv);isPlaying=false;
-  document.getElementById('playBtn').textContent='▶ Play';
-  document.getElementById('pBar').style.width='0%';
-  document.getElementById('pTimer').textContent='0:00';
-}
-function playerToggle(){if(!selTrack){alert('Tap a frequency first');return;}isPlaying?stopPlay():startPlay();}
-function timerTick(){
-  const s=Math.floor((Date.now()-startTime)/1000);
-  document.getElementById('pTimer').textContent=Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60;
-  document.getElementById('pBar').style.width=Math.min(s/900*100,100)+'%';
-}
-function playerNature(){
-  if(natOn){fade(natNodes);natNodes=[];natOn=false;document.getElementById('natBtn').className='nature-btn';document.getElementById('natBtn').textContent='🌿 Add Nature Ambience';}
-  else{const l=nature(0.12);natNodes=[l];natOn=true;document.getElementById('natBtn').className='nature-btn on';document.getElementById('natBtn').textContent='🌿 Amazon + Ocean: ON';}
-}
-function setWave(w,btn){
-  waveform=w;
-  document.querySelectorAll('#page-player .filter-btn').forEach(b=>{if(['wSine','wTri','wSaw','wSq'].includes(b.id))b.classList.remove('active');});
-  btn.classList.add('active');
-}
-function fCat(cat,btn){
-  document.querySelectorAll('#catFilter .filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  rTracks(cat);
+// ── Love Field ──
+var loveNodes = [];
+var loveFieldOn = false;
+
+function loveStageToggle(idx){
+  loveStagePlay(idx, null);
 }
 
-// ═══ LOVE ═══
 function loveFieldToggle(){
-  const btn=document.getElementById('loveBigBtn');
-  if(loveFieldOn){fade(loveNodes);loveNodes=[];loveFieldOn=false;btn.classList.remove('pulsing');document.getElementById('loveBigTxt').textContent='Activate Love Field';}
-  else{const nodes=[];[528,639,285,417,396,963].forEach(f=>nodes.push(tone(f,0.07)));nodes.push(nature(0.08));loveNodes=nodes;loveFieldOn=true;btn.classList.add('pulsing');document.getElementById('loveBigTxt').textContent='Love Field Active ✦';}
-}
-function loveStageToggle(i){
-  if(stagePlay===i){fade(loveNodes);loveNodes=[];stagePlay=null;document.querySelectorAll('.stage-card').forEach(c=>c.classList.remove('playing'));return;}
-  fade(loveNodes);loveNodes=[];
-  const s=LOVE_STAGES[i];const nodes=[];
-  s.hz.forEach(f=>nodes.push(tone(Math.min(f,2000),0.18)));
-  nodes.push(nature(0.09));loveNodes=nodes;stagePlay=i;
-  document.querySelectorAll('.stage-card').forEach(c=>c.classList.remove('playing'));
-  document.getElementById('stage-'+i).classList.add('playing');
-}
-
-// ═══ VORTEX ═══
-function vSetI(i,btn){vIntensity=i;['vi0','vi1','vi2'].forEach(id=>document.getElementById(id).classList.remove('active'));btn.classList.add('active');}
-function vortexToggle(){vortexOn?vortexStop():vortexStart();}
-function vortexStart(){
-  const vols=[0.04,0.07,0.13];const vol=vols[vIntensity];
-  const mod=VORTEX_BEINGS[vBeing]?.mod||'1.00×';const modV=parseFloat(mod)||1;
-  const freqs=[7.83,174,333,528,396,417,741,852,963,1296,2160,3168];
-  freqs.forEach((f,i)=>setTimeout(()=>{if(vortexOn)vortexNodes.push(tone(Math.min(f*modV,3168),vol));},i*300));
-  vortexNodes.push(nature(0.08));vortexOn=true;
-  document.getElementById('vortexBtn').textContent='■ Stop Vortex';
-  document.getElementById('vortexRing').classList.add('spin');
-  document.getElementById('vortexSt').textContent='Vortex active — irradiating all 9 ethers — '+VORTEX_BEINGS[vBeing].label;
-}
-function vortexStop(){fade(vortexNodes);vortexNodes=[];vortexOn=false;document.getElementById('vortexBtn').textContent='⚡ Activate Vortex';document.getElementById('vortexRing').classList.remove('spin');document.getElementById('vortexSt').textContent='Select intensity · Choose target · Activate';}
-function vSetBeing(i){vBeing=i;document.querySelectorAll('.being-btn').forEach((b,j)=>{b.style.borderColor=j===i?'#a78bfa80':'var(--border)';b.style.background=j===i?'#a78bfa12':'var(--card)'});}
-
-// ═══ NATURE ═══
-function sceneToggle(i){
-  if(scenePlay===i){fade(sceneNodes);sceneNodes=[];scenePlay=null;document.querySelectorAll('.scene-card').forEach(c=>c.classList.remove('playing'));return;}
-  fade(sceneNodes);sceneNodes=[];
-  const s=NATURE_SCENES[i];const ns=nature(0.15);
-  const t=tone(s.hz<20?100:Math.min(s.hz,2000),0.1);
-  sceneNodes=[ns,t];scenePlay=i;
-  document.querySelectorAll('.scene-card').forEach(c=>c.classList.remove('playing'));
-  const el=document.getElementById('scene-'+i);if(el){el.classList.add('playing');el.style.boxShadow='0 0 28px '+s.col+'60';}
-}
-function primalToggle(hz){
-  fade(primalNodes);primalNodes=[];
-  const t=tone(hz<20?hz*50:Math.min(hz,2000),0.18);primalNodes=[t];
-  if(hz<20){const bn=binaural(100,hz);bn.forEach(n=>primalNodes.push(n));}
+  ensureTone();
+  var btn=document.getElementById('loveBigBtn');
+  if(loveFieldOn){
+    loveNodes.forEach(function(n){ fade(n); });
+    loveNodes=[];
+    loveFieldOn=false;
+    if(btn){btn.innerHTML='💗 Activate Love Field<br><small>All 6 dimensions</small>';btn.classList.remove('active');}
+  } else {
+    var LOVE_HZ=[528,639,285,417,396,963,7.83];
+    LOVE_HZ.forEach(function(hz){
+      var n = hz<20 ? binaural(110,hz,0.12) : tone(hz,'sine',0.12);
+      loveNodes.push(n);
+    });
+    loveFieldOn=true;
+    if(btn){btn.innerHTML='💗 Love Field Active ✓<br><small>Stop field</small>';btn.classList.add('active');}
+  }
 }
 
-// ═══ GROWTH ═══
-function growthToggle(i){
-  if(growthPlay===i){fade(growthNodes);growthNodes=[];growthPlay=null;document.querySelectorAll('.growth-card').forEach(c=>c.classList.remove('playing'));return;}
-  fade(growthNodes);growthNodes=[];
-  const l=GROWTH_LAYERS[i];const nodes=[];
-  nodes.push(tone(Math.min(l.hz,2000),0.18));
-  if(l.subHz>0)nodes.push(tone(Math.min(l.subHz,2000),0.1));
-  if(l.beatHz>0){const bn=binaural(100,l.beatHz);bn.forEach(n=>nodes.push(n));}
-  nodes.push(nature(0.08));growthNodes=nodes;growthPlay=i;
-  document.querySelectorAll('.growth-card').forEach(c=>c.classList.remove('playing'));
-  const el=document.getElementById('growth-'+i);if(el){el.classList.add('playing');el.style.boxShadow='0 0 20px '+l.col+'60';}
+function loveStagePlay(idx, btn){
+  ensureTone();
+  loveNodes.forEach(function(n){ fade(n); });
+  loveNodes=[];
+  loveFieldOn=false;
+  document.getElementById('loveBigBtn').innerHTML='💗 Activate Love Field<br><small>All 6 dimensions</small>';
+  document.getElementById('loveBigBtn').classList.remove('active');
+  
+  var LOVE_STAGES=[
+    {hz:[528,174]},{hz:[285,528]},{hz:[639,396]},
+    {hz:[528,639]},{hz:[963,528]},{hz:[528,639,285,417,396,963]}
+  ];
+  var stage = LOVE_STAGES[idx];
+  if(!stage) return;
+  stage.hz.forEach(function(hz){
+    var n = hz<20 ? binaural(110,hz,0.18) : tone(hz,'sine',0.18);
+    loveNodes.push(n);
+  });
+  loveFieldOn=true;
+  if(btn){ btn.querySelector && btn.querySelector('.stage-play') ? 
+    btn.querySelector('.stage-play').textContent='⏹' : null; }
 }
-function masterToggle(){masterOn?masterStop():masterStart();}
-function masterStart(){
-  masterStop();masterOn=true;masterStep=0;
-  document.getElementById('masterBtn').textContent='■ Stop Master Sequence';
-  runMasterStep();
-  masterIv=setInterval(()=>{masterStep++;if(masterStep>=MASTER_SEQUENCE.length){masterStop();return;}runMasterStep();},120000);
+
+// ── Quantum Vortex ──
+var vortexNodes = [];
+var vortexOn = false;
+
+function vortexToggle(){
+  ensureTone();
+  var btn=document.getElementById('vortexBtn');
+  if(vortexOn){
+    vortexNodes.forEach(function(n){ fade(n); });
+    vortexNodes=[];
+    vortexOn=false;
+    if(btn){btn.innerHTML='⚡ Activate Vortex';btn.classList.remove('active');}
+  } else {
+    // 9-ether vortex frequencies
+    var freqs=[7.83,111,528,417,852,963];
+    var intensity=document.querySelector('.intensity-btn.active');
+    var vol=(intensity&&intensity.textContent.indexOf('Max')!==-1)?0.4:
+            (intensity&&intensity.textContent.indexOf('Standard')!==-1)?0.3:0.2;
+    freqs.forEach(function(hz){
+      var n = hz<20 ? binaural(110,hz,vol) : tone(hz,'sine',vol);
+      vortexNodes.push(n);
+    });
+    // Violet flame layer
+    var vf=tone(417,'sawtooth',vol*0.3);
+    vortexNodes.push(vf);
+    vortexOn=true;
+    if(btn){btn.innerHTML='⏹ Stop Vortex';btn.classList.add('active');}
+  }
 }
-function runMasterStep(){
-  fade(masterNodes);masterNodes=[];
-  const s=MASTER_SEQUENCE[masterStep];
-  masterNodes.push(tone(Math.min(s.hz,2000),0.18));
-  masterNodes.push(nature(0.08));
-  document.getElementById('masterSt').textContent='Step '+(masterStep+1)+'/8: '+s.name+' — '+s.desc;
-  document.querySelectorAll('.mstep').forEach((el,i)=>{
-    el.style.background=i<masterStep?s.col+'30':i===masterStep?s.col+'20':'transparent';
-    el.style.borderColor=i===masterStep?s.col+'80':'var(--border)';
+
+// ── Growth Sound ──
+var growthNodes = [];
+var growthOn = false;
+var growthSeqTimer = null;
+
+function growthPlay(idx, btn){
+  ensureTone();
+  growthNodes.forEach(function(n){ fade(n); });
+  growthNodes=[];
+  var GROWTH=[
+    {hz:[285,111,7.83]},{hz:[40,14,10]},{hz:[639,528,3.5]},
+    {hz:[963,852,7]},{hz:[432,7.83]},{hz:[528,396,4]},
+    {hz:[111,528,7.83]},{hz:[963,528,432,7.83]}
+  ];
+  var g=GROWTH[idx];
+  if(!g) return;
+  g.hz.forEach(function(hz){
+    var n = hz<20 ? binaural(110,hz,0.2) : tone(hz,'sine',0.2);
+    growthNodes.push(n);
   });
 }
-function masterStop(){
-  clearInterval(masterIv);fade(masterNodes);masterNodes=[];masterOn=false;masterStep=0;
-  document.getElementById('masterBtn').textContent='🌱 Start Master Sequence';
-  document.getElementById('masterSt').textContent='8 stages · 2 min each · Full spectrum ascension';
+
+function growthMasterSeq(){
+  ensureTone();
+  var step=0;
+  var GROWTH=[
+    {hz:[285,111,7.83]},{hz:[40,14,10]},{hz:[639,528,3.5]},
+    {hz:[963,852,7]},{hz:[432,7.83]},{hz:[528,396,4]},
+    {hz:[111,528,7.83]},{hz:[963,528,432,7.83]}
+  ];
+  function playStep(){
+    growthNodes.forEach(function(n){ fade(n); });
+    growthNodes=[];
+    if(step>=GROWTH.length){ growthOn=false; return; }
+    var g=GROWTH[step];
+    g.hz.forEach(function(hz){
+      var n = hz<20 ? binaural(110,hz,0.2) : tone(hz,'sine',0.2);
+      growthNodes.push(n);
+    });
+    step++;
+    growthSeqTimer=setTimeout(playStep, 120000); // 2 min each
+  }
+  playStep();
+  growthOn=true;
 }
 
-// ═══ RITUALS ═══
-function ritualExpand(i){
-  const body=document.getElementById('rb-'+i);
-  if(body){body.classList.toggle('open');}
-}
-function ritualPlay2(i){
-  fade(ritualNodes);ritualNodes=[];
-  RITUALS[i].steps.forEach(s=>{
-    const hz=parseFloat(s.freq);
-    if(!isNaN(hz)&&hz>0)ritualNodes.push(tone(Math.min(hz,2000),0.13));
-  });
-  ritualNodes.push(nature(0.08));ritualPlay=i;
-}
-function ritualStop(){fade(ritualNodes);ritualNodes=[];ritualPlay=null;}
+// ── Nature Portal ──
+var naturePortalNodes=[];
 
-// ═══ ANGELS ═══
-function angelPlay(hz){
-  fade(angelNodes);angelNodes=[];
-  const f=Math.min(hz,2000);
-  angelNodes.push(tone(f,0.22));
-  if(hz>500)angelNodes.push(tone(f/2,0.1,'sine'));
-  const shimmer=tone(Math.min(f*1.5,3000),0.05,'sine');angelNodes.push(shimmer);
+function natureSoundPlay(name,hz,btn){
+  ensureTone();
+  naturePortalNodes.forEach(function(n){ fade(n); });
+  naturePortalNodes=[];
+  document.querySelectorAll('.sound-card').forEach(function(c){ c.classList.remove('active'); });
+  if(btn){ btn.classList ? btn.classList.add('active') : null; }
+  
+  // Nature ambience layer
+  var amb=nature(0.3);
+  naturePortalNodes.push(amb);
+  
+  // Healing tone layer
+  if(hz){
+    var tn = hz<20 ? binaural(110,hz,0.3) : tone(hz,'sine',0.3);
+    naturePortalNodes.push(tn);
+  }
 }
 
-// ═══ JOURNAL ═══
-let jMoodBefore='Neutral',jMoodAfter='Good';
-const MOODS=['Anxious','Low','Neutral','Good','Elevated','Transformed'];
-const MOOD_EMOJI={Anxious:'😰',Low:'😔',Neutral:'😐',Good:'🙂',Elevated:'😄',Transformed:'🌟'};
-function jToggleForm(){
-  const f=document.getElementById('jForm');
-  f.style.display=f.style.display==='none'?'block':'none';
-  document.getElementById('jDate').value=new Date().toISOString().split('T')[0];
+function primalPlay(hz,btn){
+  ensureTone();
+  naturePortalNodes.forEach(function(n){ fade(n); });
+  naturePortalNodes=[];
+  document.querySelectorAll('.primal-card').forEach(function(c){ c.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+  var n = hz<20 ? binaural(110,hz,0.4) : tone(hz,'sine',0.4);
+  naturePortalNodes.push(n);
 }
-function jSave(){
-  const name=document.getElementById('jName').value.trim();
-  if(!name){alert('Please add a session name');return;}
-  const session={id:Date.now(),name,intention:document.getElementById('jInt').value,date:document.getElementById('jDate').value,moodBefore:jMoodBefore,moodAfter:jMoodAfter,duration:document.getElementById('jDur').value,rating:document.getElementById('jRat').value,notes:document.getElementById('jNotes').value};
-  jSessions.unshift(session);
-  try{localStorage.setItem('sf_journal',JSON.stringify(jSessions));}catch{}
-  jToggleForm();rJournal();
-  document.getElementById('jName').value='';document.getElementById('jInt').value='';document.getElementById('jNotes').value='';
-}
-function jLoad(){try{const d=localStorage.getItem('sf_journal');if(d)jSessions=JSON.parse(d);}catch{}}
 
-// ═══ PROTOCOL ═══
-function protToggle(){protOn?protStop():protStart();}
-function protStart(){
-  const freqs=[7.83,174,333,528,396,417,741,852,963,1296,2160,3168];
-  freqs.forEach((f,i)=>setTimeout(()=>{if(protOn)protNodes.push(tone(Math.min(f,3168),0.05));},i*500));
-  protNodes.push(nature(0.08));protOn=true;
-  document.getElementById('protBtn').textContent='■ Stop Irradiation';
-  document.getElementById('protRing').classList.add('spin');
-  document.getElementById('protSt').textContent='⚡ Irradiating all 9 ethers — all timelines — all beings';
+// ── Rituals ──
+var ritualNodes=[];
+var ritualSeqTimer=null;
+
+function ritualExpand(idx){
+  var body = document.querySelector('[data-ritual-body="'+idx+'"]');
+  if(!body) return;
+  var isOpen = body.style.display !== 'none' && body.style.display !== '';
+  // Close all
+  document.querySelectorAll('[data-ritual-body]').forEach(function(b){ b.style.display='none'; });
+  // Toggle clicked
+  if(!isOpen) body.style.display = 'block';
 }
-function protStop(){fade(protNodes);protNodes=[];protOn=false;document.getElementById('protBtn').textContent='⚡ Irradiate Now';document.getElementById('protRing').classList.remove('spin');document.getElementById('protSt').textContent='Select ether layers then activate';}
+
+function ritualActivate(idx){
+  ensureTone();
+  ritualNodes.forEach(function(n){ fade(n); });
+  ritualNodes=[];
+  if(ritualSeqTimer){ clearTimeout(ritualSeqTimer); ritualSeqTimer=null; }
+  
+  var RITUAL_FREQS=[
+    [7.83,528,432,396,888],    // Morning
+    [396,417,741,528,963],     // Deep Cleanse
+    [285,528,174,432,963],     // Longevity
+    [528,639,396,963,7.83],    // Love
+    [417,888,528,1111],        // Wealth
+    [963,852,528,7.83,432]     // Spiritual
+  ];
+  var freqs=RITUAL_FREQS[idx]||[];
+  var step=0;
+  function playRitualStep(){
+    ritualNodes.forEach(function(n){ fade(n); });
+    ritualNodes=[];
+    if(step>=freqs.length) return;
+    var hz=freqs[step];
+    var n = hz<20 ? binaural(110,hz,0.3) : tone(hz,'sine',0.3);
+    ritualNodes.push(n);
+    step++;
+    ritualSeqTimer=setTimeout(playRitualStep, 600000); // 10 min each
+  }
+  playRitualStep();
+}
+
+function ritualStop(){
+  ritualNodes.forEach(function(n){ fade(n); });
+  ritualNodes=[];
+  if(ritualSeqTimer){ clearTimeout(ritualSeqTimer); ritualSeqTimer=null; }
+}
+
+// ── Angel Numbers ──
+var angelNodes=[];
+
+function angelPlay(hz,btn){
+  ensureTone();
+  angelNodes.forEach(function(n){ fade(n); });
+  angelNodes=[];
+  document.querySelectorAll('.angel-card').forEach(function(c){ c.classList.remove('active'); });
+  
+  var actualHz = hz > 2000 ? hz / 10 : hz; // Map high angel numbers to audible range
+  var n = actualHz < 20 ? binaural(110, actualHz, 0.4) : tone(actualHz,'sine',0.4);
+  angelNodes.push(n);
+  
+  if(btn && btn.closest) {
+    var card=btn.closest('.angel-card');
+    if(card) card.classList.add('active');
+  }
+}
+
+// ── Lunar Protocol ──
+var lunarNodes=[];
+
 function lunarPlay(hz,btn){
-  fade(lunarNodes);lunarNodes=[];
-  lunarNodes.push(tone(hz<20?100:Math.min(hz,500),0.2));
-  if(hz<20){const bn=binaural(100,hz);bn.forEach(n=>lunarNodes.push(n));}
-  document.querySelectorAll('.lunar-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  ensureTone();
+  lunarNodes.forEach(function(n){ fade(n); });
+  lunarNodes=[];
+  
+  // Lunar harmonic triad
+  [136.10, 210.42, 221.23].forEach(function(lHz){
+    lunarNodes.push(tone(lHz,'sine',0.15));
+  });
+  // Primary frequency
+  var n = hz<20 ? binaural(110,hz,0.3) : tone(hz,'sine',0.3);
+  lunarNodes.push(n);
+  
+  document.querySelectorAll('.lunar-btn').forEach(function(b){ b.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+}
+
+
+
+// Volume control
+var masterVolume = 0.7;
+function setVol(val) {
+  masterVolume = val / 100;
+  var label = document.getElementById('volLabel');
+  if (label) label.textContent = val + '%';
+  // Apply to all active nodes
+  [playerNode, natureNode].forEach(function(n) {
+    if (n && n.masterGain) n.masterGain.gain.value = masterVolume;
+  });
+}
+
+
+// Filter track list by category
+function filterCat(cat, btn) {
+  document.querySelectorAll('#catFilter .filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  rTracks(cat);
 }
 
 // ═══ NAV ═══
 function go(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  document.querySelectorAll('.tab').forEach(t=>{
-    t.classList.remove('active');
-    if(t.getAttribute('onclick')==="go('"+id+"')")t.classList.add('active');
-  });
-  window.scrollTo(0,0);
+  try{
+    // Unlock audio on every tap
+    ensureTone();
+    // Use ONLY CSS classes - no inline style (prevents iOS class/style conflict)
+    document.querySelectorAll('.page').forEach(function(p){
+      p.classList.remove('active');
+    });
+    var target = document.getElementById('page-'+id);
+    if(!target){ console.warn('go(): page-'+id+' not found'); return; }
+    target.classList.add('active');
+    // Update nav tabs
+    document.querySelectorAll('.tab').forEach(function(t){
+      t.classList.remove('active');
+      if(t.getAttribute('data-page')===id) t.classList.add('active');
+    });
+    window.scrollTo(0,0);
+    // Render player tracks on first visit
+    if(id==='player'){
+      var tl=document.getElementById('trackList');
+      if(tl&&tl.children.length===0) rTracks('All');
+    }
+  }catch(e){ console.error('go() error:',e); }
 }
 
 // ═══ RENDER ═══
 function rTracks(cat='All'){
   const list=document.getElementById('trackList');
   const filtered=cat==='All'?TRACKS:TRACKS.filter(t=>t.cat===cat);
-  list.innerHTML=filtered.map(t=>{
-    const c=CC[t.cat]||'#a78bfa';const id='tc-'+String(t.hz).replace('.','_');
-    return '<div class="track-card" id="'+id+'" onclick=\'selTrackFn('+JSON.stringify(t)+')\'>'+
-      '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">'+
-      '<div style="flex:1;min-width:0"><div class="hz-badge" style="background:'+c+'20;color:'+c+';margin-bottom:5px">'+t.hz+' Hz</div>'+
-      '<div style="font-weight:700;font-size:13px">'+t.n+'</div>'+
-      '<div style="font-size:11px;color:var(--dim);margin-top:2px">'+t.ben+'</div>'+
-      '<div style="font-size:10px;color:var(--dim);margin-top:2px">Chakra: '+t.ch+'</div></div>'+
-      '<div style="width:32px;height:32px;border-radius:50%;background:'+c+'20;border:1px solid '+c+'40;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">▶</div>'+
+  list.innerHTML=filtered.map((t,i)=>{
+    const c=CC[t.cat]||'#a78bfa';
+    const id='tc-'+String(t.hz).replace('.','_');
+    const globalIdx=TRACKS.indexOf(t);
+    return '<div class="track-card" id="'+id+'" data-tidx="'+globalIdx+'" onclick="selByIdx(this)" style="border-left:3px solid '+c+'50">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px">'+
+      '<div style="flex:1;min-width:0">'+
+      '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">'+
+      '<div class="hz-badge" style="background:'+c+'22;color:'+c+';border:1px solid '+c+'40">'+(t.lbl||t.hz+' Hz')+'</div>'+
+      '<div style="font-size:10px;color:'+c+'99;font-weight:700;text-transform:uppercase;letter-spacing:0.06em">'+t.cat+'</div>'+
+      '</div>'+
+      '<div style="font-weight:700;font-size:13.5px;color:#e2e8f0;line-height:1.3">'+t.n+'</div>'+
+      '<div style="font-size:11.5px;color:#64748b;margin-top:3px;line-height:1.4">'+t.ben+'</div>'+
+      '<div style="font-size:10.5px;color:'+c+'80;margin-top:4px;font-weight:600">'+'✨'+' Chakra: '+(t.ch||'—')+'</div>'+
+      '</div>'+
+      '<button class="play-mini" data-tidx="'+globalIdx+'" onclick="event.stopPropagation();selByIdx(this)">▶</button>'+
       '</div></div>';
   }).join('');
 }
+function selByIdx(el){
+  var idx = parseInt(el.getAttribute('data-tidx'));
+  if(!isNaN(idx) && TRACKS[idx]){
+    var wasPlaying = isPlaying;
+    selTrack = TRACKS[idx];
+    curTrackIdx = idx;
+    selTrackFn(TRACKS[idx]);
+    ensureTone();
+    // Auto-play on card tap
+    if(!isPlaying) startPlay();
+    else {
+      // Switch track while playing
+      stopCurrentAudio();
+      isPlaying = true;
+      startPlay();
+    }
+  }
+}
+// ── selTrackFn(): select track + update player display ───────────
+// Called every time a track is chosen. Sets selTrack and refreshes
+// the player orb, benefit text, affirmation, and chakra display.
+function selTrackFn(t) {
+  selTrack = t;
+  function set(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
+  // New player IDs
+  set('pHz',        t.lbl || t.hz);
+  set('pHzLabel',       (t.lbl || t.hz) + ' Hz — ' + (t.cat || ''));
+  set('pBenefit',      t.ben || '');
+  set('pAff', t.aff ? '\\u201c' + t.aff + '\\u201d' : '');
+  // Chakra
+  var chakraEl = document.getElementById('pChakra');
+  if (chakraEl) chakraEl.textContent = t.ch ? '\\u2728 Chakra: ' + t.ch : '';
+  // Highlight active track card
+  document.querySelectorAll('.track-card').forEach(function(c) { c.classList.remove('sel'); });
+  var card = document.querySelector('[data-tidx="' + TRACKS.indexOf(t) + '"]');
+  if (card) card.classList.add('sel');
+}
+
+
+
 function rAngels(){
   document.getElementById('angelGrid').innerHTML=ANGEL_NUMBERS.map(a=>
     '<div class="angel-card" style="background:'+a.col+'08;border-color:'+a.col+'40" onclick="angelPlay('+a.hz+')">'+
@@ -972,15 +1475,15 @@ function rMoodBtns(){
     const isBefore=id==='moodBefore';
     document.getElementById(id).innerHTML=MOODS.map(m=>
       '<button class="mood-btn'+(m===(isBefore?jMoodBefore:jMoodAfter)?' sel':'')+'" onclick="'+
-      (isBefore?"jMoodBefore='"+m+"'":'jMoodAfter=\''+m+'\'')+
-      ';document.querySelectorAll(\'#'+id+' .mood-btn\').forEach(b=>b.classList.remove(\'sel\'));this.classList.add(\'sel\')">'+
+      (isBefore?"jMoodBefore='"+m+"'":'jMoodAfter=\\''+m+'\\'')+
+      ';document.querySelectorAll(\\'#'+id+' .mood-btn\\').forEach(b=>b.classList.remove(\\'sel\\'));this.classList.add(\\'sel\\')">'+
       MOOD_EMOJI[m]+' '+m+'</button>'
     ).join('');
   });
 }
 function rGuide(){
   document.getElementById('guideList').innerHTML=GUIDE_TOPICS.map((t,i)=>
-    '<div class="guide-card card" onclick="this.querySelector(\'.guide-body\').classList.toggle(\'open\')">'+
+    '<div class="guide-card card" onclick="this.querySelector(\\'.guide-body\\').classList.toggle(\\'open\\')">'+
     '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px">'+
     '<div><span style="font-size:18px;margin-right:8px">'+t.icon+'</span><span style="font-weight:800;font-size:14px">'+t.title+'</span></div>'+
     '<span style="color:var(--dim)">↓</span></div>'+
@@ -990,7 +1493,7 @@ function rGuide(){
   document.getElementById('freqRef').innerHTML=FREQ_REF.map(f=>
     '<div class="card" style="margin-bottom:6px;padding:10px 14px">'+
     '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'+
-    '<div class="hz-badge" style="background:'+CC[f.cat]+'20;color:'+CC[f.cat]+'">'+f.hz+' Hz</div>'+
+    '<div class="hz-badge" style="background:'+CC[f.cat]+'20;color:'+CC[f.cat]+'">'+(f.lbl||f.hz+' Hz')+'</div>'+
     '<div style="flex:1;min-width:0"><span style="font-weight:700;font-size:13px">'+f.name+'</span><span style="font-size:11px;color:var(--dim);margin-left:8px">'+f.info+'</span></div>'+
     '</div></div>'
   ).join('');
@@ -1028,21 +1531,146 @@ function makeStars(){
   }
 }
 
+// ═══ AUDIO UNLOCK on first touch (iOS Safari) ═══
+document.addEventListener('touchstart', function onFirstTouch(){
+  ensureTone();
+  document.removeEventListener('touchstart', onFirstTouch);
+}, {passive:true});
+document.addEventListener('click', function onFirstClick(){
+  ensureTone();
+  document.removeEventListener('click', onFirstClick);
+}, {passive:true});
+
 // ═══ INIT ═══
 makeStars();
 rTracks();rAngels();rLoveStages();rVortex();rNature();rGrowth();rRituals();rGuide();rProtocol();
 rMoodBtns();jLoad();rJournal();
 document.getElementById('wSine').classList.add('active');
 selTrackFn(TRACKS.find(t=>t.feat)||TRACKS[0]);
+// Show home page explicitly via go() so inline display styles are set
+// Pages shown via CSS .page.active class — see go()
+</script>
+
+// ── Initialize after full DOM parse ──
+document.addEventListener('DOMContentLoaded', function() {
+  go('home');
+});
+// Fallback if DOMContentLoaded already fired
+if (document.readyState !== 'loading') { go('home'); }
+
+<script>
+/* ══ PLAYER REDESIGN JS ══ */
+(function(){
+  // Wire data-action buttons
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-action]');
+    if(!btn) return;
+    var act = btn.getAttribute('data-action');
+    if(act === 'toggle') playerToggle();
+    if(act === 'nature') playerNature();
+  });
+
+  // Wave buttons via data-wave
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-wave]');
+    if(!btn) return;
+    var wave = btn.getAttribute('data-wave');
+    // deactivate all wave btns
+    document.querySelectorAll('.wave-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    setWave(wave, btn);
+  });
+
+  // Update play button state styling
+  var origToggle = window.playerToggle;
+  window.playerToggle = function(){
+    origToggle && origToggle();
+    setTimeout(function(){
+      var pb = document.getElementById('playBtn');
+      if(!pb) return;
+      var isPlaying = pb.textContent.indexOf('Stop') !== -1 || pb.textContent.indexOf('⏹') !== -1 || pb.textContent.indexOf('Pause') !== -1;
+      if(isPlaying){ pb.classList.add('playing'); } else { pb.classList.remove('playing'); }
+    }, 100);
+  };
+
+  // ── Frequency Visualizer ──
+  var canvas = document.getElementById('vizCanvas');
+  if(!canvas) return;
+  var ctx2 = canvas.getContext('2d');
+  var bars = 32;
+  var phases = [];
+  var speeds = [];
+  for(var i=0;i<bars;i++){
+    phases.push(Math.random()*Math.PI*2);
+    speeds.push(0.04 + Math.random()*0.06);
+  }
+  var isActive = false;
+  var animId = null;
+  var COLORS = ['#7c3aed','#a78bfa','#f472b6','#fbbf24','#60a5fa','#34d399'];
+
+  function drawIdle(){
+    var W = canvas.width, H = canvas.height;
+    ctx2.clearRect(0,0,W,H);
+    var bw = Math.floor(W/bars) - 1;
+    for(var i=0;i<bars;i++){
+      phases[i] += speeds[i]*0.3;
+      var amp = 0.15 + 0.1*Math.sin(phases[i]);
+      var h = Math.max(3, amp*H);
+      var x = i*(bw+1);
+      var grad = ctx2.createLinearGradient(0,H-h,0,H);
+      grad.addColorStop(0, COLORS[i%COLORS.length]);
+      grad.addColorStop(1, COLORS[i%COLORS.length]+'44');
+      ctx2.fillStyle = grad;
+      ctx2.beginPath();
+      ctx2.roundRect ? ctx2.roundRect(x, H-h, bw, h, 2) : ctx2.rect(x, H-h, bw, h);
+      ctx2.fill();
+    }
+  }
+
+  function drawActive(){
+    var W = canvas.width, H = canvas.height;
+    ctx2.clearRect(0,0,W,H);
+    var bw = Math.floor(W/bars) - 1;
+    for(var i=0;i<bars;i++){
+      phases[i] += speeds[i];
+      var amp = 0.25 + 0.6*Math.abs(Math.sin(phases[i]));
+      var h = Math.max(4, amp*H);
+      var x = i*(bw+1);
+      var grad = ctx2.createLinearGradient(0,H-h,0,H);
+      grad.addColorStop(0,'#fff');
+      grad.addColorStop(0.2, COLORS[i%COLORS.length]);
+      grad.addColorStop(1, COLORS[i%COLORS.length]+'33');
+      ctx2.fillStyle = grad;
+      ctx2.beginPath();
+      ctx2.roundRect ? ctx2.roundRect(x, H-h, bw, h, 3) : ctx2.rect(x, H-h, bw, h);
+      ctx2.fill();
+    }
+  }
+
+  function loop(){
+    var pb = document.getElementById('playBtn');
+    var playing = pb && (pb.classList.contains('playing') || pb.textContent.indexOf('Stop')!==-1 || pb.textContent.indexOf('⏹')!==-1 || pb.textContent.indexOf('Pause')!==-1);
+    if(playing){ drawActive(); } else { drawIdle(); }
+    animId = requestAnimationFrame(loop);
+  }
+
+  function resizeCanvas(){
+    canvas.width = canvas.offsetWidth * (window.devicePixelRatio||1);
+    canvas.height = 48 * (window.devicePixelRatio||1);
+    ctx2.scale(window.devicePixelRatio||1, window.devicePixelRatio||1);
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+  loop();
+})();
 </script>
 </body>
 </html>`;
-
   return new Response(html, {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "no-cache, no-store",
-      "Access-Control-Allow-Origin": "*",
+      "Cache-Control": "no-cache"
     }
   });
 });
