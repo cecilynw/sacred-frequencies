@@ -1550,12 +1550,14 @@ selTrackFn(TRACKS.find(t=>t.feat)||TRACKS[0]);
 // Pages shown via CSS .page.active class — see go()
 </script>
 
+<script>
 // ── Initialize after full DOM parse ──
 document.addEventListener('DOMContentLoaded', function() {
   go('home');
 });
 // Fallback if DOMContentLoaded already fired
 if (document.readyState !== 'loading') { go('home'); }
+</script>
 
 <script>
 /* ══ PLAYER REDESIGN JS ══ */

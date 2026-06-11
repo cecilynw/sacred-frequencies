@@ -19,7 +19,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:#03071295;backdro
 .nav-tabs::-webkit-scrollbar{display:none}
 .tab{padding:5px 11px;border-radius:8px;font-size:11.5px;font-weight:600;cursor:pointer;white-space:nowrap;border:none;background:transparent;color:#ffffff55;transition:all 0.15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-tap-highlight-color:rgba(167,139,250,0.2)}
 .tab.active{background:#ffffff18;color:#fff}
-.page{display:none;max-width:960px;margin:0 auto;padding:66px 16px 80px;padding-bottom:max(80px,env(safe-area-inset-bottom,80px));position:relative;z-index:1}
+.page{display:none;max-width:960px;margin:0 auto;padding:66px 16px 80px;padding-bottom:max(80px,env(safe-area-inset-bottom,80px));position:relative;z-index:1}#page-home{display:block}#page-home{display:block}
 .page.active{display:block;position:relative;z-index:1}
 .hero{text-align:center;padding:36px 0 28px}
 .hero-badge{display:inline-block;padding:4px 14px;border:1px solid #7c3aed55;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:0.2em;color:#a78bfa;margin-bottom:14px;text-transform:uppercase}
@@ -1268,7 +1268,6 @@ function filterCat(cat, btn) {
 function go(id){
   try{
     // Unlock audio on every tap
-    ensureTone();
     // Use ONLY CSS classes - no inline style (prevents iOS class/style conflict)
     document.querySelectorAll('.page').forEach(function(p){
       p.classList.remove('active');
@@ -1551,12 +1550,7 @@ selTrackFn(TRACKS.find(t=>t.feat)||TRACKS[0]);
 // Pages shown via CSS .page.active class — see go()
 </script>
 
-// ── Initialize after full DOM parse ──
-document.addEventListener('DOMContentLoaded', function() {
-  go('home');
-});
-// Fallback if DOMContentLoaded already fired
-if (document.readyState !== 'loading') { go('home'); }
+
 
 <script>
 /* ══ PLAYER REDESIGN JS ══ */
