@@ -146,6 +146,29 @@ nav{z-index:200}
 
 /* Section header */
 #page-player h1{font-size:clamp(22px,5vw,32px);margin-bottom:4px}
+
+/* ── PRICING ── */
+.price-card{border-radius:20px;padding:24px 20px;border:1.5px solid;text-align:center;position:relative;transition:transform 0.2s,box-shadow 0.2s}
+.price-card:active{transform:scale(0.98)}
+.price-card.popular{border-color:#a78bfa !important;box-shadow:0 0 40px #a78bfa30}
+.popular-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;font-size:10px;font-weight:800;padding:4px 14px;border-radius:999px;letter-spacing:0.1em;white-space:nowrap}
+.price-amount{font-size:48px;font-weight:900;line-height:1;margin:12px 0 2px}
+.price-period{font-size:12px;color:var(--muted);margin-bottom:16px}
+.price-feat{font-size:12.5px;color:var(--muted);text-align:left;margin-bottom:6px;padding-left:4px}
+.price-feat::before{content:"✓ ";color:#34d399;font-weight:800}
+.btn-upgrade{width:100%;padding:13px;border-radius:999px;font-weight:800;font-size:14px;cursor:pointer;border:none;margin-top:16px;-webkit-appearance:none;touch-action:manipulation}
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:#00000088;z-index:1000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)}
+.modal-overlay.open{display:flex}
+.modal-box{background:#0f172a;border:1.5px solid #a78bfa50;border-radius:24px;padding:28px 24px;max-width:400px;width:100%;text-align:center;position:relative;max-height:90vh;overflow-y:auto}
+.modal-close{position:absolute;top:14px;right:16px;background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer;touch-action:manipulation;-webkit-appearance:none}
+/* ── GATE BADGE ── */
+.gate-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:0.08em;background:#fbbf2415;color:#fbbf24;border:1px solid #fbbf2430;margin-left:8px;vertical-align:middle}
+/* ── EMAIL CAPTURE ── */
+.email-capture{background:linear-gradient(135deg,#0d0520,#0c1a2e);border:1px solid #a78bfa30;border-radius:16px;padding:20px;margin:20px 0;text-align:center}
+.email-input{width:100%;padding:12px 16px;border-radius:999px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;font-size:14px;margin:10px 0;outline:none;-webkit-appearance:none}
+.email-input:focus{border-color:#a78bfa70}
+
 </style>
 
 
@@ -160,15 +183,16 @@ nav{z-index:200}
     <div class="nav-tabs">
       <button class="tab active" data-page="home" onclick="go('home')">🏠 Home</button>
       <button class="tab" data-page="player" onclick="go('player')">🎵 Player</button>
-      <button class="tab" data-page="angels" onclick="go('angels')">👼 Angels</button>
-      <button class="tab" data-page="love" onclick="go('love')">💗 Love</button>
-      <button class="tab" data-page="vortex" onclick="go('vortex')">🌀 Vortex</button>
-      <button class="tab" data-page="nature" onclick="go('nature')">🌿 Nature</button>
-      <button class="tab" data-page="growth" onclick="go('growth')">🌱 Growth</button>
-      <button class="tab" data-page="rituals" onclick="go('rituals')">🔮 Rituals</button>
+      <button class="tab" data-page="angels" onclick="gateGo('angels','healer')">👼 Angels <span class="gate-badge">💜</span></button>
+      <button class="tab" data-page="love" onclick="gateGo('love','healer')">💗 Love <span class="gate-badge">💜</span></button>
+      <button class="tab" data-page="vortex" onclick="gateGo('vortex','ascended')">🌀 Vortex <span class="gate-badge" style="background:#fbbf2415;color:#fbbf24;border-color:#fbbf2430">✨</span></button>
+      <button class="tab" data-page="nature" onclick="gateGo('nature','healer')">🌿 Nature <span class="gate-badge">💜</span></button>
+      <button class="tab" data-page="growth" onclick="gateGo('growth','healer')">🌱 Growth <span class="gate-badge">💜</span></button>
+      <button class="tab" data-page="rituals" onclick="gateGo('rituals','healer')">🔮 Rituals <span class="gate-badge">💜</span></button>
       <button class="tab" data-page="journal" onclick="go('journal')">📓 Journal</button>
       <button class="tab" data-page="guide" onclick="go('guide')">📖 Guide</button>
-      <button class="tab" data-page="protocol" onclick="go('protocol')">⚡ Protocol</button>
+      <button class="tab" data-page="protocol" onclick="gateGo('protocol','ascended')">⚡ Protocol <span class="gate-badge" style="background:#fbbf2415;color:#fbbf24;border-color:#fbbf2430">✨</span></button>
+      <button class="tab" data-page="pricing" onclick="go('pricing')" style="color:#fbbf24">💎 Plans</button>
     </div>
   </div>
 </nav>
@@ -192,7 +216,29 @@ nav{z-index:200}
     <div class="card" style="text-align:center;cursor:pointer;touch-action:manipulation;border-color:#2dd4bf30" onclick="go('rituals')"><div style="font-size:26px;margin-bottom:6px">🔮</div><div style="font-weight:800;color:#2dd4bf;font-size:14px">Healing Rituals</div><div style="font-size:11px;color:var(--dim);margin-top:4px">6 complete protocols</div></div>
     <div class="card" style="text-align:center;cursor:pointer;touch-action:manipulation;border-color:#60a5fa30" onclick="go('journal')"><div style="font-size:26px;margin-bottom:6px">📓</div><div style="font-weight:800;color:#60a5fa;font-size:14px">Healing Journal</div><div style="font-size:11px;color:var(--dim);margin-top:4px">Track your transformation</div></div>
   </div>
-  <div class="card" style="text-align:center;margin-top:4px"><div style="font-size:11px;color:var(--dim)">🔒 Universal Safety Promise · 528 Hz love carrier + 7.83 Hz Schumann anchor · Safe for all ages and animals</div></div>
+  <div class="card" style="text-align:center;margin-top:4px">
+
+  <!-- Upgrade CTA Banner -->
+  <div style="background:linear-gradient(135deg,#0d0520,#0c1a2e);border:1px solid #a78bfa30;border-radius:16px;padding:20px;margin:16px 0;text-align:center">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:10px">Unlock the full healing experience</div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="showUpgrade('healer')" style="font-size:12px;padding:10px 20px;touch-action:manipulation">💜 Healer — £11/mo</button>
+      <button class="btn" onclick="showUpgrade('ascended')" style="font-size:12px;padding:10px 20px;touch-action:manipulation;background:linear-gradient(135deg,#92400e,#fbbf24);color:#fff">✨ Ascended — £33/mo</button>
+    </div>
+    <div style="font-size:10px;color:var(--dim);margin-top:8px">🔒 Secure payment · Cancel anytime</div>
+  </div>
+
+  <!-- Email Capture -->
+  <div class="email-capture" id="emailCapture">
+    <div style="font-size:20px;margin-bottom:6px">✨</div>
+    <div style="font-weight:800;font-size:15px;margin-bottom:4px">Join the Sacred Circle</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Get your free Healing Frequency Guide + weekly sacred transmissions</div>
+    <input class="email-input" id="emailInput" type="email" placeholder="Your email address" />
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:4px" onclick="submitEmail()">🌿 Send My Free Guide</button>
+    <div id="emailMsg" style="font-size:12px;color:#34d399;margin-top:8px;display:none">💚 You're in the Sacred Circle! Check your inbox.</div>
+  </div>
+
+  <div style="font-size:11px;color:var(--dim)">🔒 Universal Safety Promise · 528 Hz love carrier + 7.83 Hz Schumann anchor · Safe for all ages and animals</div></div>
 </div>
 
 <!-- ════════════ PLAYER ════════════ -->
@@ -303,7 +349,30 @@ nav{z-index:200}
       <button class="btn btn-secondary" onclick="vortexStop()">■ Stop</button>
     </div>
   </div>
-  <style>@keyframes vcPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}</style>
+  <style>@keyframes vcPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+/* ── PRICING ── */
+.price-card{border-radius:20px;padding:24px 20px;border:1.5px solid;text-align:center;position:relative;transition:transform 0.2s,box-shadow 0.2s}
+.price-card:active{transform:scale(0.98)}
+.price-card.popular{border-color:#a78bfa !important;box-shadow:0 0 40px #a78bfa30}
+.popular-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;font-size:10px;font-weight:800;padding:4px 14px;border-radius:999px;letter-spacing:0.1em;white-space:nowrap}
+.price-amount{font-size:48px;font-weight:900;line-height:1;margin:12px 0 2px}
+.price-period{font-size:12px;color:var(--muted);margin-bottom:16px}
+.price-feat{font-size:12.5px;color:var(--muted);text-align:left;margin-bottom:6px;padding-left:4px}
+.price-feat::before{content:"✓ ";color:#34d399;font-weight:800}
+.btn-upgrade{width:100%;padding:13px;border-radius:999px;font-weight:800;font-size:14px;cursor:pointer;border:none;margin-top:16px;-webkit-appearance:none;touch-action:manipulation}
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:#00000088;z-index:1000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)}
+.modal-overlay.open{display:flex}
+.modal-box{background:#0f172a;border:1.5px solid #a78bfa50;border-radius:24px;padding:28px 24px;max-width:400px;width:100%;text-align:center;position:relative;max-height:90vh;overflow-y:auto}
+.modal-close{position:absolute;top:14px;right:16px;background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer;touch-action:manipulation;-webkit-appearance:none}
+/* ── GATE BADGE ── */
+.gate-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:0.08em;background:#fbbf2415;color:#fbbf24;border:1px solid #fbbf2430;margin-left:8px;vertical-align:middle}
+/* ── EMAIL CAPTURE ── */
+.email-capture{background:linear-gradient(135deg,#0d0520,#0c1a2e);border:1px solid #a78bfa30;border-radius:16px;padding:20px;margin:20px 0;text-align:center}
+.email-input{width:100%;padding:12px 16px;border-radius:999px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;font-size:14px;margin:10px 0;outline:none;-webkit-appearance:none}
+.email-input:focus{border-color:#a78bfa70}
+
+</style>
   <div class="section-label">Intensity</div>
   <div class="filter-row">
     <button class="filter-btn active" id="vi0" onclick="vSetI(0,this)">🌱 Gentle</button>
@@ -1546,10 +1615,212 @@ document.getElementById('wSine').classList.add('active');
 selTrackFn(TRACKS.find(t=>t.feat)||TRACKS[0]);
 // Show home page explicitly via go() so inline display styles are set
 // Pages shown via CSS .page.active class — see go()
+
+// ════════════════════════════════════
+// ══  MONETISATION ENGINE            ══
+// ════════════════════════════════════
+
+// Tier levels: 0=free, 1=healer, 2=ascended
+var TIER_LEVELS = {free:0, healer:1, ascended:2};
+var TIER_ACCESS = {
+  home:0, player:0, journal:0, guide:0,
+  angels:1, nature:1, love:1, growth:1, rituals:1,
+  vortex:2, protocol:2
+};
+var TIER_NAMES = {0:'Free',1:'Healer',2:'Ascended'};
+var TIER_PRICES = {healer:'£11/mo', ascended:'£33/mo'};
+var TIER_COLORS = {healer:'#a78bfa', ascended:'#fbbf24'};
+var TIER_EMOJIS = {healer:'💜', ascended:'✨'};
+
+function getUserTier(){
+  return localStorage.getItem('sf_tier') || 'free';
+}
+function getTierLevel(){
+  return TIER_LEVELS[getUserTier()] || 0;
+}
+
+function gateGo(pageId, required){
+  var need = TIER_LEVELS[required] || 1;
+  if(getTierLevel() >= need){
+    go(pageId);
+  } else {
+    showUpgrade(required);
+  }
+}
+
+function showUpgrade(tier){
+  var name = tier === 'healer' ? 'Healer' : 'Ascended';
+  var price = TIER_PRICES[tier];
+  var col = TIER_COLORS[tier];
+  var emoji = TIER_EMOJIS[tier];
+  var feats = tier === 'healer'
+    ? ['Angel Numbers (20 sacred codes)', 'Nature Portal (6 soundscapes)', 'Epigenetic Love Module', 'Growth & Ascension (8 steps)', 'Healing Rituals (6 protocols)']
+    : ['9-Ether Protocol (Supreme)', 'Quantum Healing Vortex', 'Lunar Engine (4 phases)', 'Early access to new modules', 'Priority support'];
+  document.getElementById('modalContent').innerHTML =
+    '<div style="font-size:36px;margin-bottom:8px">'+emoji+'</div>'+
+    '<div style="font-weight:900;font-size:20px;color:'+col+';margin-bottom:4px">Unlock '+name+'</div>'+
+    '<div style="font-size:13px;color:var(--muted);margin-bottom:16px">'+price+' · Cancel anytime</div>'+
+    '<div style="text-align:left;margin-bottom:20px">'+
+    feats.map(function(f){return '<div style="font-size:12.5px;color:#e2e8f0;margin-bottom:7px">✓ <span style="color:'+col+'">'+f+'</span></div>';}).join('')+
+    '</div>'+
+    '<button class="btn-upgrade" style="background:linear-gradient(135deg,'+col+','+col+'99);color:#fff;border:none;padding:14px;border-radius:999px;font-size:14px;font-weight:800;cursor:pointer;width:100%;-webkit-appearance:none;touch-action:manipulation" onclick="startCheckout(''+tier+'')">'+emoji+' Activate '+name+' — '+price+'</button>'+
+    '<button onclick="closeModal()" style="background:transparent;border:none;color:var(--muted);font-size:12px;margin-top:12px;cursor:pointer;width:100%;touch-action:manipulation">Maybe later</button>'+
+    '<div style="font-size:10px;color:var(--dim);margin-top:10px">🔒 Secure payment · Cancel anytime · Universal Safety Promise</div>';
+  document.getElementById('upgradeModal').classList.add('open');
+}
+
+function closeModal(){
+  document.getElementById('upgradeModal').classList.remove('open');
+}
+
+function startCheckout(tier){
+  // Store pending tier, show email-first flow if no email captured
+  var email = localStorage.getItem('sf_email') || '';
+  if(!email){
+    document.getElementById('modalContent').innerHTML =
+      '<div style="font-size:32px;margin-bottom:8px">✉️</div>'+
+      '<div style="font-weight:900;font-size:18px;margin-bottom:6px">One quick step</div>'+
+      '<div style="font-size:13px;color:var(--muted);margin-bottom:14px">Enter your email to set up your Sacred Frequencies account</div>'+
+      '<input class="email-input" id="checkoutEmail" type="email" placeholder="your@email.com" style="margin-bottom:8px"/>' +
+      '<button class="btn-upgrade" onclick="confirmCheckout(''+tier+'')" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;border:none;padding:13px;border-radius:999px;font-size:14px;font-weight:800;cursor:pointer;width:100%;-webkit-appearance:none;touch-action:manipulation;margin-top:4px">Continue to Payment →</button>'+
+      '<div style="font-size:10px;color:var(--dim);margin-top:10px">🔒 Secure · No spam · Cancel anytime</div>';
+  } else {
+    confirmCheckout(tier);
+  }
+}
+
+function confirmCheckout(tier){
+  var emailEl = document.getElementById('checkoutEmail');
+  if(emailEl && emailEl.value) localStorage.setItem('sf_email', emailEl.value);
+  var email = localStorage.getItem('sf_email') || '';
+  // For now: show thank-you + direct to payment page (Wix Payments link to be added)
+  document.getElementById('modalContent').innerHTML =
+    '<div style="font-size:48px;margin-bottom:10px">🌟</div>'+
+    '<div style="font-weight:900;font-size:20px;color:#a78bfa;margin-bottom:6px">You're almost there!</div>'+
+    '<div style="font-size:13px;color:var(--muted);margin-bottom:20px">Complete your payment to unlock your chosen tier. You'll be redirected to our secure payment page.</div>'+
+    '<button onclick="closeModal();go('pricing')" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;border:none;padding:14px 24px;border-radius:999px;font-size:14px;font-weight:800;cursor:pointer;-webkit-appearance:none;touch-action:manipulation">💳 Go to Plans & Payment</button>'+
+    '<div style="font-size:10px;color:var(--dim);margin-top:14px">📧 We'll send your access details to: '+email+'</div>';
+  // In production: window.location.href = PAYMENT_LINK[tier];
+}
+
+// Demo unlock for testing (remove in production)
+function devUnlock(tier){
+  localStorage.setItem('sf_tier', tier);
+  closeModal();
+  alert('🔓 Dev unlock: ' + tier + ' tier activated!');
+}
+
+// Email capture on home page
+function submitEmail(){
+  var input = document.getElementById('emailInput');
+  if(!input || !input.value.includes('@')){
+    input.style.borderColor='#ef4444';
+    return;
+  }
+  localStorage.setItem('sf_email', input.value);
+  document.getElementById('emailMsg').style.display='block';
+  input.style.display='none';
+  document.querySelector('#emailCapture .btn').style.display='none';
+  // Auto-show upgrade after 2s
+  setTimeout(function(){ showUpgrade('healer'); }, 2000);
+}
+
+// Close modal on overlay click
+document.getElementById('upgradeModal').addEventListener('click', function(e){
+  if(e.target === this) closeModal();
+});
+
 </script>
 
 
 
+
+
+<!-- ════════════ PRICING ════════════ -->
+<div class="page" id="page-pricing">
+  <div class="hero" style="padding-bottom:12px">
+    <div class="hero-badge">💎 Sacred Frequencies · Plans</div>
+    <h1 style="font-size:clamp(22px,5vw,36px);font-weight:900;margin-bottom:8px"><span class="grad-gold">Choose Your</span> <span class="grad-violet">Healing Path</span></h1>
+    <p class="sub">All plans include the Universal Safety Promise — 528 Hz + 7.83 Hz anchors in every frequency</p>
+  </div>
+
+  <div class="grid3" style="margin-bottom:24px;align-items:start">
+    <!-- FREE -->
+    <div class="price-card" style="border-color:#334155;background:var(--card)">
+      <div style="font-size:28px;margin-bottom:6px">🌱</div>
+      <div style="font-weight:900;font-size:18px;color:#e2e8f0">Free</div>
+      <div class="price-amount grad-main">£0</div>
+      <div class="price-period">forever</div>
+      <hr style="border:none;border-top:1px solid #1e293b;margin-bottom:14px">
+      <div class="price-feat">40 Frequency Tracks</div>
+      <div class="price-feat">Healing Journal</div>
+      <div class="price-feat">Universal Safety Promise</div>
+      <div class="price-feat">App Guide</div>
+      <button class="btn-upgrade" style="background:#1e293b;color:#94a3b8" onclick="go('player')">Start Healing Free</button>
+    </div>
+
+    <!-- HEALER -->
+    <div class="price-card popular" style="background:linear-gradient(160deg,#0d0520,#0c1a2e)">
+      <div class="popular-badge">⭐ MOST POPULAR</div>
+      <div style="font-size:28px;margin-bottom:6px">💜</div>
+      <div style="font-weight:900;font-size:18px;color:#a78bfa">Healer</div>
+      <div class="price-amount grad-violet">£11</div>
+      <div class="price-period">per month</div>
+      <hr style="border:none;border-top:1px solid #a78bfa30;margin-bottom:14px">
+      <div class="price-feat">Everything in Free</div>
+      <div class="price-feat">Angel Numbers (20 sacred codes)</div>
+      <div class="price-feat">Nature Portal (6 soundscapes)</div>
+      <div class="price-feat">Epigenetic Love (6 stages)</div>
+      <div class="price-feat">Growth & Ascension (8 steps)</div>
+      <div class="price-feat">Healing Rituals (6 protocols)</div>
+      <button class="btn-upgrade" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;box-shadow:0 0 24px #7c3aed40" onclick="showUpgrade('healer')">✦ Activate Healer</button>
+    </div>
+
+    <!-- ASCENDED -->
+    <div class="price-card" style="border-color:#fbbf2440;background:linear-gradient(160deg,#0f0a00,#1a1000)">
+      <div style="font-size:28px;margin-bottom:6px">✨</div>
+      <div style="font-weight:900;font-size:18px;color:#fbbf24">Ascended</div>
+      <div class="price-amount grad-amber">£33</div>
+      <div class="price-period">per month</div>
+      <hr style="border:none;border-top:1px solid #fbbf2430;margin-bottom:14px">
+      <div class="price-feat">Everything in Healer</div>
+      <div class="price-feat">9-Ether Protocol (Supreme)</div>
+      <div class="price-feat">Quantum Healing Vortex</div>
+      <div class="price-feat">Lunar Engine (4 phases)</div>
+      <div class="price-feat">Early access to new modules</div>
+      <div class="price-feat">Priority support</div>
+      <button class="btn-upgrade" style="background:linear-gradient(135deg,#92400e,#fbbf24);color:#fff;box-shadow:0 0 24px #fbbf2430" onclick="showUpgrade('ascended')">⚡ Ascend Now</button>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="section-label">Common Questions</div>
+  <div class="card" style="margin-bottom:8px">
+    <div style="font-weight:700;font-size:13px;margin-bottom:4px;color:#e2e8f0">Is my payment secure?</div>
+    <div style="font-size:12px;color:var(--muted)">Yes — payments are processed securely through Wix Payments. We never store your card details.</div>
+  </div>
+  <div class="card" style="margin-bottom:8px">
+    <div style="font-weight:700;font-size:13px;margin-bottom:4px;color:#e2e8f0">Can I cancel anytime?</div>
+    <div style="font-size:12px;color:var(--muted)">Absolutely. Cancel any time from your account — no questions asked.</div>
+  </div>
+  <div class="card" style="margin-bottom:8px">
+    <div style="font-weight:700;font-size:13px;margin-bottom:4px;color:#e2e8f0">Will it work on my iPhone?</div>
+    <div style="font-size:12px;color:var(--muted)">Yes — Sacred Frequencies is built first for iOS Safari. Just make sure your silent switch is OFF and volume is up.</div>
+  </div>
+  <div class="card" style="margin-bottom:24px">
+    <div style="font-weight:700;font-size:13px;margin-bottom:4px;color:#e2e8f0">What is the Universal Safety Promise?</div>
+    <div style="font-size:12px;color:var(--muted)">528 Hz (love carrier) and 7.83 Hz (Schumann resonance) are embedded in all protocols. Scientifically grounded, safe for all ages.</div>
+  </div>
+</div>
+
+
+<!-- ════════ UPGRADE MODAL ════════ -->
+<div class="modal-overlay" id="upgradeModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
 
 </body>
 </html>
