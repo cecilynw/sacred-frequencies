@@ -1,6 +1,8 @@
 {
-  "last_sync": "2026-06-29 16:49:30 UTC",
+  "last_sync": "2026-07-02 01:49 Europe/London",
   "files": ["functions/sacredApp.ts", "functions/serveProtocol.ts", "exports/sacred_app_full.html"],
   "status": "synced",
-  "check_time": "2026-06-29 16:49:30 UTC"
+  "check_time": "2026-07-02 01:49 Europe/London",
+  "deployed_hash": "bc50ec08d4b48b1dfb130d503d5b0c86",
+  "github_commit": "9e7646c"
 }
