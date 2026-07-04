@@ -1,5 +1,4 @@
-Deno.serve(async (_req) => {
-  const html = `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1408,10 +1407,10 @@ function selTrackFn(t) {
   set('pHz',        t.lbl || t.hz);
   set('pHzLabel',       (t.lbl || t.hz) + ' Hz — ' + (t.cat || ''));
   set('pBenefit',      t.ben || '');
-  set('pAff', t.aff ? '\\\\\\\\u201c' + t.aff + '\\\\\\\\u201d' : '');
+  set('pAff', t.aff ? '\\\\u201c' + t.aff + '\\\\u201d' : '');
   // Chakra
   var chakraEl = document.getElementById('pChakra');
-  if (chakraEl) chakraEl.textContent = t.ch ? '\\\\\\\\u2728 Chakra: ' + t.ch : '';
+  if (chakraEl) chakraEl.textContent = t.ch ? '\\\\u2728 Chakra: ' + t.ch : '';
   // Highlight active track card
   document.querySelectorAll('.track-card').forEach(function(c) { c.classList.remove('sel'); });
   var card = document.querySelector('[data-tidx="' + TRACKS.indexOf(t) + '"]');
@@ -1542,15 +1541,15 @@ function rMoodBtns(){
     const isBefore=id==='moodBefore';
     document.getElementById(id).innerHTML=MOODS.map(m=>
       '<button class="mood-btn'+(m===(isBefore?jMoodBefore:jMoodAfter)?' sel':'')+'" onclick="'+
-      (isBefore?"jMoodBefore='"+m+"'":'jMoodAfter=\\\\\\\\''+m+'\\\\\\\\'')+
-      ';document.querySelectorAll(\\\\\\\\'#'+id+' .mood-btn\\\\\\\\').forEach(b=>b.classList.remove(\\\\\\\\'sel\\\\\\\\'));this.classList.add(\\\\\\\\'sel\\\\\\\\')">'+
+      (isBefore?"jMoodBefore='"+m+"'":'jMoodAfter=\\\\''+m+'\\\\'')+
+      ';document.querySelectorAll(\\\\'#'+id+' .mood-btn\\\\').forEach(b=>b.classList.remove(\\\\'sel\\\\'));this.classList.add(\\\\'sel\\\\')">'+
       MOOD_EMOJI[m]+' '+m+'</button>'
     ).join('');
   });
 }
 function rGuide(){
   document.getElementById('guideList').innerHTML=GUIDE_TOPICS.map((t,i)=>
-    '<div class="guide-card card" onclick="this.querySelector(\\\\\\\\'.guide-body\\\\\\\\').classList.toggle(\\\\\\\\'open\\\\\\\\')">'+
+    '<div class="guide-card card" onclick="this.querySelector(\\\\'.guide-body\\\\').classList.toggle(\\\\'open\\\\')">'+
     '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px">'+
     '<div><span style="font-size:18px;margin-right:8px">'+t.icon+'</span><span style="font-weight:800;font-size:14px">'+t.title+'</span></div>'+
     '<span style="color:var(--dim)">↓</span></div>'+
@@ -1824,11 +1823,4 @@ document.getElementById('upgradeModal').addEventListener('click', function(e){
 </div>
 
 </body>
-</html>`;
-  return new Response(html, {
-    headers: {
-      "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "no-cache, no-store, must-revalidate"
-    }
-  });
-});
+</html>
