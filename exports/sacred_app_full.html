@@ -1541,15 +1541,15 @@ function rMoodBtns(){
     const isBefore=id==='moodBefore';
     document.getElementById(id).innerHTML=MOODS.map(m=>
       '<button class="mood-btn'+(m===(isBefore?jMoodBefore:jMoodAfter)?' sel':'')+'" onclick="'+
-      (isBefore?"jMoodBefore='"+m+"'":'jMoodAfter=\''+m+'\'')+
-      ';document.querySelectorAll(\'#'+id+' .mood-btn\').forEach(b=>b.classList.remove(\'sel\'));this.classList.add(\'sel\')">'+
+      (isBefore?"jMoodBefore='"+m+"'":'jMoodAfter=\\\\''+m+'\\\\'')+
+      ';document.querySelectorAll(\\\\'#'+id+' .mood-btn\\\\').forEach(b=>b.classList.remove(\\\\'sel\\\\'));this.classList.add(\\\\'sel\\\\')">'+
       MOOD_EMOJI[m]+' '+m+'</button>'
     ).join('');
   });
 }
 function rGuide(){
   document.getElementById('guideList').innerHTML=GUIDE_TOPICS.map((t,i)=>
-    '<div class="guide-card card" onclick="this.querySelector(\'.guide-body\').classList.toggle(\'open\')">'+
+    '<div class="guide-card card" onclick="this.querySelector(\\\\'.guide-body\\\\').classList.toggle(\\\\'open\\\\')">'+
     '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px">'+
     '<div><span style="font-size:18px;margin-right:8px">'+t.icon+'</span><span style="font-weight:800;font-size:14px">'+t.title+'</span></div>'+
     '<span style="color:var(--dim)">↓</span></div>'+
@@ -1663,7 +1663,7 @@ function showUpgrade(tier){
     '<div style="text-align:left;margin-bottom:20px">'+
     feats.map(function(f){return '<div style="font-size:12.5px;color:#e2e8f0;margin-bottom:7px">✓ <span style="color:'+col+'">'+f+'</span></div>';}).join('')+
     '</div>'+
-    '<button class="btn-upgrade" style="background:linear-gradient(135deg,'+col+','+col+'99);color:#fff;border:none;padding:14px;border-radius:999px;font-size:14px;font-weight:800;cursor:pointer;width:100%;-webkit-appearance:none;touch-action:manipulation" onclick="startCheckout(\''+tier+'\')">'+emoji+' Activate '+name+' — '+price+'</button>'+
+    '<button class="btn-upgrade" style="background:linear-gradient(135deg,'+col+','+col+'99);color:#fff;border:none;padding:14px;border-radius:999px;font-size:14px;font-weight:800;cursor:pointer;width:100%;-webkit-appearance:none;touch-action:manipulation" onclick="startCheckout(''+tier+'')">'+emoji+' Activate '+name+' — '+price+'</button>'+
     '<button onclick="closeModal()" style="background:transparent;border:none;color:var(--muted);font-size:12px;margin-top:12px;cursor:pointer;width:100%;touch-action:manipulation">Maybe later</button>'+
     '<div style="font-size:10px;color:var(--dim);margin-top:10px">🔒 Secure payment · Cancel anytime · Universal Safety Promise</div>';
   document.getElementById('upgradeModal').classList.add('open');
@@ -1682,7 +1682,7 @@ function startCheckout(tier){
       '<div style="font-weight:900;font-size:18px;margin-bottom:6px">One quick step</div>'+
       '<div style="font-size:13px;color:var(--muted);margin-bottom:14px">Enter your email to set up your Sacred Frequencies account</div>'+
       '<input class="email-input" id="checkoutEmail" type="email" placeholder="your@email.com" style="margin-bottom:8px"/>' +
-      '<button class="btn-upgrade" onclick="confirmCheckout(\''+tier+'\')" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;border:none;padding:13px;border-radius:999px;font-size:14px;font-weight:800;cursor:pointer;width:100%;-webkit-appearance:none;touch-action:manipulation;margin-top:4px">Continue to Payment →</button>'+
+      '<button class="btn-upgrade" onclick="confirmCheckout(''+tier+'')" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;border:none;padding:13px;border-radius:999px;font-size:14px;font-weight:800;cursor:pointer;width:100%;-webkit-appearance:none;touch-action:manipulation;margin-top:4px">Continue to Payment →</button>'+
       '<div style="font-size:10px;color:var(--dim);margin-top:10px">🔒 Secure · No spam · Cancel anytime</div>';
   } else {
     confirmCheckout(tier);
@@ -1696,10 +1696,10 @@ function confirmCheckout(tier){
   // For now: show thank-you + direct to payment page (Wix Payments link to be added)
   document.getElementById('modalContent').innerHTML =
     '<div style="font-size:48px;margin-bottom:10px">🌟</div>'+
-    '<div style="font-weight:900;font-size:20px;color:#a78bfa;margin-bottom:6px">You\'re almost there!</div>'+
-    '<div style="font-size:13px;color:var(--muted);margin-bottom:20px">Complete your payment to unlock your chosen tier. You\'ll be redirected to our secure payment page.</div>'+
-    '<button onclick="closeModal();go(\'pricing\')" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;border:none;padding:14px 24px;border-radius:999px;font-size:14px;font-weight:800;cursor:pointer;-webkit-appearance:none;touch-action:manipulation">💳 Go to Plans & Payment</button>'+
-    '<div style="font-size:10px;color:var(--dim);margin-top:14px">📧 We\'ll send your access details to: '+email+'</div>';
+    '<div style="font-weight:900;font-size:20px;color:#a78bfa;margin-bottom:6px">You're almost there!</div>'+
+    '<div style="font-size:13px;color:var(--muted);margin-bottom:20px">Complete your payment to unlock your chosen tier. You'll be redirected to our secure payment page.</div>'+
+    '<button onclick="closeModal();go('pricing')" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;border:none;padding:14px 24px;border-radius:999px;font-size:14px;font-weight:800;cursor:pointer;-webkit-appearance:none;touch-action:manipulation">💳 Go to Plans & Payment</button>'+
+    '<div style="font-size:10px;color:var(--dim);margin-top:14px">📧 We'll send your access details to: '+email+'</div>';
   // In production: window.location.href = PAYMENT_LINK[tier];
 }
 
