@@ -1,0 +1,134 @@
+){
+    return '<div class="angel-card" style="background:'+a.col+'08;border-color:'+a.col+'40" onclick="angelPlay('+a.hz+',this)">'+
+    '<div style="font-size:26px;color:'+a.col+';margin-bottom:5px">'+a.sym+'</div>'+
+    '<div style="font-size:18px;font-weight:900;color:'+a.col+'">'+a.hz+'</div>'+
+    '<div style="font-weight:700;font-size:11px;margin:4px 0 2px">'+a.meaning+'</div>'+
+    '<div style="font-size:10px;color:var(--dim);line-height:1.4">'+a.msg+'</div>'+
+    '</div>';
+  }).join('');
+}
+function rLoveStages(){
+  document.getElementById('loveStages').innerHTML=LOVE_STAGES.map(function(s,i){
+    return '<div class="card" style="cursor:pointer" onclick="loveStageToggle('+i+')">'+
+    '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">'+
+    '<div style="font-size:26px">'+s.icon+'</div>'+
+    '<div style="flex:1;min-width:0">'+
+    '<div style="font-weight:800;color:'+s.col+';margin-bottom:3px">Stage '+(i+1)+': '+s.name+'</div>'+
+    '<div style="font-size:12px;color:var(--muted);margin-bottom:3px">'+s.desc+'</div>'+
+    '<div style="font-size:11px;color:var(--dim)">'+s.hz.join(' Hz + ')+' Hz</div></div>'+
+    '<div style="font-size:18px;color:'+s.col+'">▶</div></div></div>';
+  }).join('');
+}
+function rNature(){
+  document.getElementById('natureGrid').innerHTML=NATURE_SCENES.map(function(s,i){
+    return '<div class="card scene-card" id="scene-'+i+'" style="border-color:'+s.col+'40" onclick="sceneToggle('+i+')">'+
+    '<div style="font-size:28px;margin-bottom:8px">'+s.icon+'</div>'+
+    '<div style="font-weight:800;color:'+s.col+';margin-bottom:4px">'+s.name+'</div>'+
+    '<div style="font-size:12px;color:var(--muted);margin-bottom:6px">'+s.desc+'</div>'+
+    '<div style="font-size:11px;color:var(--dim)">+ '+s.hz+' Hz healing tone</div>'+
+    '</div>';
+  }).join('');
+  document.getElementById('primalGrid').innerHTML=PRIMAL_FREQS.map(function(p){
+    return '<div class="card" style="cursor:pointer;border-color:'+p.col+'40" onclick="primalToggle('+p.hz+')">'+
+    '<div style="font-size:18px;font-weight:900;color:'+p.col+'">'+p.hz+' Hz</div>'+
+    '<div style="font-weight:700;font-size:12px;margin:4px 0 2px">'+p.name+'</div>'+
+    '<div style="font-size:11px;color:var(--dim)">'+p.desc+'</div>'+
+    '</div>';
+  }).join('');
+}
+function rGrowth(){
+  document.getElementById('growthGrid').innerHTML=GROWTH_LAYERS.map(function(l,i){
+    return '<div class="card" style="cursor:pointer;border-color:'+l.col+'40" onclick="growthToggle('+i+')">'+
+    '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">'+
+    '<div style="font-size:26px">'+l.icon+'</div>'+
+    '<div style="flex:1;min-width:0">'+
+    '<div style="font-weight:800;color:'+l.col+';margin-bottom:3px">'+l.name+'</div>'+
+    '<div style="font-size:12px;color:var(--muted);margin-bottom:3px">'+l.desc+'</div>'+
+    '<div style="font-size:11px;color:var(--dim);font-style:italic">'+l.aff+'</div></div>'+
+    '<div style="font-size:18px;color:'+l.col+'">▶</div></div></div>';
+  }).join('');
+  document.getElementById('masterSteps').innerHTML=MASTER_SEQUENCE.map(function(s,i){
+    return '<div class="card" style="border-color:'+s.col+'30;margin-bottom:6px;padding:10px 14px">'+
+    '<div style="display:flex;align-items:center;gap:10px">'+
+    '<div style="width:24px;height:24px;border-radius:50%;background:'+s.col+'25;color:'+s.col+';font-weight:900;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+(i+1)+'</div>'+
+    '<div><span style="font-weight:800;color:'+s.col+'">'+s.name+'</span> — <span style="font-size:12px;color:var(--muted)">'+s.hz+' Hz · '+s.desc+'</span></div>'+
+    '</div></div>';
+  }).join('');
+}
+function rRituals(){
+  document.getElementById('ritualList').innerHTML=RITUALS.map(function(r,i){
+    return '<div class="ritual-card" style="border-color:'+r.col+'30">'+
+    '<button class="ritual-header" onclick="ritualExpand('+i+')">'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">'+
+    '<div><div style="font-weight:800;font-size:15px;margin-bottom:3px">'+r.title+'</div>'+
+    '<div style="font-size:12px;color:var(--muted)">'+r.sub+'</div>'+
+    '<span style="font-size:11px;padding:2px 8px;background:#ffffff10;border-radius:999px;color:var(--dim)">'+r.dur+'</span>'+
+    '</div>'+
+    '<span style="color:var(--dim);font-size:18px">↓</span>'+
+    '</div></button>'+
+    '<div class="ritual-body" id="rb-'+i+'">'+
+    '<div style="display:flex;gap:8px;margin-bottom:12px">'+
+    '<button class="btn btn-primary" style="font-size:12px;padding:8px 16px" onclick="ritualActivate('+i+')">▶ Activate All Frequencies</button>'+
+    '<button class="btn btn-secondary" style="font-size:12px;padding:8px 14px" onclick="ritualStop()">■ Stop</button>'+
+    '</div>'+
+    r.steps.map(function(s,j){
+      return '<div class="ritual-step">'+
+      '<div class="step-dot" style="background:'+r.col+'25;color:'+r.col+';font-size:10px">'+(j+1)+'</div>'+
+      '<div><div style="font-weight:700;font-size:13px;margin-bottom:2px">'+s.name+' — <span style="color:'+r.col+'">'+s.freq+'</span></div>'+
+      '<div style="font-size:11px;color:var(--dim)">'+s.time+' · '+s.desc+'</div></div>'+
+      '</div>';
+    }).join('')+
+    '<div style="margin-top:10px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--dim);margin-bottom:6px">Benefits</div>'+
+    '<div style="display:flex;flex-wrap:wrap;gap:4px">'+r.ben.map(function(b){return '<span style="padding:2px 8px;background:'+r.col+'15;color:'+r.col+';border-radius:999px;font-size:10px;font-weight:700">'+b+'</span>';}).join('')+
+    '</div></div></div></div>';
+  }).join('');
+}
+function rGuide(){
+  document.getElementById('guideList').innerHTML=GUIDE_TOPICS.map(function(t){
+    return '<div class="guide-card" onclick="this.querySelector(&#39;.guide-body&#39;).classList.toggle(&#39;open&#39;)">'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px">'+
+    '<div><span style="font-size:18px;margin-right:8px">'+t.icon+'</span><span style="font-weight:800;font-size:14px">'+t.title+'</span></div>'+
+    '<span style="color:var(--dim)">↓</span></div>'+
+    '<div class="guide-body">'+t.content+'</div>'+
+    '</div>';
+  }).join('');
+  document.getElementById('freqRef').innerHTML=FREQ_REF.map(function(f){
+    return '<div class="card" style="margin-bottom:6px;padding:10px 14px">'+
+    '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'+
+    '<div class="hz-badge" style="background:'+CC[f.cat]+'20;color:'+CC[f.cat]+'">'+f.hz+' Hz</div>'+
+    '<div style="flex:1;min-width:0"><span style="font-weight:700;font-size:13px">'+f.name+'</span><span style="font-size:11px;color:var(--dim);margin-left:8px">'+f.info+'</span></div>'+
+    '</div></div>';
+  }).join('');
+}
+function rProtocol(){
+  document.getElementById('protEthers').innerHTML=PROTOCOL_ETHERS.map(function(e){
+    return '<div class="card" style="border-color:'+e.col+'40;margin-bottom:8px">'+
+    '<div style="display:flex;align-items:flex-start;gap:10px">'+
+    '<div style="width:28px;height:28px;border-radius:50%;background:'+e.col+'25;color:'+e.col+';font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">'+e.num+'</div>'+
+    '<div style="flex:1;min-width:0">'+
+    '<div style="font-weight:800;color:'+e.col+';margin-bottom:2px">Ether '+e.num+': '+e.name+' — <span style="font-size:12px;font-weight:600">'+e.hz+'</span></div>'+
+    '<div style="font-size:11px;color:var(--dim);margin-bottom:4px">Targets: '+e.targets+'</div>'+
+    '<div style="font-size:11px;font-style:italic;color:#c4b5fd">'+e.aff+'</div>'+
+    '</div></div></div>';
+  }).join('');
+  document.getElementById('protLunar').innerHTML=LUNAR_PHASES.map(function(l){
+    return '<div class="card" style="border-color:'+l.col+'40;text-align:center">'+
+    '<div style="font-size:28px;margin-bottom:6px">'+l.phase+'</div>'+
+    '<div style="font-weight:800;color:'+l.col+'">'+l.name+'</div>'+
+    '<div style="font-size:18px;font-weight:900;color:'+l.col+';margin:4px 0">'+l.hz+' Hz</div>'+
+    '<div style="font-size:11px;color:var(--dim);margin-bottom:10px">'+l.desc+'</div>'+
+    '<button class="lunar-btn filter-btn" style="width:100%" onclick="lunarPlay('+l.hz+',this)">▶ Activate</button>'+
+    '</div>';
+  }).join('');
+}
+function makeStars(){
+  var c=document.getElementById('starsContainer');
+  for(var i=0;i<80;i++){
+    var s=document.createElement('div'); s.className='star';
+    var size=Math.random()*2+1;
+    s.style.cssText='width:'+size+'px;height:'+size+'px;top:'+Math.random()*100+'%;left:'+Math.random()*100+'%;--d:'+(Math.random()*4+2)+'s;--delay:-'+(Math.random()*4)+'s;--op:'+(Math.random()*0.6+0.2);
+    c.appendChild(s);
+  }
+}
+document.addEventListener('touchstart', function onFT(){ ensureTone(); document.removeEventListener('touchstart',onFT); }, {passive:true});
+document.addEventListener('click', function onFC(){ en

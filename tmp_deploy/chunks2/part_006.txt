@@ -1,0 +1,208 @@
+onds++;
+    if(timerEl){ var m=Math.floor(elapsedSeconds/60); var s=elapsedSeconds%60; timerEl.textContent=m+':'+(s<10?'0':'')+s; }
+  },1000);
+}
+function startPlay(){
+  var ctx=getCtx(); if(ctx.state==='suspended') ctx.resume();
+  stopCurrentAudio();
+  isPlaying=true; updatePlayBtn(true); startTimer();
+  var t=TRACKS[curTrackIdx]||TRACKS[0];
+  var hz=t.hz;
+  playerNode = hz<20 ? binaural(110,hz,masterVolume) : tone(hz,curWave,masterVolume);
+  var affirmEl=document.getElementById('pAff');
+  if(affirmEl){ affirmEl.style.display='block'; affirmEl.textContent='“'+(t.aff||'')+'”'; }
+}
+function stopPlay(){
+  stopCurrentAudio(); isPlaying=false; updatePlayBtn(false); elapsedSeconds=0;
+  var timerEl=document.getElementById('pTimer'); if(timerEl) timerEl.textContent='0:00';
+}
+function playerToggle(){ ensureTone(); if(isPlaying){ stopPlay(); } else { startPlay(); } }
+function playerNature(){
+  ensureTone();
+  var btn=document.getElementById('natBtn');
+  if(natureNode){ fade(natureNode); natureNode=null; if(btn){ btn.textContent='🌿 Nature'; btn.classList.remove('active'); } }
+  else { natureNode=nature(0.25); if(btn){ btn.textContent='🌿 Nature ✓'; btn.classList.add('active'); } }
+}
+function selTrackFn(t){
+  curTrackIdx=TRACKS.indexOf(t);
+  function set(id,val){ var el=document.getElementById(id); if(el) el.textContent=val; }
+  set('pHz', t.lbl||t.hz);
+  set('pHzLabel', (t.lbl||t.hz)+' Hz — '+(t.cat||''));
+  set('pBenefit', t.ben||'');
+  var affirmEl=document.getElementById('pAff');
+  if(affirmEl) affirmEl.textContent = t.aff ? ('“'+t.aff+'”') : '';
+  document.querySelectorAll('.track-card').forEach(function(c){ c.classList.remove('sel'); });
+  var card=document.querySelector('[data-tidx="'+TRACKS.indexOf(t)+'"]');
+  if(card) card.classList.add('sel');
+  if(isPlaying){ stopCurrentAudio(); isPlaying=true; startPlay(); }
+}
+function selByIdx(el){
+  var idx=parseInt(el.getAttribute('data-tidx'));
+  if(!isNaN(idx) && TRACKS[idx]){
+    selTrackFn(TRACKS[idx]);
+    ensureTone();
+    if(!isPlaying) startPlay();
+  }
+}
+var loveFieldOn=false;
+function loveFieldToggle(){
+  ensureTone();
+  var btn=document.getElementById('loveBigBtn');
+  if(loveFieldOn){
+    loveNodes.forEach(function(n){fade(n);}); loveNodes=[]; loveFieldOn=false;
+    if(btn) btn.classList.remove('active');
+  } else {
+    [528,639,285,417,396,963,7.83].forEach(function(hz){ loveNodes.push(hz<20?binaural(110,hz,0.12):tone(hz,'sine',0.12)); });
+    loveFieldOn=true;
+    if(btn) btn.classList.add('active');
+  }
+}
+function loveStageToggle(idx){
+  ensureTone();
+  loveNodes.forEach(function(n){fade(n);}); loveNodes=[];
+  var stage=LOVE_STAGES[idx]; if(!stage) return;
+  stage.hz.forEach(function(hz){ loveNodes.push(hz<20?binaural(110,hz,0.18):tone(hz,'sine',0.18)); });
+  loveFieldOn=true;
+}
+function vortexToggle(){
+  ensureTone();
+  var btn=document.getElementById('vortexBtn');
+  var ring=document.getElementById('vortexRing');
+  if(vortexOn){
+    vortexNodes.forEach(function(n){fade(n);}); vortexNodes=[]; vortexOn=false;
+    if(btn) btn.innerHTML='⚡ Activate Vortex';
+    if(ring) ring.classList.remove('active');
+  } else {
+    [7.83,111,528,417,852,963].forEach(function(hz){ vortexNodes.push(hz<20?binaural(110,hz,0.3):tone(hz,'sine',0.3)); });
+    vortexNodes.push(tone(417,'sawtooth',0.1));
+    vortexOn=true;
+    if(btn) btn.innerHTML='⏹ Stop Vortex';
+    if(ring) ring.classList.add('active');
+  }
+}
+function growthToggle(idx){
+  ensureTone();
+  growthNodes.forEach(function(n){fade(n);}); growthNodes=[];
+  var g=GROWTH_LAYERS[idx]; if(!g) return;
+  g.gh.forEach(function(hz){ growthNodes.push(hz<20?binaural(110,hz,0.2):tone(hz,'sine',0.2)); });
+}
+function growthMasterSeq(){
+  ensureTone();
+  var step=0;
+  function playStep(){
+    growthNodes.forEach(function(n){fade(n);}); growthNodes=[];
+    if(step>=MASTER_SEQUENCE.length) return;
+    var s=MASTER_SEQUENCE[step];
+    growthNodes.push(s.hz<20?binaural(110,s.hz,0.25):tone(s.hz,'sine',0.25));
+    step++;
+    growthSeqTimer=setTimeout(playStep,120000);
+  }
+  playStep();
+}
+function sceneToggle(idx){
+  ensureTone();
+  naturePortalNodes.forEach(function(n){fade(n);}); naturePortalNodes=[];
+  document.querySelectorAll('.scene-card').forEach(function(c){c.classList.remove('playing');});
+  var s=NATURE_SCENES[idx]; if(!s) return;
+  naturePortalNodes.push(nature(0.3));
+  naturePortalNodes.push(s.hz<20?binaural(110,s.hz,0.3):tone(s.hz,'sine',0.3));
+  var card=document.getElementById('scene-'+idx); if(card) card.classList.add('playing');
+}
+function primalToggle(hz){
+  ensureTone();
+  naturePortalNodes.forEach(function(n){fade(n);}); naturePortalNodes=[];
+  naturePortalNodes.push(hz<20?binaural(110,hz,0.4):tone(hz,'sine',0.4));
+}
+function ritualExpand(idx){
+  var body=document.getElementById('rb-'+idx); if(!body) return;
+  var isOpen=body.classList.contains('open');
+  document.querySelectorAll('.ritual-body').forEach(function(b){b.classList.remove('open');});
+  if(!isOpen) body.classList.add('open');
+}
+function ritualActivate(idx){
+  ensureTone();
+  ritualNodes.forEach(function(n){fade(n);}); ritualNodes=[];
+  if(ritualSeqTimer){ clearTimeout(ritualSeqTimer); ritualSeqTimer=null; }
+  var r=RITUALS[idx]; if(!r) return;
+  var freqs=r.freqs||[]; var step=0;
+  function playRitualStep(){
+    ritualNodes.forEach(function(n){fade(n);}); ritualNodes=[];
+    if(step>=freqs.length) return;
+    var hz=freqs[step];
+    ritualNodes.push(hz<20?binaural(110,hz,0.3):tone(hz,'sine',0.3));
+    step++;
+    ritualSeqTimer=setTimeout(playRitualStep,600000);
+  }
+  playRitualStep();
+}
+function ritualStop(){
+  ritualNodes.forEach(function(n){fade(n);}); ritualNodes=[];
+  if(ritualSeqTimer){ clearTimeout(ritualSeqTimer); ritualSeqTimer=null; }
+}
+function angelPlay(hz,btn){
+  ensureTone();
+  angelNodes.forEach(function(n){fade(n);}); angelNodes=[];
+  document.querySelectorAll('.angel-card').forEach(function(c){c.classList.remove('active');});
+  var actualHz=hz>2000?hz/10:hz;
+  angelNodes.push(actualHz<20?binaural(110,actualHz,0.4):tone(actualHz,'sine',0.4));
+  if(btn && btn.closest){ var card=btn.closest('.angel-card'); if(card) card.classList.add('active'); }
+}
+function lunarPlay(hz,btn){
+  ensureTone();
+  lunarNodes.forEach(function(n){fade(n);}); lunarNodes=[];
+  [136.10,210.42,221.23].forEach(function(lHz){ lunarNodes.push(tone(lHz,'sine',0.15)); });
+  lunarNodes.push(hz<20?binaural(110,hz,0.3):tone(hz,'sine',0.3));
+  document.querySelectorAll('.lunar-btn').forEach(function(b){b.classList.remove('active');});
+  if(btn) btn.classList.add('active');
+}
+function setVol(val){
+  masterVolume=val/100;
+  var label=document.getElementById('volLabel'); if(label) label.textContent=val+'%';
+  [playerNode,natureNode].forEach(function(n){ if(n && n.masterGain) n.masterGain.gain.value=masterVolume; });
+}
+function filterCat(cat,btn){
+  document.querySelectorAll('#catFilter .filter-btn').forEach(function(b){b.classList.remove('active');});
+  if(btn) btn.classList.add('active');
+  rTracks(cat);
+}
+function go(id){
+  try{
+    document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+    var target=document.getElementById('page-'+id);
+    if(!target){ return; }
+    target.classList.add('active');
+    document.querySelectorAll('.tab').forEach(function(t){
+      t.classList.remove('active');
+      if(t.getAttribute('data-page')===id) t.classList.add('active');
+    });
+    window.scrollTo(0,0);
+    if(id==='player'){
+      var tl=document.getElementById('trackList');
+      if(tl && tl.children.length===0) rTracks('All');
+    }
+  }catch(e){}
+}
+function rTracks(cat){
+  cat=cat||'All';
+  var list=document.getElementById('trackList');
+  var filtered = cat==='All' ? TRACKS : TRACKS.filter(function(t){return t.cat===cat;});
+  list.innerHTML=filtered.map(function(t){
+    var c=CC[t.cat]||'#a78bfa';
+    var globalIdx=TRACKS.indexOf(t);
+    return '<div class="track-card" data-tidx="'+globalIdx+'" onclick="selByIdx(this)" style="border-left:3px solid '+c+'50">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px">'+
+      '<div style="flex:1;min-width:0">'+
+      '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">'+
+      '<div class="hz-badge" style="background:'+c+'22;color:'+c+';border:1px solid '+c+'40">'+(t.lbl||t.hz+' Hz')+'</div>'+
+      '<div style="font-size:10px;color:'+c+'99;font-weight:700;text-transform:uppercase">'+t.cat+'</div>'+
+      '</div>'+
+      '<div style="font-weight:700;font-size:13.5px;color:#e2e8f0;line-height:1.3">'+t.n+'</div>'+
+      '<div style="font-size:11.5px;color:#64748b;margin-top:3px">'+t.ben+'</div>'+
+      '<div style="font-size:10.5px;color:'+c+'80;margin-top:4px;font-weight:600">Chakra: '+(t.ch||'—')+'</div>'+
+      '</div>'+
+      '<button class="play-mini" data-tidx="'+globalIdx+'" onclick="event.stopPropagation();selByIdx(this)">▶</button>'+
+      '</div></div>';
+  }).join('');
+}
+function rAngels(){
+  document.getElementById('angelGrid').innerHTML=ANGEL_NUMBERS.map(function(a

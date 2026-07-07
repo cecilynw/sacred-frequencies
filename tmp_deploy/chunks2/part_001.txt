@@ -1,0 +1,82 @@
+ion:twinkle var(--d) ease-in-out infinite var(--delay)}
+@keyframes twinkle{0%,100%{opacity:0.1}50%{opacity:var(--op)}}
+.wave-btn{padding:7px 16px;border-radius:999px;font-size:11.5px;font-weight:700;cursor:pointer;border:1px solid #334155;background:transparent;color:#94a3b8;touch-action:manipulation}
+.wave-btn.active{background:linear-gradient(135deg,#7c3aed30,#a78bfa20);border-color:#a78bfa80;color:#c4b5fd}
+.price-card{border-radius:20px;padding:24px 20px;border:1.5px solid;text-align:center;position:relative}
+.price-card.popular{border-color:#a78bfa !important;box-shadow:0 0 40px #a78bfa30}
+.popular-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;font-size:10px;font-weight:800;padding:4px 14px;border-radius:999px;white-space:nowrap}
+.price-amount{font-size:48px;font-weight:900;line-height:1;margin:12px 0 2px}
+.price-period{font-size:12px;color:var(--muted);margin-bottom:16px}
+.price-feat{font-size:12.5px;color:var(--muted);text-align:left;margin-bottom:6px;padding-left:4px}
+.price-feat::before{content:"✓ ";color:#34d399;font-weight:800}
+.btn-upgrade{width:100%;padding:13px;border-radius:999px;font-weight:800;font-size:14px;cursor:pointer;border:none;margin-top:16px;touch-action:manipulation}
+.modal-overlay{display:none;position:fixed;inset:0;background:#00000088;z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal-box{background:#0f172a;border:1.5px solid #a78bfa50;border-radius:24px;padding:28px 24px;max-width:400px;width:100%;text-align:center;position:relative;max-height:90vh;overflow-y:auto}
+.modal-close{position:absolute;top:14px;right:16px;background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer}
+.gate-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:10px;font-weight:800;background:#fbbf2415;color:#fbbf24;border:1px solid #fbbf2430;margin-left:8px}
+.email-capture{background:linear-gradient(135deg,#0d0520,#0c1a2e);border:1px solid #a78bfa30;border-radius:16px;padding:20px;margin:20px 0;text-align:center}
+.email-input{width:100%;padding:12px 16px;border-radius:999px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;font-size:14px;margin:10px 0;outline:none}
+</style>
+</head>
+<body style="touch-action:pan-y;-webkit-text-size-adjust:100%;">
+<div class="stars" id="starsContainer"></div>
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">✦ Sacred Frequencies</div>
+    <div class="nav-tabs">
+      <button class="tab active" data-page="home" onclick="go('home')">🏠 Home</button>
+      <button class="tab" data-page="player" onclick="go('player')">🎵 Player</button>
+      <button class="tab" data-page="angels" onclick="gateGo('angels','healer')">👼 Angels <span class="gate-badge">💜</span></button>
+      <button class="tab" data-page="love" onclick="gateGo('love','healer')">💗 Love <span class="gate-badge">💜</span></button>
+      <button class="tab" data-page="vortex" onclick="gateGo('vortex','ascended')">🌀 Vortex <span class="gate-badge">✨</span></button>
+      <button class="tab" data-page="nature" onclick="gateGo('nature','healer')">🌿 Nature <span class="gate-badge">💜</span></button>
+      <button class="tab" data-page="growth" onclick="gateGo('growth','healer')">🌱 Growth <span class="gate-badge">💜</span></button>
+      <button class="tab" data-page="rituals" onclick="gateGo('rituals','healer')">🔮 Rituals <span class="gate-badge">💜</span></button>
+      <button class="tab" data-page="journal" onclick="go('journal')">📓 Journal</button>
+      <button class="tab" data-page="guide" onclick="go('guide')">📖 Guide</button>
+      <button class="tab" data-page="protocol" onclick="gateGo('protocol','ascended')">⚡ Protocol <span class="gate-badge">✨</span></button>
+      <button class="tab" data-page="pricing" onclick="go('pricing')" style="color:#fbbf24">💎 Plans</button>
+    </div>
+  </div>
+</nav>
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-badge">✦ Sacred Frequencies · Complete Healing App</div>
+    <h1 class="grad-main">Heal. Align. Ascend.</h1>
+    <p class="sub" style="margin-bottom:22px">40 sacred frequencies · Epigenetic Love · 9-Ether Protocol · Angel Numbers · Quantum Vortex · Healing Journal. Your complete sonic healing toolkit — works on any device.</p>
+    <button class="btn btn-primary" onclick="go('player')" style="font-size:15px;padding:14px 32px;">▶ Start Healing Now</button>
+  </div>
+  <div class="grid3" style="margin-bottom:12px">
+    <div class="card" style="text-align:center;cursor:pointer;border-color:#fbbf2430" onclick="go('player')"><div style="font-size:26px;margin-bottom:6px">🎵</div><div style="font-weight:800;color:#fbbf24;font-size:14px">40 Frequencies</div></div>
+    <div class="card" style="text-align:center;cursor:pointer;border-color:#34d39930" onclick="go('nature')"><div style="font-size:26px;margin-bottom:6px">🌿</div><div style="font-weight:800;color:#34d399;font-size:14px">Nature Portal</div></div>
+    <div class="card" style="text-align:center;cursor:pointer;border-color:#a78bfa30" onclick="go('protocol')"><div style="font-size:26px;margin-bottom:6px">⚡</div><div style="font-weight:800;color:#a78bfa;font-size:14px">9-Ether Protocol</div></div>
+    <div class="card" style="text-align:center;cursor:pointer;border-color:#fb718530" onclick="go('love')"><div style="font-size:26px;margin-bottom:6px">💗</div><div style="font-weight:800;color:#fb7185;font-size:14px">Epigenetic Love</div></div>
+    <div class="card" style="text-align:center;cursor:pointer;border-color:#7c3aed30" onclick="go('vortex')"><div style="font-size:26px;margin-bottom:6px">🌀</div><div style="font-weight:800;color:#a78bfa;font-size:14px">Quantum Vortex</div></div>
+    <div class="card" style="text-align:center;cursor:pointer;border-color:#fbbf2430" onclick="go('angels')"><div style="font-size:26px;margin-bottom:6px">👼</div><div style="font-weight:800;color:#fbbf24;font-size:14px">Angel Numbers</div></div>
+    <div class="card" style="text-align:center;cursor:pointer;border-color:#22c55e30" onclick="go('growth')"><div style="font-size:26px;margin-bottom:6px">🌱</div><div style="font-weight:800;color:#22c55e;font-size:14px">Growth Sound</div></div>
+    <div class="card" style="text-align:center;cursor:pointer;border-color:#2dd4bf30" onclick="go('rituals')"><div style="font-size:26px;margin-bottom:6px">🔮</div><div style="font-weight:800;color:#2dd4bf;font-size:14px">Healing Rituals</div></div>
+    <div class="card" style="text-align:center;cursor:pointer;border-color:#60a5fa30" onclick="go('journal')"><div style="font-size:26px;margin-bottom:6px">📓</div><div style="font-weight:800;color:#60a5fa;font-size:14px">Healing Journal</div></div>
+  </div>
+  <div class="card" style="text-align:center;margin-top:4px">
+  <div style="background:linear-gradient(135deg,#0d0520,#0c1a2e);border:1px solid #a78bfa30;border-radius:16px;padding:20px;margin:16px 0;text-align:center">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:10px">Unlock the full healing experience</div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="showUpgrade('healer')" style="font-size:12px;padding:10px 20px">💜 Healer — £11/mo</button>
+      <button class="btn" onclick="showUpgrade('ascended')" style="font-size:12px;padding:10px 20px;background:linear-gradient(135deg,#92400e,#fbbf24);color:#fff">✨ Ascended — £33/mo</button>
+    </div>
+  </div>
+  <div class="email-capture" id="emailCapture">
+    <div style="font-size:20px;margin-bottom:6px">✨</div>
+    <div style="font-weight:800;font-size:15px;margin-bottom:4px">Join the Sacred Circle</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Get your free Healing Frequency Guide + weekly sacred transmissions</div>
+    <input class="email-input" id="emailInput" type="email" placeholder="Your email address" />
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:4px" onclick="submitEmail()">🌿 Send My Free Guide</button>
+    <div id="emailMsg" style="font-size:12px;color:#34d399;margin-top:8px;display:none">💚 You are in the Sacred Circle! Check your inbox.</div>
+  </div>
+  <div style="font-size:11px;color:var(--dim)">🔒 Universal Safety Promise · 528 Hz love carrier + 7.83 Hz Schumann anchor · Safe for all ages and animals</div></div>
+</div>
+<div class="page" id="page-player">
+  <h1 class="grad-amber" style="margin-bottom:6px">🎵 Frequency Player</h1>
+  <p class="sub" style="margin-bottom:18px;text-align:left">Use headphones for binaural effect · Set your intention · Tap a track then press Play</p>
+  <div id="iosHint" style="background:#a78bfa15;border:1px solid #a78bfa40;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#c4b5fd;text-align:center">📱 <strong>Tip:</strong> Silent switch OFF · Volume up · Tap a trac

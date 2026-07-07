@@ -1,0 +1,96 @@
+base44.app/functions/serveProtocol" target="_blank" class="btn btn-primary" style="text-decoration:none">⚡ Open Full Protocol</a>
+  </div>
+  <div class="section-label">The 9 Ethers</div>
+  <div id="protEthers"></div>
+  <div class="section-label">Lunar Resonance</div>
+  <div id="protLunar" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px"></div>
+</div>
+<div class="page" id="page-pricing">
+  <div class="hero" style="padding-bottom:12px">
+    <div class="hero-badge">💎 Sacred Frequencies · Plans</div>
+    <h1 style="font-size:clamp(22px,5vw,36px);font-weight:900;margin-bottom:8px"><span class="grad-gold">Choose Your</span> <span class="grad-violet">Healing Path</span></h1>
+    <p class="sub">All plans include the Universal Safety Promise — 528 Hz + 7.83 Hz anchors in every frequency</p>
+  </div>
+  <div class="grid3" style="margin-bottom:24px;align-items:start">
+    <div class="price-card" style="border-color:#334155;background:var(--card)">
+      <div style="font-size:28px;margin-bottom:6px">🌱</div>
+      <div style="font-weight:900;font-size:18px;color:#e2e8f0">Free</div>
+      <div class="price-amount grad-main">£0</div>
+      <div class="price-period">forever</div>
+      <div class="price-feat">40 Frequency Tracks</div>
+      <div class="price-feat">Healing Journal</div>
+      <button class="btn-upgrade" style="background:#1e293b;color:#94a3b8" onclick="go('player')">Start Healing Free</button>
+    </div>
+    <div class="price-card popular" style="background:linear-gradient(160deg,#0d0520,#0c1a2e)">
+      <div class="popular-badge">⭐ MOST POPULAR</div>
+      <div style="font-size:28px;margin-bottom:6px">💜</div>
+      <div style="font-weight:900;font-size:18px;color:#a78bfa">Healer</div>
+      <div class="price-amount grad-violet">£11</div>
+      <div class="price-period">per month</div>
+      <div class="price-feat">Everything in Free</div>
+      <div class="price-feat">Angel Numbers, Nature Portal, Epigenetic Love, Growth, Rituals</div>
+      <button class="btn-upgrade" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff" onclick="showUpgrade('healer')">✦ Activate Healer</button>
+    </div>
+    <div class="price-card" style="border-color:#fbbf2440;background:linear-gradient(160deg,#0f0a00,#1a1000)">
+      <div style="font-size:28px;margin-bottom:6px">✨</div>
+      <div style="font-weight:900;font-size:18px;color:#fbbf24">Ascended</div>
+      <div class="price-amount grad-amber">£33</div>
+      <div class="price-period">per month</div>
+      <div class="price-feat">Everything in Healer</div>
+      <div class="price-feat">9-Ether Protocol, Quantum Vortex, Lunar Engine</div>
+      <button class="btn-upgrade" style="background:linear-gradient(135deg,#92400e,#fbbf24);color:#fff" onclick="showUpgrade('ascended')">⚡ Ascend Now</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="upgradeModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+<script>
+const TRACKS=[
+{n:"111 Hz — Angel Number New Beginnings",hz:111,cat:"Spirit",ben:"Awakens manifestation power",ch:"Crown",aff:"I am aligned with divine timing."},
+{n:"222 Hz — Angel Number Balance",hz:222,cat:"Love",ben:"Restores balance and harmony",ch:"Heart",aff:"Everything is in divine balance."},
+{n:"333 Hz — Angel Number Ascended Masters",hz:333,cat:"Spirit",ben:"Connects with ascended masters",ch:"Throat & Crown",aff:"I am surrounded by divine masters."},
+{n:"444 Hz — Angel Number Protection",hz:444,cat:"Body",ben:"Builds unshakeable foundations",ch:"Root",aff:"I am divinely protected."},
+{n:"555 Hz — Angel Number Transformation",hz:555,cat:"Cleansing",ben:"Accelerates positive change",ch:"Solar Plexus",aff:"I welcome transformation."},
+{n:"666 Hz — Angel Number Rebalance",hz:666,cat:"Mind",ben:"Rebalances overthinking",ch:"Heart",aff:"My mind and heart are in harmony."},
+{n:"777 Hz — Angel Number Divine Luck",hz:777,cat:"Spirit",ben:"Activates divine luck",ch:"Crown",aff:"I walk the sacred path."},
+{n:"888 Hz — Angel Number Infinite Abundance",hz:888,cat:"Wealth",ben:"Opens infinite financial abundance",ch:"Solar Plexus",aff:"I am an infinite channel for abundance."},
+{n:"999 Hz — Angel Number Completion",hz:999,cat:"Cleansing",ben:"Completes karmic cycles",ch:"All Chakras",aff:"I complete all karmic cycles with grace."},
+{n:"1111 Hz — Manifestation Portal",hz:1111,cat:"Spirit",ben:"Opens the manifestation portal",ch:"Crown",aff:"The portal is open."},
+{n:"1212 Hz — Spiritual Growth",hz:1212,cat:"Spirit",ben:"Accelerates spiritual growth",ch:"Crown",aff:"I am rapidly evolving."},
+{n:"1234 Hz — Divine Progression",hz:1234,cat:"Mind",ben:"Aligns life steps with divine order",ch:"Solar Plexus",aff:"I trust the divine steps of my journey."},
+{n:"2222 Hz — Master Builder",hz:2222,cat:"Wealth",ben:"Activates the master builder frequency",ch:"Root & Crown",aff:"I am a master builder."},
+{n:"3333 Hz — Trinity Activation",hz:3333,cat:"Spirit",ben:"Activates body, mind, spirit",ch:"All Chakras",aff:"Body, mind and spirit are unified."},
+{n:"4444 Hz — Celestial Fortress",hz:4000,lbl:"4444 Hz",cat:"Body",ben:"Maximum divine protection",ch:"Root",aff:"I am fully protected on all levels."},
+{n:"5555 Hz — Mass Transformation",hz:4000,lbl:"5555 Hz",cat:"Cleansing",ben:"Quantum leap frequency",ch:"All Chakras",aff:"I quantum leap into my highest timeline."},
+{n:"6666 Hz — Unconditional Love Field",hz:4000,lbl:"6666 Hz",cat:"Love",ben:"Generates unconditional love",ch:"Heart",aff:"I radiate unconditional love."},
+{n:"7777 Hz — Supreme Sacred Luck",hz:4000,lbl:"7777 Hz",cat:"Wealth",ben:"Maximum divine luck",ch:"All Chakras",aff:"I am divinely lucky."},
+{n:"8888 Hz — Infinite Financial Mastery",hz:4000,lbl:"8888 Hz",cat:"Wealth",ben:"Opens all financial channels",ch:"All Chakras",aff:"I am an infinite magnet for wealth."},
+{n:"9999 Hz — Divine Completion",hz:4000,lbl:"9999 Hz",cat:"Spirit",ben:"Complete spiritual ascension",ch:"Soul Star",aff:"I ascend into pure light."},
+{n:"174 Hz — Pain Relief",hz:174,cat:"Body",ben:"Natural anesthetic",ch:"Earth Star",aff:"I am safe. My body heals naturally."},
+{n:"285 Hz — Tissue Regeneration",hz:285,cat:"Body",ben:"Heals and regenerates tissues",ch:"Root",aff:"Every cell in my body regenerates."},
+{n:"396 Hz — Liberation from Fear",hz:396,cat:"Cleansing",ben:"Releases fear, guilt, and grief",ch:"Root",aff:"I release all guilt and fear."},
+{n:"417 Hz — Transmutation",hz:417,cat:"Cleansing",ben:"Undoes situations, facilitates change",ch:"Sacral",aff:"I embrace change."},
+{n:"432 Hz — Nature's Tuning",hz:432,cat:"Nature",ben:"Aligns with natural resonance",ch:"Heart",aff:"I am in perfect harmony with nature."},
+{n:"528 Hz — DNA Repair",hz:528,cat:"Body",ben:"Repairs DNA, increases life energy",ch:"Solar Plexus",aff:"My DNA heals perfectly."},
+{n:"639 Hz — Relationships",hz:639,cat:"Love",ben:"Harmonizes relationships",ch:"Heart",aff:"Love flows freely through me."},
+{n:"741 Hz — Detox & Awakening",hz:741,cat:"Cleansing",ben:"Cleanses cells, detoxifies body",ch:"Throat",aff:"I release all toxins."},
+{n:"852 Hz — Spiritual Order",hz:852,cat:"Spirit",ben:"Returns to spiritual order",ch:"Third Eye",aff:"My inner vision is clear."},
+{n:"963 Hz — Crown Activation",hz:963,cat:"Spirit",ben:"Activates the pineal gland",ch:"Crown",aff:"I am one with the divine."},
+{n:"40 Hz — Gamma Brain",hz:40,cat:"Mind",ben:"Enhances cognitive function",ch:"Crown",aff:"My mind is sharp and clear."},
+{n:"7.83 Hz — Schumann Resonance",hz:7.83,cat:"Nature",ben:"Aligns with Earth's frequency",ch:"Root & Heart",aff:"I am grounded in the Earth."},
+{n:"10 Hz — Alpha Relaxation",hz:10,cat:"Mind",ben:"Deep relaxation, stress reduction",ch:"Third Eye",aff:"I am deeply relaxed."},
+{n:"528 Hz + 432 Hz Blend",hz:528,cat:"Love",ben:"Supreme healing blend",ch:"Heart & Crown",aff:"I am love. I heal completely."},
+{n:"888 Hz — Abundance Activation",hz:888,cat:"Wealth",ben:"Activates abundance mindset",ch:"Solar Plexus",aff:"Abundance flows to me easily."},
+{n:"111 Hz — Cellular Regeneration",hz:111,cat:"Body",ben:"Activates cellular regeneration",ch:"Crown & Heart",aff:"I am light. Every cell radiates health."},
+{n:"432 Hz — Deep Sleep Reset",hz:432,cat:"Mind",ben:"Induces deep restorative sleep",ch:"All Chakras",aff:"I release the day with gratitude."},
+{n:"528 Hz — Self Love",hz:528,cat:"Love",ben:"Cultivates deep self-love",ch:"Heart",aff:"I am worthy of all good things."},
+{n:"963 Hz — Pineal Activation",hz:963,cat:"Spirit",ben:"Activates the pineal gland",ch:"Third Eye & Crown",aff:"My third eye opens fully."},
+{n:"741 Hz — Electromagnetic Protection",hz:741,cat:"Cleansing",ben:"Shields from EMF",ch:"Throat",aff:"I am protected from harmful frequencies."}
+];
+const CC={Body:"#ef4444",Mind:"#60a5fa",Spirit:"#a78bfa",Wealth:"#fbbf24",Nature:"#34d399",Love:"#f472b6",Cleansing:"#2dd4bf"};
+const LOVE_STAGES=[
+{name:"Self Love",hz:[528,174],icon:"💝"
