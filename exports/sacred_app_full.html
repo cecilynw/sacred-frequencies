@@ -262,6 +262,18 @@ textarea{resize:none}
     <div class="card" style="text-align:center"><div style="font-size:24px;margin-bottom:4px">⭐</div><div style="font-size:20px;font-weight:900" id="jStatRating">—</div><div style="font-size:11px;color:var(--dim)">Avg. Rating</div></div>
     <div class="card" style="text-align:center"><div style="font-size:24px;margin-bottom:4px">🌟</div><div style="font-size:20px;font-weight:900" id="jStatTrans">0</div><div style="font-size:11px;color:var(--dim)">Transformations</div></div>
   </div>
+  <div class="card">
+    <div class="section-label" style="margin-top:0">New Entry</div>
+    <div style="margin-bottom:10px"><input id="jTitle" type="text" placeholder="Session title (e.g. Morning Activation)"/></div>
+    <div style="margin-bottom:10px"><input id="jIntention" type="text" placeholder="Your intention for this session"/></div>
+    <div style="font-size:11px;color:var(--dim);margin-bottom:6px">Mood Before</div>
+    <div id="moodBefore" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"></div>
+    <div style="font-size:11px;color:var(--dim);margin-bottom:6px">Mood After</div>
+    <div id="moodAfter" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"></div>
+    <div style="margin-bottom:10px"><textarea id="jNotes" rows="3" placeholder="Notes, insights, or reflections..."></textarea></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="saveJournal()">💾 Save Entry</button>
+  </div>
+  <div class="section-label">Your Entries</div>
   <div id="jList"></div>
 </div>
 <div class="page" id="page-guide">
@@ -944,10 +956,81 @@ function makeStars(){
     c.appendChild(s);
   }
 }
+var MOODS=['Peaceful','Energized','Grateful','Anxious','Sad','Hopeful','Clear','Tired'];
+var MOOD_EMOJI={Peaceful:'😌',Energized:'⚡',Grateful:'🙏',Anxious:'😰',Sad:'😢',Hopeful:'🌟',Clear:'🔮',Tired:'😴'};
+var jMoodBefore='',jMoodAfter='';
+function rMoodBtns(){
+  ['moodBefore','moodAfter'].forEach(function(id){
+    var isBefore=id==='moodBefore';
+    document.getElementById(id).innerHTML=MOODS.map(function(m){
+      var sel=(m===(isBefore?jMoodBefore:jMoodAfter));
+      return '<button type="button" class="mood-btn'+(sel?' sel':'')+'" data-mood="'+m+'" data-target="'+id+'" onclick="pickMood(this)">'+MOOD_EMOJI[m]+' '+m+'</button>';
+    }).join('');
+  });
+}
+function pickMood(btn){
+  var mood=btn.getAttribute('data-mood');
+  var target=btn.getAttribute('data-target');
+  if(target==='moodBefore') jMoodBefore=mood; else jMoodAfter=mood;
+  document.querySelectorAll('#'+target+' .mood-btn').forEach(function(b){b.classList.remove('sel');});
+  btn.classList.add('sel');
+}
+function saveJournal(){
+  var title=document.getElementById('jTitle').value||'Healing Session';
+  var intention=document.getElementById('jIntention').value||'';
+  var notes=document.getElementById('jNotes').value||'';
+  var entries=JSON.parse(localStorage.getItem('sf_journal')||'[]');
+  entries.push({title:title,intention:intention,moodBefore:jMoodBefore,moodAfter:jMoodAfter,notes:notes,date:Date.now()});
+  localStorage.setItem('sf_journal', JSON.stringify(entries));
+  document.getElementById('jTitle').value='';
+  document.getElementById('jIntention').value='';
+  document.getElementById('jNotes').value='';
+  jMoodBefore=''; jMoodAfter='';
+  rMoodBtns();
+  loadJournal();
+}
+function deleteJournalEntry(idx){
+  var entries=JSON.parse(localStorage.getItem('sf_journal')||'[]');
+  entries.splice(idx,1);
+  localStorage.setItem('sf_journal', JSON.stringify(entries));
+  loadJournal();
+}
+function loadJournal(){
+  var entries=JSON.parse(localStorage.getItem('sf_journal')||'[]');
+  var sorted=entries.slice().reverse();
+  var list=document.getElementById('jList');
+  if(!list) return;
+  if(sorted.length===0){
+    list.innerHTML='<div class="card" style="text-align:center;color:var(--dim);font-size:13px">No entries yet. Start your first healing session above. 🌿</div>';
+  } else {
+    list.innerHTML=sorted.map(function(e,revIdx){
+      var idx=entries.length-1-revIdx;
+      var d=new Date(e.date);
+      var dateStr=d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+      return '<div class="card">'+
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">'+
+        '<div style="font-weight:800;font-size:14px">'+e.title+'</div>'+
+        '<button onclick="deleteJournalEntry('+idx+')" style="background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:16px">×</button>'+
+        '</div>'+
+        '<div style="font-size:11px;color:var(--dim);margin-bottom:6px">'+dateStr+'</div>'+
+        (e.intention?'<div style="font-size:12px;color:#c4b5fd;margin-bottom:6px;font-style:italic">'+e.intention+'</div>':'')+
+        (e.moodBefore||e.moodAfter?'<div style="font-size:11px;color:var(--muted);margin-bottom:6px">'+(e.moodBefore?MOOD_EMOJI[e.moodBefore]+' '+e.moodBefore:'')+(e.moodBefore&&e.moodAfter?' → ':'')+(e.moodAfter?MOOD_EMOJI[e.moodAfter]+' '+e.moodAfter:'')+'</div>':'')+
+        (e.notes?'<div style="font-size:12px;color:var(--text)">'+e.notes+'</div>':'')+
+        '</div>';
+    }).join('');
+  }
+  var sessionsEl=document.getElementById('jStatSessions');
+  if(sessionsEl) sessionsEl.textContent=entries.length;
+  var transEl=document.getElementById('jStatTrans');
+  if(transEl){
+    var trans=entries.filter(function(e){return e.moodBefore&&e.moodAfter&&e.moodBefore!==e.moodAfter;}).length;
+    transEl.textContent=trans;
+  }
+}
 document.addEventListener('touchstart', function onFT(){ ensureTone(); document.removeEventListener('touchstart',onFT); }, {passive:true});
 document.addEventListener('click', function onFC(){ ensureTone(); document.removeEventListener('click',onFC); }, {passive:true});
 makeStars();
-rTracks('All'); rAngels(); rLoveStages(); rNature(); rGrowth(); rRituals(); rGuide(); rProtocol();
+rTracks('All'); rAngels(); rLoveStages(); rNature(); rGrowth(); rRituals(); rGuide(); rProtocol(); rMoodBtns(); loadJournal();
 selTrackFn(TRACKS[0]);
 var TIER_LEVELS={free:0,healer:1,ascended:2};
 var TIER_PRICES={healer:'£11/mo',ascended:'£33/mo'};
