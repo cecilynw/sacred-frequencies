@@ -19,7 +19,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:#03071295;backdro
 .nav-tabs::-webkit-scrollbar{display:none}
 .tab{padding:5px 11px;border-radius:8px;font-size:11.5px;font-weight:600;cursor:pointer;white-space:nowrap;border:none;background:transparent;color:#ffffff55;transition:all 0.15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-tap-highlight-color:rgba(167,139,250,0.2)}
 .tab.active{background:#ffffff18;color:#fff}
-.page{display:none;max-width:960px;margin:0 auto;padding:66px 16px 80px;padding-bottom:max(80px,env(safe-area-inset-bottom,80px));position:relative;z-index:1}#page-home{display:block}.page.active{display:block}
+.page{display:none;max-width:960px;margin:0 auto;padding:66px 16px 80px;padding-bottom:max(80px,env(safe-area-inset-bottom,80px));position:relative;z-index:1}.page.active{display:block}
 .hero{text-align:center;padding:36px 0 28px}
 .hero-badge{display:inline-block;padding:4px 14px;border:1px solid #7c3aed55;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:0.2em;color:#a78bfa;margin-bottom:14px;text-transform:uppercase}
 .hero h1{font-size:clamp(26px,6vw,42px);font-weight:900;line-height:1.1;margin-bottom:10px}
@@ -199,7 +199,7 @@ nav{z-index:200}
 </nav>
 
 <!-- ════════════ HOME ════════════ -->
-<div class="page" id="page-home">
+<div class="page active" id="page-home">
   <div class="hero">
     <div class="hero-badge">✦ Sacred Frequencies · Complete Healing App</div>
     <h1 class="grad-main">Heal. Align. Ascend.</h1>
