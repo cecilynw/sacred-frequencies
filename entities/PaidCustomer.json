@@ -1,0 +1,52 @@
+{
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string",
+      "description": "Customer email \u2014 used as the unique lookup key for the app to check access"
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "free",
+        "healer",
+        "ascended"
+      ],
+      "description": "Current active tier for this customer"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "canceled",
+        "past_due"
+      ],
+      "description": "Subscription status from Wix"
+    },
+    "wix_order_id": {
+      "type": "string",
+      "description": "Wix eCommerce/Pricing Plans order ID for reference and idempotency"
+    },
+    "subscribed_date": {
+      "type": "string",
+      "description": "ISO date the subscription started"
+    },
+    "canceled_date": {
+      "type": "string",
+      "description": "ISO date the subscription was canceled, if applicable"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "checkout",
+        "lead_capture"
+      ],
+      "description": "Whether this record came from a real purchase or the free lead-capture form"
+    }
+  },
+  "required": [
+    "email",
+    "tier"
+  ],
+  "name": "PaidCustomer"
+}
