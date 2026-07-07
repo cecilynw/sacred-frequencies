@@ -1,0 +1,121 @@
+ivated!');
+}
+
+// Email capture on home page
+function submitEmail(){
+  var input = document.getElementById('emailInput');
+  if(!input || !input.value.includes('@')){
+    input.style.borderColor='#ef4444';
+    return;
+  }
+  localStorage.setItem('sf_email', input.value);
+  document.getElementById('emailMsg').style.display='block';
+  input.style.display='none';
+  document.querySelector('#emailCapture .btn').style.display='none';
+  // Auto-show upgrade after 2s
+  setTimeout(function(){ showUpgrade('healer'); }, 2000);
+}
+
+// Close modal on overlay click
+document.getElementById('upgradeModal').addEventListener('click', function(e){
+  if(e.target === this) closeModal();
+});
+
+</script>
+
+
+
+
+
+<!-- ════════════ PRICING ════════════ -->
+<div class="page" id="page-pricing">
+  <div class="hero" style="padding-bottom:12px">
+    <div class="hero-badge">💎 Sacred Frequencies · Plans</div>
+    <h1 style="font-size:clamp(22px,5vw,36px);font-weight:900;margin-bottom:8px"><span class="grad-gold">Choose Your</span> <span class="grad-violet">Healing Path</span></h1>
+    <p class="sub">All plans include the Universal Safety Promise — 528 Hz + 7.83 Hz anchors in every frequency</p>
+  </div>
+
+  <div class="grid3" style="margin-bottom:24px;align-items:start">
+    <!-- FREE -->
+    <div class="price-card" style="border-color:#334155;background:var(--card)">
+      <div style="font-size:28px;margin-bottom:6px">🌱</div>
+      <div style="font-weight:900;font-size:18px;color:#e2e8f0">Free</div>
+      <div class="price-amount grad-main">£0</div>
+      <div class="price-period">forever</div>
+      <hr style="border:none;border-top:1px solid #1e293b;margin-bottom:14px">
+      <div class="price-feat">40 Frequency Tracks</div>
+      <div class="price-feat">Healing Journal</div>
+      <div class="price-feat">Universal Safety Promise</div>
+      <div class="price-feat">App Guide</div>
+      <button class="btn-upgrade" style="background:#1e293b;color:#94a3b8" onclick="go('player')">Start Healing Free</button>
+    </div>
+
+    <!-- HEALER -->
+    <div class="price-card popular" style="background:linear-gradient(160deg,#0d0520,#0c1a2e)">
+      <div class="popular-badge">⭐ MOST POPULAR</div>
+      <div style="font-size:28px;margin-bottom:6px">💜</div>
+      <div style="font-weight:900;font-size:18px;color:#a78bfa">Healer</div>
+      <div class="price-amount grad-violet">£11</div>
+      <div class="price-period">per month</div>
+      <hr style="border:none;border-top:1px solid #a78bfa30;margin-bottom:14px">
+      <div class="price-feat">Everything in Free</div>
+      <div class="price-feat">Angel Numbers (20 sacred codes)</div>
+      <div class="price-feat">Nature Portal (6 soundscapes)</div>
+      <div class="price-feat">Epigenetic Love (6 stages)</div>
+      <div class="price-feat">Growth & Ascension (8 steps)</div>
+      <div class="price-feat">Healing Rituals (6 protocols)</div>
+      <button class="btn-upgrade" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;box-shadow:0 0 24px #7c3aed40" onclick="showUpgrade('healer')">✦ Activate Healer</button>
+    </div>
+
+    <!-- ASCENDED -->
+    <div class="price-card" style="border-color:#fbbf2440;background:linear-gradient(160deg,#0f0a00,#1a1000)">
+      <div style="font-size:28px;margin-bottom:6px">✨</div>
+      <div style="font-weight:900;font-size:18px;color:#fbbf24">Ascended</div>
+      <div class="price-amount grad-amber">£33</div>
+      <div class="price-period">per month</div>
+      <hr style="border:none;border-top:1px solid #fbbf2430;margin-bottom:14px">
+      <div class="price-feat">Everything in Healer</div>
+      <div class="price-feat">9-Ether Protocol (Supreme)</div>
+      <div class="price-feat">Quantum Healing Vortex</div>
+      <div class="price-feat">Lunar Engine (4 phases)</div>
+      <div class="price-feat">Early access to new modules</div>
+      <div class="price-feat">Priority support</div>
+      <button class="btn-upgrade" style="background:linear-gradient(135deg,#92400e,#fbbf24);color:#fff;box-shadow:0 0 24px #fbbf2430" onclick="showUpgrade('ascended')">⚡ Ascend Now</button>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="section-label">Common Questions</div>
+  <div class="card" style="margin-bottom:8px">
+    <div style="font-weight:700;font-size:13px;margin-bottom:4px;color:#e2e8f0">Is my payment secure?</div>
+    <div style="font-size:12px;color:var(--muted)">Yes — payments are processed securely through Wix Payments. We never store your card details.</div>
+  </div>
+  <div class="card" style="margin-bottom:8px">
+    <div style="font-weight:700;font-size:13px;margin-bottom:4px;color:#e2e8f0">Can I cancel anytime?</div>
+    <div style="font-size:12px;color:var(--muted)">Absolutely. Cancel any time from your account — no questions asked.</div>
+  </div>
+  <div class="card" style="margin-bottom:8px">
+    <div style="font-weight:700;font-size:13px;margin-bottom:4px;color:#e2e8f0">Will it work on my iPhone?</div>
+    <div style="font-size:12px;color:var(--muted)">Yes — Sacred Frequencies is built first for iOS Safari. Just make sure your silent switch is OFF and volume is up.</div>
+  </div>
+  <div class="card" style="margin-bottom:24px">
+    <div style="font-weight:700;font-size:13px;margin-bottom:4px;color:#e2e8f0">What is the Universal Safety Promise?</div>
+    <div style="font-size:12px;color:var(--muted)">528 Hz (love carrier) and 7.83 Hz (Schumann resonance) are embedded in all protocols. Scientifically grounded, safe for all ages.</div>
+  </div>
+</div>
+
+
+<!-- ════════ UPGRADE MODAL ════════ -->
+<div class="modal-overlay" id="upgradeModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+</body>
+</html>`;
+  return new Response(html, {
+    headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-cache" }
+  });
+});

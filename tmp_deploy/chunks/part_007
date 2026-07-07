@@ -1,0 +1,87 @@
+cy",desc:"Breathe into your DNA spiral. Feel it repairing perfectly."},
+    {time:"15 min",freq:"40 Hz",name:"Gamma Brain Renewal",desc:"Activate neuroplasticity. See new neural pathways forming."},
+   ],ben:["DNA repair activation","Pain relief","Cognitive longevity boost","Immune system optimization"]},
+  {title:"💗 Love & Heart Opening",sub:"Expand your capacity to give and receive love",dur:"50 min",col:"#f472b6",border:"#f472b630",bg:"from-pink-950/60 to-rose-950/40",
+   steps:[
+    {time:"10 min",freq:"528 Hz",name:"Love Foundation",desc:"Feel the miracle tone open your heart. Breathe love into every cell."},
+    {time:"15 min",freq:"639 Hz",name:"Heart Harmony",desc:"Bring relationships to mind. Send healing to any broken bonds."},
+    {time:"10 min",freq:"432 Hz",name:"Unconditional Love",desc:"Love at the frequency of the universe — boundless and infinite."},
+    {time:"15 min",freq:"528 + 432 Hz",name:"Love & Nature Fusion",desc:"The supreme blend. Rest in a field of pure love."},
+   ],ben:["Opens heart chakra","Heals relationship trauma","Attracts loving experiences","Deepens self-love"]},
+  {title:"💎 Wealth & Abundance",sub:"Reprogram your money mindset at the cellular level",dur:"40 min",col:"#fbbf24",border:"#fbbf2430",bg:"from-yellow-950/60 to-amber-950/40",
+   steps:[
+    {time:"10 min",freq:"417 Hz",name:"Scarcity Clearing",desc:"Release all inherited beliefs about money being hard to get."},
+    {time:"15 min",freq:"888 Hz",name:"Abundance Frequency",desc:"888 — infinite abundance. Feel wealth as your natural birthright."},
+    {time:"10 min",freq:"528 Hz",name:"Manifestation Field",desc:"Your DNA now codes for abundance. Every cell vibrates with prosperity."},
+    {time:"5 min",freq:"1111 Hz",name:"Manifestation Gateway",desc:"Set your specific wealth intention through this dimensional gateway."},
+   ],ben:["Dissolves scarcity programming","Opens manifestation channels","Accelerates law of attraction"]},
+  {title:"👁️ Spiritual Awakening",sub:"Connect with your highest divine self",dur:"60 min",col:"#a78bfa",border:"#a78bfa30",bg:"from-violet-950/60 to-purple-950/40",
+   steps:[
+    {time:"10 min",freq:"7.83 Hz",name:"Earth Grounding",desc:"Ground deeply before ascending. High connection needs deep roots."},
+    {time:"15 min",freq:"852 Hz",name:"Third Eye Activation",desc:"Focus on the space between your brows. Feel indigo light expanding."},
+    {time:"15 min",freq:"963 Hz",name:"Crown Opening",desc:"The God frequency. Feel violet-white light pouring in from above."},
+    {time:"10 min",freq:"1111 Hz",name:"Dimensional Gateway",desc:"Enter the gateway of manifestation. Thoughts become reality here."},
+    {time:"10 min",freq:"432 Hz",name:"Cosmic Reintegration",desc:"Return with divine gifts. Reintegrate with peace, clarity, purpose."},
+   ],ben:["Pineal gland activation","Third eye opening","Higher guidance access","Soul purpose alignment"]},
+];
+
+const ANGEL_NUMBERS=[
+  {hz:111,sym:"✦",meaning:"New Beginnings",msg:"Your thoughts are manifesting — keep them positive",col:"#ffffff"},
+  {hz:222,sym:"⚖",meaning:"Balance & Trust",msg:"Everything is falling into place",col:"#f9a8d4"},
+  {hz:333,sym:"△",meaning:"Ascended Masters",msg:"You are surrounded by divine support",col:"#fcd34d"},
+  {hz:444,sym:"◈",meaning:"Angelic Protection",msg:"Angels surround you — you are completely safe",col:"#fde68a"},
+  {hz:555,sym:"⚡",meaning:"Major Change",msg:"Massive transformation is coming — welcome it",col:"#67e8f9"},
+  {hz:666,sym:"♡",meaning:"Rebalance",msg:"Refocus — align your mind with your heart",col:"#fda4af"},
+  {hz:777,sym:"✪",meaning:"Divine Luck",msg:"You are on the perfect path — miracles align",col:"#c4b5fd"},
+  {hz:888,sym:"∞",meaning:"Infinite Abundance",msg:"Financial rewards and abundance flow to you now",col:"#6ee7b7"},
+  {hz:999,sym:"◯",meaning:"Completion",msg:"A karmic cycle completes — prepare for your calling",col:"#fca5a5"},
+  {hz:1111,sym:"⟡",meaning:"Manifestation Portal",msg:"Make a wish — your thoughts write into reality",col:"#e2e8f0"},
+  {hz:1212,sym:"↑↑",meaning:"Spiritual Growth",msg:"Stay positive — your awakening accelerates",col:"#a5b4fc"},
+  {hz:2222,sym:"⊞",meaning:"Master Builder",msg:"Build your legacy — the universe supports you",col:"#e5e7eb"},
+  {hz:3333,sym:"⁂",meaning:"Trinity Activation",msg:"Body, mind and spirit align at the highest octave",col:"#fde68a"},
+  {hz:4444,sym:"⬡",meaning:"Celestial Fortress",msg:"Four layers of angelic armor surround you",col:"#fcd34d"},
+  {hz:5555,sym:"⚡⚡",meaning:"Quantum Leap",msg:"A total reality shift — leap into your highest timeline",col:"#f8fafc"},
+  {hz:6666,sym:"❋",meaning:"Unconditional Love",msg:"Your heart radiates love that transforms all it touches",col:"#f9a8d4"},
+  {hz:7777,sym:"✦✦",meaning:"Supreme Sacred Luck",msg:"Maximum divine fortune — miracles surround you",col:"#fde68a"},
+  {hz:8888,sym:"∞∞",meaning:"Infinite Financial Mastery",msg:"All doors of abundance open simultaneously",col:"#6ee7b7"},
+  {hz:9999,sym:"☽○☾",meaning:"Ascension & Soul Graduation",msg:"All karmic cycles complete — you ascend into pure light",col:"#f1f5f9"},
+  {hz:1234,sym:"1→",meaning:"Divine Steps",msg:"Trust the process — you are progressing perfectly",col:"#86efac"},
+];
+
+const VORTEX_BEINGS=[
+  {label:"Myself",icon:"🧍",mod:"1.00×"},
+  {label:"My Family",icon:"👨‍👩‍👧",mod:"1.00×"},
+  {label:"Child",icon:"👶",mod:"1.10×"},
+  {label:"Elder",icon:"🧓",mod:"0.90×"},
+  {label:"Pregnant",icon:"🤰",mod:"1.05×"},
+  {label:"Dog",icon:"🐕",mod:"0.85×"},
+  {label:"Cat",icon:"🐈",mod:"0.95×"},
+  {label:"Horse",icon:"🐎",mod:"0.70×"},
+  {label:"Bird",icon:"🐦",mod:"1.15×"},
+  {label:"Reptile",icon:"🦎",mod:"0.80×"},
+  {label:"Plant/Tree",icon:"🌿",mod:"0.60×"},
+  {label:"All Beings",icon:"🌍",mod:"Universal"},
+];
+
+const PROTOCOL_ETHERS=[
+  {num:1,name:"Physical",hz:"174 Hz + 40 Hz sub",targets:"Parasites, tissue masses, heavy metals, bone spurs",col:"#ef4444",aff:"Every physical blockage, every uninvited organism in my body dissolves now into perfect light."},
+  {num:2,name:"Cellular",hz:"333 Hz + 111 Hz",targets:"Bacteria, fungi, viral loads, Candida, Lyme spirochetes",col:"#f97316",aff:"Every parasite, every pathogen reaches its mortal oscillatory rate and shatters into light."},
+  {num:3,name:"Etheric",hz:"396 Hz + 417 Hz (Violet Flame)",targets:"Entity attachments, psychic cords, astral implants",col:"#f59e0b",aff:"Every cord, every entity feeding on my energy is severed. I am wholly free."},
+  {num:4,name:"Emotional",hz:"528 Hz + 639 Hz",targets:"Trapped grief, rage, shame, fear, heartbreak codes",col:"#fb7185",aff:"Every trapped emotion is transmuted into pure, radiant love. My heart is free."},
+  {num:5,name:"Mental",hz:"741 Hz + 852 Hz",targets:"Mind loops, psychic implants, hypnotic programming",col:"#8b5cf6",aff:"My mind is sovereign. Every harmful program dissolves in my perfect intelligence."},
+  {num:6,name:"Ancestral",hz:"963 Hz + 1,111 Hz",targets:"Generational trauma, inherited disease codes, karmic loops",col:"#22c55e",aff:"I release all ancestral trauma now. My lineage is healed seven generations back and forward."},
+  {num:7,name:"Spiritual",hz:"1,296 Hz (Angelic Threshold)",targets:"Dark soul contracts, false light traps, inverted programming",col:"#60a5fa",aff:"Every false contract is dissolved. I stand in pure divine light."},
+  {num:8,name:"Quantum",hz:"2,160 Hz (Solar Harmonic)",targets:"Timeline anchors, parallel reality interference, scalar intrusions",col:"#f59e0b",aff:"My quantum field is clear. I exist in perfect harmonic resonance across all timelines."},
+  {num:9,name:"Akashic",hz:"3,168 Hz (Christ Consciousness Grid)",targets:"Akashic distortions, soul wounds, original sin overlays",col:"#a78bfa",aff:"My soul record is restored to its original perfection. I AM the living expression of divine consciousness."},
+];
+
+const LUNAR_PHASES=[
+  {phase:"🌑",name:"New Moon",hz:136.10,desc:"Maximum clearing power. Plant seeds of healing intention.",col:"#94a3b8"},
+  {phase:"🌒",name:"Waxing Moon",hz:210.42,desc:"Build healing momentum. Amplify affirmations.",col:"#fbbf24"},
+  {phase:"🌕",name:"Full Moon",hz:221.23,desc:"Maximum healing power. Full illumination.",col:"#f1f5f9"},
+  {phase:"🌘",name:"Waning Moon",hz:229.22,desc:"Release and let go. Detox and elimination.",col:"#a78bfa"},
+];
+
+const GUIDE_TOPICS=[
+  {title:"How Sound Heals",icon:"🔬",content:"Sound waves create mechanical vibrations that travel through all biological tissue. Every organ, bone, and cell has a natural resonant frequency. When exposed to matching frequencies, cells entrain (synchronize), restoring optimal function — the same principle behind ultrasound therapy in medicine."},
+  {title:"Brainwave Entrainment",icon:"🧠",content:"The brain's electrical activity can be influenced by external audio. Binaural beats — slightly di

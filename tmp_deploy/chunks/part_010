@@ -1,0 +1,267 @@
+:[111,528,7.83]},{hz:[963,528,432,7.83]}
+  ];
+  var g=GROWTH[idx];
+  if(!g) return;
+  g.hz.forEach(function(hz){
+    var n = hz<20 ? binaural(110,hz,0.2) : tone(hz,'sine',0.2);
+    growthNodes.push(n);
+  });
+}
+
+function growthMasterSeq(){
+  ensureTone();
+  var step=0;
+  var GROWTH=[
+    {hz:[285,111,7.83]},{hz:[40,14,10]},{hz:[639,528,3.5]},
+    {hz:[963,852,7]},{hz:[432,7.83]},{hz:[528,396,4]},
+    {hz:[111,528,7.83]},{hz:[963,528,432,7.83]}
+  ];
+  function playStep(){
+    growthNodes.forEach(function(n){ fade(n); });
+    growthNodes=[];
+    if(step>=GROWTH.length){ growthOn=false; return; }
+    var g=GROWTH[step];
+    g.hz.forEach(function(hz){
+      var n = hz<20 ? binaural(110,hz,0.2) : tone(hz,'sine',0.2);
+      growthNodes.push(n);
+    });
+    step++;
+    growthSeqTimer=setTimeout(playStep, 120000); // 2 min each
+  }
+  playStep();
+  growthOn=true;
+}
+
+// ── Nature Portal ──
+var naturePortalNodes=[];
+
+function natureSoundPlay(name,hz,btn){
+  ensureTone();
+  naturePortalNodes.forEach(function(n){ fade(n); });
+  naturePortalNodes=[];
+  document.querySelectorAll('.sound-card').forEach(function(c){ c.classList.remove('active'); });
+  if(btn){ btn.classList ? btn.classList.add('active') : null; }
+  
+  // Nature ambience layer
+  var amb=nature(0.3);
+  naturePortalNodes.push(amb);
+  
+  // Healing tone layer
+  if(hz){
+    var tn = hz<20 ? binaural(110,hz,0.3) : tone(hz,'sine',0.3);
+    naturePortalNodes.push(tn);
+  }
+}
+
+function primalPlay(hz,btn){
+  ensureTone();
+  naturePortalNodes.forEach(function(n){ fade(n); });
+  naturePortalNodes=[];
+  document.querySelectorAll('.primal-card').forEach(function(c){ c.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+  var n = hz<20 ? binaural(110,hz,0.4) : tone(hz,'sine',0.4);
+  naturePortalNodes.push(n);
+}
+
+// ── Rituals ──
+var ritualNodes=[];
+var ritualSeqTimer=null;
+
+function ritualExpand(idx){
+  var body = document.querySelector('[data-ritual-body="'+idx+'"]');
+  if(!body) return;
+  var isOpen = body.style.display !== 'none' && body.style.display !== '';
+  // Close all
+  document.querySelectorAll('[data-ritual-body]').forEach(function(b){ b.style.display='none'; });
+  // Toggle clicked
+  if(!isOpen) body.style.display = 'block';
+}
+
+function ritualActivate(idx){
+  ensureTone();
+  ritualNodes.forEach(function(n){ fade(n); });
+  ritualNodes=[];
+  if(ritualSeqTimer){ clearTimeout(ritualSeqTimer); ritualSeqTimer=null; }
+  
+  var RITUAL_FREQS=[
+    [7.83,528,432,396,888],    // Morning
+    [396,417,741,528,963],     // Deep Cleanse
+    [285,528,174,432,963],     // Longevity
+    [528,639,396,963,7.83],    // Love
+    [417,888,528,1111],        // Wealth
+    [963,852,528,7.83,432]     // Spiritual
+  ];
+  var freqs=RITUAL_FREQS[idx]||[];
+  var step=0;
+  function playRitualStep(){
+    ritualNodes.forEach(function(n){ fade(n); });
+    ritualNodes=[];
+    if(step>=freqs.length) return;
+    var hz=freqs[step];
+    var n = hz<20 ? binaural(110,hz,0.3) : tone(hz,'sine',0.3);
+    ritualNodes.push(n);
+    step++;
+    ritualSeqTimer=setTimeout(playRitualStep, 600000); // 10 min each
+  }
+  playRitualStep();
+}
+
+function ritualStop(){
+  ritualNodes.forEach(function(n){ fade(n); });
+  ritualNodes=[];
+  if(ritualSeqTimer){ clearTimeout(ritualSeqTimer); ritualSeqTimer=null; }
+}
+
+// ── Angel Numbers ──
+var angelNodes=[];
+
+function angelPlay(hz,btn){
+  ensureTone();
+  angelNodes.forEach(function(n){ fade(n); });
+  angelNodes=[];
+  document.querySelectorAll('.angel-card').forEach(function(c){ c.classList.remove('active'); });
+  
+  var actualHz = hz > 2000 ? hz / 10 : hz; // Map high angel numbers to audible range
+  var n = actualHz < 20 ? binaural(110, actualHz, 0.4) : tone(actualHz,'sine',0.4);
+  angelNodes.push(n);
+  
+  if(btn && btn.closest) {
+    var card=btn.closest('.angel-card');
+    if(card) card.classList.add('active');
+  }
+}
+
+// ── Lunar Protocol ──
+var lunarNodes=[];
+
+function lunarPlay(hz,btn){
+  ensureTone();
+  lunarNodes.forEach(function(n){ fade(n); });
+  lunarNodes=[];
+  
+  // Lunar harmonic triad
+  [136.10, 210.42, 221.23].forEach(function(lHz){
+    lunarNodes.push(tone(lHz,'sine',0.15));
+  });
+  // Primary frequency
+  var n = hz<20 ? binaural(110,hz,0.3) : tone(hz,'sine',0.3);
+  lunarNodes.push(n);
+  
+  document.querySelectorAll('.lunar-btn').forEach(function(b){ b.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+}
+
+
+
+// Volume control
+var masterVolume = 0.7;
+function setVol(val) {
+  masterVolume = val / 100;
+  var label = document.getElementById('volLabel');
+  if (label) label.textContent = val + '%';
+  // Apply to all active nodes
+  [playerNode, natureNode].forEach(function(n) {
+    if (n && n.masterGain) n.masterGain.gain.value = masterVolume;
+  });
+}
+
+
+// Filter track list by category
+function filterCat(cat, btn) {
+  document.querySelectorAll('#catFilter .filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  rTracks(cat);
+}
+
+// ═══ NAV ═══
+function go(id){
+  try{
+    // Unlock audio on every tap
+    // Use ONLY CSS classes - no inline style (prevents iOS class/style conflict)
+    document.querySelectorAll('.page').forEach(function(p){
+      p.classList.remove('active');
+    });
+    var target = document.getElementById('page-'+id);
+    if(!target){ console.warn('go(): page-'+id+' not found'); return; }
+    target.classList.add('active');
+    // Update nav tabs
+    document.querySelectorAll('.tab').forEach(function(t){
+      t.classList.remove('active');
+      if(t.getAttribute('data-page')===id) t.classList.add('active');
+    });
+    window.scrollTo(0,0);
+    // Render player tracks on first visit
+    if(id==='player'){
+      var tl=document.getElementById('trackList');
+      if(tl&&tl.children.length===0) rTracks('All');
+    }
+  }catch(e){ console.error('go() error:',e); }
+}
+
+// ═══ RENDER ═══
+function rTracks(cat='All'){
+  const list=document.getElementById('trackList');
+  const filtered=cat==='All'?TRACKS:TRACKS.filter(t=>t.cat===cat);
+  list.innerHTML=filtered.map((t,i)=>{
+    const c=CC[t.cat]||'#a78bfa';
+    const id='tc-'+String(t.hz).replace('.','_');
+    const globalIdx=TRACKS.indexOf(t);
+    return '<div class="track-card" id="'+id+'" data-tidx="'+globalIdx+'" onclick="selByIdx(this)" style="border-left:3px solid '+c+'50">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px">'+
+      '<div style="flex:1;min-width:0">'+
+      '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">'+
+      '<div class="hz-badge" style="background:'+c+'22;color:'+c+';border:1px solid '+c+'40">'+(t.lbl||t.hz+' Hz')+'</div>'+
+      '<div style="font-size:10px;color:'+c+'99;font-weight:700;text-transform:uppercase;letter-spacing:0.06em">'+t.cat+'</div>'+
+      '</div>'+
+      '<div style="font-weight:700;font-size:13.5px;color:#e2e8f0;line-height:1.3">'+t.n+'</div>'+
+      '<div style="font-size:11.5px;color:#64748b;margin-top:3px;line-height:1.4">'+t.ben+'</div>'+
+      '<div style="font-size:10.5px;color:'+c+'80;margin-top:4px;font-weight:600">'+'✨'+' Chakra: '+(t.ch||'—')+'</div>'+
+      '</div>'+
+      '<button class="play-mini" data-tidx="'+globalIdx+'" onclick="event.stopPropagation();selByIdx(this)">▶</button>'+
+      '</div></div>';
+  }).join('');
+}
+function selByIdx(el){
+  var idx = parseInt(el.getAttribute('data-tidx'));
+  if(!isNaN(idx) && TRACKS[idx]){
+    var wasPlaying = isPlaying;
+    selTrack = TRACKS[idx];
+    curTrackIdx = idx;
+    selTrackFn(TRACKS[idx]);
+    ensureTone();
+    // Auto-play on card tap
+    if(!isPlaying) startPlay();
+    else {
+      // Switch track while playing
+      stopCurrentAudio();
+      isPlaying = true;
+      startPlay();
+    }
+  }
+}
+// ── selTrackFn(): select track + update player display ───────────
+// Called every time a track is chosen. Sets selTrack and refreshes
+// the player orb, benefit text, affirmation, and chakra display.
+function selTrackFn(t) {
+  selTrack = t;
+  function set(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
+  // New player IDs
+  set('pHz',        t.lbl || t.hz);
+  set('pHzLabel',       (t.lbl || t.hz) + ' Hz — ' + (t.cat || ''));
+  set('pBenefit',      t.ben || '');
+  set('pAff', t.aff ? '\\\\\\\\u201c' + t.aff + '\\\\\\\\u201d' : '');
+  // Chakra
+  var chakraEl = document.getElementById('pChakra');
+  if (chakraEl) chakraEl.textContent = t.ch ? '\\\\\\\\u2728 Chakra: ' + t.ch : '';
+  // Highlight active track card
+  document.querySelectorAll('.track-card').forEach(function(c) { c.classList.remove('sel'); });
+  var card = document.querySelector('[data-tidx="' + TRACKS.indexOf(t) + '"]');
+  if (card) card.classList.add('sel');
+}
+
+
+
+function rAngels(){
+  document.getElementById('angelGrid').innerHTML=ANGEL_NUMBERS.map(a=>
+    '<div class="angel-card" style="background:'+a.col+'08;border-color:'+a.col+'40" onclick="angelPlay('+a.hz+')">'+
+    '<div style="font-size:

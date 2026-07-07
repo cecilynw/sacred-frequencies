@@ -1,0 +1,319 @@
+r ctx = getCtx();
+  var merger = ctx.createChannelMerger(2);
+  var gain = ctx.createGain();
+  gain.gain.value = vol || 0.45;
+  gain.connect(getMaster());
+  merger.connect(gain);
+
+  var oscL = ctx.createOscillator();
+  oscL.type = 'sine';
+  oscL.frequency.value = carrier;
+  var panL = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+  if (panL) { panL.pan.value = -1; oscL.connect(panL); panL.connect(merger, 0, 0); }
+  else { oscL.connect(merger, 0, 0); }
+  oscL.start();
+
+  var freqR = carrier + Math.min(beatHz, 40);
+  var oscR = ctx.createOscillator();
+  oscR.type = 'sine';
+  oscR.frequency.value = freqR;
+  var panR = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+  if (panR) { panR.pan.value = 1; oscR.connect(panR); panR.connect(merger, 0, 1); }
+  else { oscR.connect(merger, 0, 1); }
+  oscR.start();
+
+  return {
+    masterGain: gain,
+    _stop: function() {
+      try { oscL.stop(); oscR.stop(); } catch(e) {}
+      try { gain.disconnect(); merger.disconnect(); } catch(e) {}
+    }
+  };
+}
+
+// NATURE GENERATOR — brown noise + nature ambience layer
+function nature(vol) {
+  var ctx = getCtx();
+  var gain = makeGain(vol || 0.3);
+  
+  // Brown noise via filtered white noise
+  var bufSize = ctx.sampleRate * 2;
+  var buffer = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+  var data = buffer.getChannelData(0);
+  var last = 0;
+  for (var i = 0; i < bufSize; i++) {
+    var white = Math.random() * 2 - 1;
+    data[i] = (last + 0.02 * white) / 1.02;
+    last = data[i];
+    data[i] *= 3.5;
+  }
+  var src = ctx.createBufferSource();
+  src.buffer = buffer;
+  src.loop = true;
+  
+  // Low-pass filter for forest warmth
+  var filter = ctx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = 800;
+  filter.Q.value = 0.5;
+  
+  src.connect(filter);
+  filter.connect(gain);
+  src.start();
+  
+  return {
+    masterGain: gain,
+    _stop: function() {
+      try { src.stop(); } catch(e) {}
+      try { gain.disconnect(); filter.disconnect(); } catch(e) {}
+    }
+  };
+}
+
+// Fade out and stop a node
+function fade(nodeObj) {
+  if (!nodeObj) return;
+  var g = nodeObj.masterGain;
+  if (g) {
+    g.gain.value = 0;
+  }
+  setTimeout(function() { stopNode(nodeObj); }, 300);
+}
+
+// ── Player state ──
+var curWave = 'sine';
+var curTrackIdx = 0;
+var playerNode = null;
+var natureNode = null;
+var timerInterval = null;
+var elapsedSeconds = 0;
+
+function setWave(w, btn) {
+  curWave = w;
+  if (isPlaying) {
+    // Restart with new waveform
+    stopCurrentAudio();
+    startPlay();
+  }
+}
+
+function stopCurrentAudio() {
+  if (playerNode) { fade(playerNode); playerNode = null; }
+  if (natureNode) { fade(natureNode); natureNode = null; }
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+function updatePlayBtn(playing) {
+  var btn = document.getElementById('playBtn');
+  if (!btn) return;
+  if (playing) {
+    btn.innerHTML = '⏹ Stop';
+    btn.classList.add('playing');
+    btn.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)';
+  } else {
+    btn.innerHTML = '▶ Play';
+    btn.classList.remove('playing');
+    btn.style.background = '';
+  }
+}
+
+function startTimer() {
+  elapsedSeconds = 0;
+  var timerEl = document.getElementById('pTimer');
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(function() {
+    elapsedSeconds++;
+    if (timerEl) {
+      var m = Math.floor(elapsedSeconds/60);
+      var s = elapsedSeconds % 60;
+      timerEl.textContent = m + ':' + (s<10?'0':'') + s;
+    }
+    // Update orb Hz display while playing
+    var orbHz = document.getElementById('pHz');
+    var t = TRACKS[curTrackIdx];
+    if (orbHz && t) orbHz.textContent = t.lbl || t.hz;
+  }, 1000);
+}
+
+function startPlay() {
+  var ctx = getCtx();
+  if (ctx.state === 'suspended') ctx.resume();
+  
+  stopCurrentAudio();
+  isPlaying = true;
+  updatePlayBtn(true);
+  startTimer();
+  
+  var t = TRACKS[curTrackIdx] || TRACKS[0];
+  var hz = t.hz;
+  
+  // Choose synthesis method based on frequency
+  if (hz < 20) {
+    // Sub-audible: use binaural beats with 110Hz carrier
+    playerNode = binaural(110, hz, 0.5);
+  } else {
+    // Audible tone
+    playerNode = tone(hz, curWave, 0.5);
+  }
+  
+  // Update display
+  var orbHz = document.getElementById('pHz');
+  var orbCat = document.getElementById('pHzLabel');
+  var affirmEl = document.getElementById('pAff');
+  if (orbHz) orbHz.textContent = t.lbl || t.hz;
+  if (orbCat) orbCat.textContent = (t.hz) + ' Hz — ' + t.cat;
+  if (affirmEl) affirmEl.textContent = '"' + (t.aff || '') + '"';
+}
+
+function stopPlay() {
+  stopCurrentAudio();
+  isPlaying = false;
+  updatePlayBtn(false);
+  elapsedSeconds = 0;
+  var timerEl = document.getElementById('pTimer');
+  if (timerEl) timerEl.textContent = '0:00';
+}
+
+function playerToggle() {
+  ensureTone();
+  if (isPlaying) {
+    stopPlay();
+  } else {
+    startPlay();
+  }
+}
+
+function playerNature() {
+  ensureTone();
+  var btn = document.getElementById('natBtn');
+  if (natureNode) {
+    fade(natureNode);
+    natureNode = null;
+    if (btn) { btn.textContent = '🌿 Nature'; btn.classList.remove('active'); }
+  } else {
+    natureNode = nature(0.25);
+    if (btn) { btn.textContent = '🌿 Nature ✓'; btn.classList.add('active'); }
+  }
+}
+
+function selectTrack(idx) {
+  curTrackIdx = idx;
+  var t = TRACKS[idx];
+  if (!t) return;
+  
+  // Update orb display
+  var orbHz = document.getElementById('pHz');
+  var orbCat = document.getElementById('pHzLabel');
+  var orbDesc = document.getElementById('pBenefit');
+  var affirmEl = document.getElementById('pAff');
+  if (orbHz) orbHz.textContent = t.lbl || t.hz;
+  if (orbCat) orbCat.textContent = (t.lbl || t.hz) + ' Hz — ' + t.cat;
+  if (orbDesc) orbDesc.textContent = t.ben || '';
+  if (affirmEl) affirmEl.textContent = '"' + (t.aff || '') + '"';
+  
+  // Highlight selected track card
+  document.querySelectorAll('.track-card').forEach(function(c,i) {
+    c.classList.toggle('selected', i === idx);
+  });
+  
+  // If already playing, restart with new track
+  if (isPlaying) {
+    stopCurrentAudio();
+    isPlaying = true;
+    startPlay();
+  }
+}
+
+// ── Love Field ──
+var loveNodes = [];
+var loveFieldOn = false;
+
+function loveStageToggle(idx){
+  loveStagePlay(idx, null);
+}
+
+function loveFieldToggle(){
+  ensureTone();
+  var btn=document.getElementById('loveBigBtn');
+  if(loveFieldOn){
+    loveNodes.forEach(function(n){ fade(n); });
+    loveNodes=[];
+    loveFieldOn=false;
+    if(btn){btn.innerHTML='💗 Activate Love Field<br><small>All 6 dimensions</small>';btn.classList.remove('active');}
+  } else {
+    var LOVE_HZ=[528,639,285,417,396,963,7.83];
+    LOVE_HZ.forEach(function(hz){
+      var n = hz<20 ? binaural(110,hz,0.12) : tone(hz,'sine',0.12);
+      loveNodes.push(n);
+    });
+    loveFieldOn=true;
+    if(btn){btn.innerHTML='💗 Love Field Active ✓<br><small>Stop field</small>';btn.classList.add('active');}
+  }
+}
+
+function loveStagePlay(idx, btn){
+  ensureTone();
+  loveNodes.forEach(function(n){ fade(n); });
+  loveNodes=[];
+  loveFieldOn=false;
+  document.getElementById('loveBigBtn').innerHTML='💗 Activate Love Field<br><small>All 6 dimensions</small>';
+  document.getElementById('loveBigBtn').classList.remove('active');
+  
+  var LOVE_STAGES=[
+    {hz:[528,174]},{hz:[285,528]},{hz:[639,396]},
+    {hz:[528,639]},{hz:[963,528]},{hz:[528,639,285,417,396,963]}
+  ];
+  var stage = LOVE_STAGES[idx];
+  if(!stage) return;
+  stage.hz.forEach(function(hz){
+    var n = hz<20 ? binaural(110,hz,0.18) : tone(hz,'sine',0.18);
+    loveNodes.push(n);
+  });
+  loveFieldOn=true;
+  if(btn){ btn.querySelector && btn.querySelector('.stage-play') ? 
+    btn.querySelector('.stage-play').textContent='⏹' : null; }
+}
+
+// ── Quantum Vortex ──
+var vortexNodes = [];
+var vortexOn = false;
+
+function vortexToggle(){
+  ensureTone();
+  var btn=document.getElementById('vortexBtn');
+  if(vortexOn){
+    vortexNodes.forEach(function(n){ fade(n); });
+    vortexNodes=[];
+    vortexOn=false;
+    if(btn){btn.innerHTML='⚡ Activate Vortex';btn.classList.remove('active');}
+  } else {
+    // 9-ether vortex frequencies
+    var freqs=[7.83,111,528,417,852,963];
+    var intensity=document.querySelector('.intensity-btn.active');
+    var vol=(intensity&&intensity.textContent.indexOf('Max')!==-1)?0.4:
+            (intensity&&intensity.textContent.indexOf('Standard')!==-1)?0.3:0.2;
+    freqs.forEach(function(hz){
+      var n = hz<20 ? binaural(110,hz,vol) : tone(hz,'sine',vol);
+      vortexNodes.push(n);
+    });
+    // Violet flame layer
+    var vf=tone(417,'sawtooth',vol*0.3);
+    vortexNodes.push(vf);
+    vortexOn=true;
+    if(btn){btn.innerHTML='⏹ Stop Vortex';btn.classList.add('active');}
+  }
+}
+
+// ── Growth Sound ──
+var growthNodes = [];
+var growthOn = false;
+var growthSeqTimer = null;
+
+function growthPlay(idx, btn){
+  ensureTone();
+  growthNodes.forEach(function(n){ fade(n); });
+  growthNodes=[];
+  var GROWTH=[
+    {hz:[285,111,7.83]},{hz:[40,14,10]},{hz:[639,528,3.5]},
+    {hz:[963,852,7]},{hz:[432,7.83]},{hz:[528,396,4]},
+    {hz

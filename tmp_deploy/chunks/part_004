@@ -1,0 +1,105 @@
+ter-row">
+    <button class="filter-btn active" id="vi0" onclick="vSetI(0,this)">🌱 Gentle</button>
+    <button class="filter-btn" id="vi1" onclick="vSetI(1,this)">⚡ Standard</button>
+    <button class="filter-btn" id="vi2" onclick="vSetI(2,this)">🔥 Maximum</button>
+  </div>
+  <div class="section-label">Target Being</div>
+  <div id="vBeingGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;margin-bottom:18px"></div>
+  <div class="section-label">Frequency Architecture</div>
+  <div class="grid2">
+    <div class="card" style="border-color:#ef444430"><div style="font-weight:700;color:#fca5a5;margin-bottom:6px;font-size:13px">🔴 Physical + Cellular</div><div style="font-size:12px;color:var(--dim)">174 · 333 · 40 Hz gamma · Rife 4 Hz tremolo</div><div style="font-size:11px;color:var(--dim);margin-top:4px">Targets: parasites, bacteria, fungi, viral loads</div></div>
+    <div class="card" style="border-color:#a78bfa30"><div style="font-weight:700;color:#c4b5fd;margin-bottom:6px;font-size:13px">💜 Etheric + Mental</div><div style="font-size:12px;color:var(--dim)">396 · 417 · 741 · 852 Hz</div><div style="font-size:11px;color:var(--dim);margin-top:4px">Targets: entity attachments, mind loops, implants</div></div>
+    <div class="card" style="border-color:#fbbf2430"><div style="font-weight:700;color:#fde68a;margin-bottom:6px;font-size:13px">☀️ Supreme Tiers</div><div style="font-size:12px;color:var(--dim)">1,296 · 2,160 · 3,168 Hz</div><div style="font-size:11px;color:var(--dim);margin-top:4px">Angelic Threshold · Solar Harmonic · Christ Grid</div></div>
+    <div class="card" style="border-color:#34d39930"><div style="font-weight:700;color:#86efac;margin-bottom:6px;font-size:13px">🛡️ Safety Anchors</div><div style="font-size:12px;color:var(--dim)">528 Hz love carrier · 7.83 Hz Schumann</div><div style="font-size:11px;color:var(--dim);margin-top:4px">Continuous protection — healthy cells strengthen</div></div>
+  </div>
+</div>
+
+<!-- ════════════ NATURE PORTAL ════════════ -->
+<div class="page" id="page-nature">
+  <h1 class="grad-green" style="margin-bottom:6px">🌿 Nature & Ether Portal</h1>
+  <p class="sub" style="text-align:left;margin-bottom:22px">6 immersive soundscapes — each paired with a sacred healing frequency. Amazon forest, Sacred Ocean, Earth Heartbeat, the Ether, Sacred Fire, and Cosmic Void.</p>
+  <div class="section-label">Soundscapes — Tap to Activate</div>
+  <div class="grid2" id="natureGrid"></div>
+  <div class="section-label" style="margin-top:20px">Primal Frequencies</div>
+  <div id="primalGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px"></div>
+</div>
+
+<!-- ════════════ GROWTH SOUND ════════════ -->
+<div class="page" id="page-growth">
+  <h1 class="grad-green" style="margin-bottom:6px">🌱 Growth Sound Architecture</h1>
+  <p class="sub" style="text-align:left;margin-bottom:22px">6 growth dimensions with binaural beat layers + an 8-step Master Ascension Sequence. Each layer targets a specific dimension of human growth.</p>
+  <div style="text-align:center;margin-bottom:22px">
+    <button class="btn btn-green" id="masterBtn" onclick="masterToggle()">🌱 Start Master Sequence</button>
+    <div id="masterSt" style="font-size:12px;color:var(--dim);margin-top:8px">8 stages · 2 min each · Full spectrum ascension</div>
+  </div>
+  <div class="section-label">Growth Dimensions — Tap to Activate Each Layer</div>
+  <div id="growthGrid"></div>
+  <div class="section-label">Master Sequence Steps</div>
+  <div id="masterSteps"></div>
+</div>
+
+<!-- ════════════ RITUALS ════════════ -->
+<div class="page" id="page-rituals">
+  <h1 class="grad-teal" style="margin-bottom:6px">🔮 Healing Rituals</h1>
+  <p class="sub" style="text-align:left;margin-bottom:22px">6 complete frequency protocols — curated sequences that work synergistically for maximum healing impact. Tap a ritual to expand and activate.</p>
+  <div id="ritualList"></div>
+</div>
+
+<!-- ════════════ JOURNAL ════════════ -->
+<div class="page" id="page-journal">
+  <h1 class="grad-violet" style="margin-bottom:6px">📓 Healing Journal</h1>
+  <p class="sub" style="text-align:left;margin-bottom:18px">Track your transformation. Your healing journey is sacred data.</p>
+  <div class="grid3" style="margin-bottom:16px">
+    <div class="card" style="text-align:center"><div style="font-size:24px;margin-bottom:4px">🧘</div><div style="font-size:20px;font-weight:900" id="jStatSessions">0</div><div style="font-size:11px;color:var(--dim)">Total Sessions</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:24px;margin-bottom:4px">⭐</div><div style="font-size:20px;font-weight:900" id="jStatRating">—</div><div style="font-size:11px;color:var(--dim)">Avg. Rating</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:24px;margin-bottom:4px">🌟</div><div style="font-size:20px;font-weight:900" id="jStatTrans">0</div><div style="font-size:11px;color:var(--dim)">Transformations</div></div>
+  </div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+    <button class="btn btn-primary" onclick="jToggleForm()">+ Log Session</button>
+  </div>
+  <div id="jForm" style="display:none" class="card" style="margin-bottom:16px;border-color:#7c3aed40">
+    <div style="font-weight:800;font-size:15px;margin-bottom:14px">New Healing Session</div>
+    <div class="grid2">
+      <div style="margin-bottom:12px"><div style="font-size:11px;color:var(--dim);margin-bottom:5px">Session Name</div><input id="jName" placeholder="e.g. Morning DNA Activation"></div>
+      <div style="margin-bottom:12px"><div style="font-size:11px;color:var(--dim);margin-bottom:5px">Date</div><input id="jDate" type="date"></div>
+    </div>
+    <div style="margin-bottom:12px"><div style="font-size:11px;color:var(--dim);margin-bottom:5px">Intention</div><input id="jInt" placeholder="What did you intend to heal, clear, or activate?"></div>
+    <div class="grid2">
+      <div style="margin-bottom:12px">
+        <div style="font-size:11px;color:var(--dim);margin-bottom:6px">Mood Before</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px" id="moodBefore"></div>
+      </div>
+      <div style="margin-bottom:12px">
+        <div style="font-size:11px;color:var(--dim);margin-bottom:6px">Mood After</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px" id="moodAfter"></div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div style="margin-bottom:12px"><div style="font-size:11px;color:var(--dim);margin-bottom:5px">Duration (min)</div><input id="jDur" type="number" value="20" min="1" max="300"></div>
+      <div style="margin-bottom:12px"><div style="font-size:11px;color:var(--dim);margin-bottom:5px">Rating: <span id="jRatLbl">7</span>/10</div><input id="jRat" type="range" min="1" max="10" value="7" oninput="document.getElementById('jRatLbl').textContent=this.value" style="padding:0;border:none;background:transparent;height:20px"></div>
+    </div>
+    <div style="margin-bottom:12px"><div style="font-size:11px;color:var(--dim);margin-bottom:5px">Notes & Experiences</div><textarea id="jNotes" rows="3" placeholder="What did you feel, see, or experience?"></textarea></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-primary" onclick="jSave()">✓ Save Session</button>
+      <button class="btn btn-secondary" onclick="jToggleForm()">Cancel</button>
+    </div>
+  </div>
+  <div id="jList"></div>
+</div>
+
+<!-- ════════════ GUIDE ════════════ -->
+<div class="page" id="page-guide">
+  <h1 class="grad-violet" style="margin-bottom:6px">📖 Frequency Science Guide</h1>
+  <p class="sub" style="text-align:left;margin-bottom:22px">The science and sacred knowledge behind healing frequencies. Tap any topic to expand.</p>
+  <div id="guideList"></div>
+  <div class="section-label">Full Frequency Reference</div>
+  <div id="freqRef"></div>
+</div>
+
+<!-- ════════════ PROTOCOL ════════════ -->
+<div class="page" id="page-protocol">
+  <h1 class="grad-main" style="margin-bottom:6px">⚡ 9-Ether Irradiation Protocol</h1>
+  <p class="sub" style="text-align:left;margin-bottom:20px">Supreme Resonance + Full Lunar Balance · 9 etheric dimensions · 3 supreme tiers · 4 lunar phases · All beings · All timelines</p>
+  <div class="card" style="text-align:center;border-color:#7c3aed50;margin-bottom:18px;background:linear-gradient(135deg,#0f0726,#0c1a2e)">
+    <div style="font-size:13px;color:#a78bfa;font-weight:800;margin-bottom:8px">✦ Full Protocol — Print / Download Available</div>
+    <div style="font-size:12px;color:var(--dim);margin-bottom:16px">Complete Supreme +

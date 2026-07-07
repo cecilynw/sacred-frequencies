@@ -1,0 +1,115 @@
+="48"></canvas>
+
+    <!-- Progress bar -->
+    <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" id="pBar"></div></div>
+    <div id="pTimer" style="font-size:11px;color:#475569;margin-bottom:12px;font-variant-numeric:tabular-nums">0:00</div>
+
+    <!-- Play + Nature buttons -->
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;align-items:center">
+      <button class="btn btn-primary btn-play-cosmic" id="playBtn" data-action="toggle" style="touch-action:manipulation;-webkit-appearance:none;min-width:150px;min-height:54px;font-size:18px;letter-spacing:0.5px;border-radius:30px;">▶ Play</button>
+      <button class="nature-btn" id="natBtn" data-action="nature" style="touch-action:manipulation;-webkit-appearance:none;min-height:48px;">🌿 Nature</button>
+    </div>
+
+    <!-- Volume -->
+    <div style="display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:0 6px">
+      <span style="font-size:15px;line-height:1">🔊</span>
+      <input type="range" id="volSlider" min="1" max="100" value="70" oninput="setVol(this.value)" style="flex:1;touch-action:manipulation">
+      <span id="volLabel" style="font-size:12px;color:#64748b;min-width:34px;text-align:right;font-variant-numeric:tabular-nums">70%</span>
+    </div>
+
+    <!-- Affirmation -->
+    <div class="affirmation" id="pAff"></div>
+
+    <!-- Wave type selector -->
+    <div style="display:flex;gap:6px;justify-content:center;margin-top:16px;flex-wrap:wrap">
+      <button class="wave-btn active" id="wSine" data-wave="sine" style="touch-action:manipulation">Sine</button>
+      <button class="wave-btn" id="wTri" data-wave="triangle" style="touch-action:manipulation">Triangle</button>
+      <button class="wave-btn" id="wSaw" data-wave="sawtooth" style="touch-action:manipulation">Sawtooth</button>
+      <button class="wave-btn" id="wSq" data-wave="square" style="touch-action:manipulation">Square</button>
+    </div>
+  </div>
+  <div class="filter-row" id="catFilter">
+    <button class="filter-btn active" onclick="fCat('All',this)">All</button>
+    <button class="filter-btn" onclick="fCat('Body',this)">🧬 Body</button>
+    <button class="filter-btn" onclick="fCat('Mind',this)">🧠 Mind</button>
+    <button class="filter-btn" onclick="fCat('Spirit',this)">✨ Spirit</button>
+    <button class="filter-btn" onclick="fCat('Wealth',this)">💛 Wealth</button>
+    <button class="filter-btn" onclick="fCat('Love',this)">💗 Love</button>
+    <button class="filter-btn" onclick="fCat('Nature',this)">🌿 Nature</button>
+    <button class="filter-btn" onclick="fCat('Cleansing',this)">🔮 Cleanse</button>
+  </div>
+  <div id="trackList"></div>
+</div>
+
+<!-- ════════════ ANGEL NUMBERS ════════════ -->
+<div class="page" id="page-angels">
+  <h1 class="grad-amber" style="margin-bottom:6px">👼 Angel Number Frequencies</h1>
+  <p class="sub" style="text-align:left;margin-bottom:18px">Each angel number carries a divine message. Tap to activate its sacred tone and receive its blessing.</p>
+  <div id="angelGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px"></div>
+</div>
+
+<!-- ════════════ EPIGENETIC LOVE ════════════ -->
+<div class="page" id="page-love">
+  <h1 class="grad-rose" style="margin-bottom:6px">💗 Epigenetic Love Protocol</h1>
+  <p class="sub" style="text-align:left;margin-bottom:22px">A 6-stage DNA repair journey using love-based frequencies to restore heart coherence, release ancestral trauma, and activate your highest expression of love.</p>
+  <div style="text-align:center;margin-bottom:24px">
+    <button class="love-btn" id="loveBigBtn" onclick="loveFieldToggle()">
+      <div style="font-size:30px">💗</div>
+      <div id="loveBigTxt">Activate Love Field</div>
+      <div style="font-size:10px;opacity:0.7">All 6 dimensions</div>
+    </button>
+  </div>
+  <div class="card" style="margin-bottom:18px;border-color:#fb718530;background:linear-gradient(135deg,#be185d08,#7c3aed08)">
+    <div style="font-size:12px;color:var(--dim);margin-bottom:8px">The Love Field activates simultaneously:</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      <span style="padding:3px 10px;background:#be185d20;color:#fda4af;border-radius:999px;font-size:11px;font-weight:700">528 Hz DNA Repair</span>
+      <span style="padding:3px 10px;background:#7c3aed20;color:#c4b5fd;border-radius:999px;font-size:11px;font-weight:700">639 Hz Heart</span>
+      <span style="padding:3px 10px;background:#be185d20;color:#fda4af;border-radius:999px;font-size:11px;font-weight:700">285 Hz Cells</span>
+      <span style="padding:3px 10px;background:#7c3aed20;color:#c4b5fd;border-radius:999px;font-size:11px;font-weight:700">417 Hz Release</span>
+      <span style="padding:3px 10px;background:#be185d20;color:#fda4af;border-radius:999px;font-size:11px;font-weight:700">396 Hz Freedom</span>
+      <span style="padding:3px 10px;background:#7c3aed20;color:#c4b5fd;border-radius:999px;font-size:11px;font-weight:700">963 Hz Divine</span>
+      <span style="padding:3px 10px;background:#34d39920;color:#86efac;border-radius:999px;font-size:11px;font-weight:700">7.83 Hz Earth</span>
+    </div>
+  </div>
+  <div class="section-label">6-Stage Journey — Tap a Stage to Activate</div>
+  <div id="loveStages"></div>
+</div>
+
+<!-- ════════════ QUANTUM VORTEX ════════════ -->
+<div class="page" id="page-vortex">
+  <h1 class="grad-violet" style="margin-bottom:6px">🌀 Quantum Healing Vortex</h1>
+  <p class="sub" style="text-align:left;margin-bottom:22px">9-ether quantum healing targeting cellular, spiritual, and dimensional levels simultaneously. Uses Rife-inspired tremolo and Violet Flame (417 Hz) for pathogenic transmutation.</p>
+  <div style="text-align:center;margin-bottom:22px">
+    <div class="vortex-ring" id="vortexRing"><div style="font-size:36px;animation:vcPulse 2s ease-in-out infinite" id="vortexCore">🌀</div></div>
+    <div id="vortexSt" style="font-size:12px;color:var(--dim);margin:10px 0">Select intensity · Choose target · Activate</div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary" id="vortexBtn" onclick="vortexToggle()">⚡ Activate Vortex</button>
+      <button class="btn btn-secondary" onclick="vortexStop()">■ Stop</button>
+    </div>
+  </div>
+  <style>@keyframes vcPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+/* ── PRICING ── */
+.price-card{border-radius:20px;padding:24px 20px;border:1.5px solid;text-align:center;position:relative;transition:transform 0.2s,box-shadow 0.2s}
+.price-card:active{transform:scale(0.98)}
+.price-card.popular{border-color:#a78bfa !important;box-shadow:0 0 40px #a78bfa30}
+.popular-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;font-size:10px;font-weight:800;padding:4px 14px;border-radius:999px;letter-spacing:0.1em;white-space:nowrap}
+.price-amount{font-size:48px;font-weight:900;line-height:1;margin:12px 0 2px}
+.price-period{font-size:12px;color:var(--muted);margin-bottom:16px}
+.price-feat{font-size:12.5px;color:var(--muted);text-align:left;margin-bottom:6px;padding-left:4px}
+.price-feat::before{content:"✓ ";color:#34d399;font-weight:800}
+.btn-upgrade{width:100%;padding:13px;border-radius:999px;font-weight:800;font-size:14px;cursor:pointer;border:none;margin-top:16px;-webkit-appearance:none;touch-action:manipulation}
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:#00000088;z-index:1000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)}
+.modal-overlay.open{display:flex}
+.modal-box{background:#0f172a;border:1.5px solid #a78bfa50;border-radius:24px;padding:28px 24px;max-width:400px;width:100%;text-align:center;position:relative;max-height:90vh;overflow-y:auto}
+.modal-close{position:absolute;top:14px;right:16px;background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer;touch-action:manipulation;-webkit-appearance:none}
+/* ── GATE BADGE ── */
+.gate-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:0.08em;background:#fbbf2415;color:#fbbf24;border:1px solid #fbbf2430;margin-left:8px;vertical-align:middle}
+/* ── EMAIL CAPTURE ── */
+.email-capture{background:linear-gradient(135deg,#0d0520,#0c1a2e);border:1px solid #a78bfa30;border-radius:16px;padding:20px;margin:20px 0;text-align:center}
+.email-input{width:100%;padding:12px 16px;border-radius:999px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;font-size:14px;margin:10px 0;outline:none;-webkit-appearance:none}
+.email-input:focus{border-color:#a78bfa70}
+
+</style>
+  <div class="section-label">Intensity</div>
+  <div class="fil
