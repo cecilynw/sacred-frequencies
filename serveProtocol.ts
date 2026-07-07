@@ -275,6 +275,15 @@ Deno.serve(async (req) => {
   /* ── FOOTER ── */
   .footer { text-align: center; padding: 40px 20px; color: #334155; font-size: 11px; border-top: 1px solid #0f172a; margin-top: 60px; }
   .footer strong { color: #475569; }
+  .footer-section { max-width: 640px; margin: 22px auto; text-align: left; }
+  .footer-heading { font-weight: 700; color: #a78bfa; font-size: 11.5px; letter-spacing: 0.08em; margin-bottom: 6px; text-transform: uppercase; }
+  .footer-section p { color: #475569; font-size: 11.5px; line-height: 1.75; }
+  .footer-section.disclaimer { border-top: 1px solid #1e293b; border-bottom: 1px solid #1e293b; padding: 18px 0; }
+  .footer-section.disclaimer .footer-heading { color: #f59e0b; }
+  .footer-section.disclaimer p { color: #64748b; }
+  .footer-benefits { list-style: none; padding: 0; margin: 0; }
+  .footer-benefits li { color: #475569; font-size: 11.5px; line-height: 1.9; padding-left: 16px; position: relative; }
+  .footer-benefits li:before { content: "✓"; position: absolute; left: 0; color: #34d399; }
 
   /* ── UTIL ── */
   .text-center { text-align: center; }
@@ -309,7 +318,7 @@ Deno.serve(async (req) => {
   </p>
   <div class="hero-meta">
     <span>📅 June 7, 2026</span>
-    <span>👤 Cecilyn Williams</span>
+    <span>🌐 Sacred Frequencies Healing Collective</span>
     <span>🎵 Sacred Frequencies App</span>
     <span>🔒 Version: Supreme + Lunar</span>
   </div>
@@ -1061,9 +1070,32 @@ Deno.serve(async (req) => {
 <!-- ═══════════════════════════════════════════════════════ FOOTER -->
 <div class="footer">
   <strong>Sacred Frequencies · 9-Ether Irradiation Protocol</strong><br>
-  Supreme Resonance + Full Lunar Balance Edition · June 7, 2026 · Cecilyn Williams<br><br>
+  Supreme Resonance + Full Lunar Balance Edition · June 7, 2026
+
+  <div class="footer-section">
+    <div class="footer-heading">✦ Our Purpose</div>
+    <p>Sacred Frequencies exists to make frequency-based sound healing — solfeggio tones, Schumann resonance, binaural entrainment, and sacred geometry — accessible to everyone seeking balance, clarity, and a deeper connection to themselves, each other, and the Earth.</p>
+  </div>
+
+  <div class="footer-section">
+    <div class="footer-heading">✦ Benefits</div>
+    <ul class="footer-benefits">
+      <li>Supports relaxation, stress relief, and nervous system regulation</li>
+      <li>Encourages mindful presence and emotional balance</li>
+      <li>Aids restful sleep and deep meditative states</li>
+      <li>Enhances focus, heart coherence, and spiritual connection</li>
+      <li>Layers nature ambience (rainforest, ocean) for grounding and calm</li>
+    </ul>
+  </div>
+
+  <div class="footer-section disclaimer">
+    <div class="footer-heading">⚠ Disclaimer</div>
+    <p>Sacred Frequencies is intended for relaxation, meditation, and general wellness purposes only. It is not a medical device and is not intended to diagnose, treat, cure, or prevent any disease or medical condition. This content is not a substitute for professional medical advice, diagnosis, or treatment — always consult a qualified healthcare provider regarding any physical or mental health concerns. Individual experiences and results may vary. If you are pregnant, have epilepsy, a pacemaker or other implanted device, or any condition affected by sound or light stimulation, consult your doctor before use. Discontinue use if you experience discomfort.</p>
+  </div>
+
   🎧 Headphones deepen the effect · Safe for all ages and all animals<br>
-  528 Hz love carrier + 7.83 Hz Schumann in every ether · Supreme ceiling: 3,168 Hz
+  528 Hz love carrier + 7.83 Hz Schumann in every ether · Supreme ceiling: 3,168 Hz<br><br>
+  <span style="color:#334155">© 2026 Sacred Frequencies · All Rights Reserved</span>
 </div>
 
 </div>
