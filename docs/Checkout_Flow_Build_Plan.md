@@ -15,10 +15,10 @@ Replace the current fake `startCheckout`/`confirmCheckout` functions in `sacredA
 ## Step 3 — Build the customer database *(Agent)*
 Create a new entity `PaidCustomer` with fields: `email`, `tier`, `order_id`, `status`, `subscribed_date`. This becomes the single source of truth for who has paid for what.
 
-## Step 4 — Webhook automation for payments *(Agent)* 2705 DONE (8 July 2026)
+## Step 4 — Webhook automation for payments *(Agent)* ✅ DONE (8 July 2026)
 Connector automation on Wix's `order_created` event: when it fires, record the customer's email + tier in `PaidCustomer`, then send a confirmation email with their personal access link via the connected Gmail account.
 
-## Step 5 — Webhook automation for cancellations *(Agent)* 2705 DONE (8 July 2026, combined with Step 4)
+## Step 5 — Webhook automation for cancellations *(Agent)* ✅ DONE (8 July 2026, combined with Step 4)
 Same setup on Wix's `order_canceled` event — automatically flips status back to Free, no manual tracking required.
 
 ## Step 6 — Real access-check in the app *(Agent)*
