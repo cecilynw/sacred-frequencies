@@ -15,10 +15,10 @@ Replace the current fake `startCheckout`/`confirmCheckout` functions in `sacredA
 ## Step 3 — Build the customer database *(Agent)*
 Create a new entity `PaidCustomer` with fields: `email`, `tier`, `order_id`, `status`, `subscribed_date`. This becomes the single source of truth for who has paid for what.
 
-## Step 4 — Webhook automation for payments *(Agent)*
+## Step 4 — Webhook automation for payments *(Agent)* 2705 DONE (8 July 2026)
 Connector automation on Wix's `order_created` event: when it fires, record the customer's email + tier in `PaidCustomer`, then send a confirmation email with their personal access link via the connected Gmail account.
 
-## Step 5 — Webhook automation for cancellations *(Agent)*
+## Step 5 — Webhook automation for cancellations *(Agent)* 2705 DONE (8 July 2026, combined with Step 4)
 Same setup on Wix's `order_canceled` event — automatically flips status back to Free, no manual tracking required.
 
 ## Step 6 — Real access-check in the app *(Agent)*
@@ -32,4 +32,4 @@ Full end-to-end test with a real small transaction: verify the webhook fires, un
 
 ---
 
-**Current blocker:** Step 1. Everything from Step 2 onward can start immediately once Cecilyn shares the two Wix checkout links.
+**Current blocker:** Step 1 (Wix checkout links). Steps 3-5 are now built: PaidCustomer entity, checkCustomerAccess + captureLead functions, and a single connector automation ('Wix Subscription Order Sync', ID 6a4de80dd347334622873059) listening for wix.ecom.v1.order_created and wix.ecom.v1.order_canceled -- it upserts PaidCustomer records and reverts cancellations to free tier. Steps 2 and 6 (real checkout buttons + frontend email-gate) still need the actual Wix checkout links to finish.
