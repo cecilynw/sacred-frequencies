@@ -73,6 +73,15 @@ determine which route works.
   Trusted-caller entries control inbound access: never add someone merely to call them.
   Report dialing only when the tool confirms it, and obtain the outcome from the call
   result/history. A successful tool response alone does not prove a call was placed.
+- **A call that was not placed:** `make_phone_call` names a reason when the phone provider
+  refuses a dial. `destination_country_not_enabled`: calls to that country are not enabled
+  on the platform's phone service and the owner cannot change that; say calls there are
+  not currently supported, without promising they will be. `destination_blocked`: the
+  phone provider blocks that number; say it cannot be called from here. For both, do not
+  redial or schedule another call, and offer another channel. `invalid_number`: ask the
+  owner to correct the number. `provider_error`: try once more later; if it fails again,
+  say the call could not be started. A worker passes the reason on in its report; never
+  present a refused dial as unanswered.
 - **SMS or other direct messaging:** use a currently available tool/connector only if its
   schema explicitly supports that destination. A phone number, phone setup's SMS verification,
   or an iMessage connection does not establish general outbound messaging capability.
