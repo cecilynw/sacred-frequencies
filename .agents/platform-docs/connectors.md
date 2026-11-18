@@ -1,10 +1,10 @@
 # connectors
 
-> Connecting and using third-party OAuth services (Google, Slack, etc.)
+> Connecting and using OAuth or Base44-managed services (Google Workspace, Slack, Google Maps, etc.)
 
-You can connect and use third-party OAuth services (Google Calendar, Slack, Gmail, etc.) through the connector tools.
+You can use OAuth services (Google Calendar, Slack, Gmail, etc.) and Base44-managed connectors (Google Maps, etc.) through the connector tools.
 
-IMPORTANT: App connectors connect the APP BUILDER'S account, NOT individual app users' accounts. For example, connecting Google Calendar connects your account, not the end user's.
+IMPORTANT: OAuth connectors connect the APP BUILDER'S account, NOT individual app users' accounts. For example, connecting Google Calendar connects your account, not the end user's.
 
 IMPORTANT: Only the app owner can add or authorize shared OAuth connectors. If someone who is not the owner asks to connect a service, explain that only the owner can do this and do not call `request_oauth_authorization`.
 
@@ -25,6 +25,14 @@ Typical workflow when the user asks to find and read/edit a Google document:
 2. Use the specific connector (**Google Docs** / **Sheets** / **Slides**) to read or edit it
 
 If the user asks to search for documents and Google Drive is not connected, proactively suggest connecting it - explain that Drive is needed to search/browse files.
+
+## Base44-managed connectors
+
+Read `get_connectors_info` for the exact identifier, enablement status, supported operations and costs. These connectors use Base44-managed credentials, not OAuth or `get_connector_token`.
+
+Only the app owner can enable them. If not enabled, call `enable_connector` and wait for approval before calling the provider. If already enabled, proceed without asking again. If approval is declined, stop; if enablement is unavailable here, ask the owner to enable it from an interactive owner chat. Do not ask for a provider API key.
+
+Use sandbox `bash` with the connector proxy below. Credentials are added server-side. For a conversational lookup, call the proxy directly; backend SDK examples do not require creating or deploying a function. Follow the guide's costs and the user's call limit.
 
 ## Tool usage
 
@@ -61,7 +69,7 @@ For quick operations, call `get_connector_token` then use `bash` with the env va
 4. Inject token: `get_connector_token("googlecalendar")` -> sets `$GOOGLECALENDAR_ACCESS_TOKEN`
 5. Make API calls using the env var (never hardcode the token)
 
-## Handling external API auth errors
+## Handling OAuth API auth errors
 
 When a connector tool or external API fails, distinguish token rejection, missing permissions, resource access, rate limits and temporary failures. A scope mismatch or 403 alone does not establish that the account is disconnected, expired or revoked.
 For authentication or scope failures, follow this recovery sequence:
