@@ -17,7 +17,7 @@ To discover existing functions, search for files in the functions/ directory. If
 ## Coding rules
 - Use `Deno.serve(async (req) => { ... })` - no other patterns.
 - External packages must use `npm:` with a pinned version. Base44 virtual imports such as `base44:private-data-sources/<type>` are platform modules, not packages.
-- For app auth or entity access, use `import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';` and create it with `const base44 = createClientFromRequest(req);` inside the handler. Existing pinned SDK versions remain valid, but use this version for new functions.
+- For app auth or entity access, use `import { createClientFromRequest } from 'npm:@base44/sdk@0.8.63';` and create it with `const base44 = createClientFromRequest(req);` inside the handler. Existing pinned SDK versions remain valid, but use this version for new functions.
 - No local imports between function files - each file is deployed independently.
 - Use camelCase for function names (e.g. `getJoke`, `exportTasks`).
 - Parameters are passed through the request body only, not URL params.
