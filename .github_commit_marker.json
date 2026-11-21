@@ -6,5 +6,5 @@
     "functions/serveProtocol.ts",
     "exports/sacred_app_full.html"
   ],
-  "github_commit": "642fcae"
+  "github_commit": "bda72ce"
 }
